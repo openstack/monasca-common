@@ -1,0 +1,211 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>com.hpcloud</groupId>
+  <artifactId>mon-common</artifactId>
+  <version>${computedVersion}</version>
+  <url>http://hpcloud.net</url>
+  <packaging>pom</packaging>
+
+  <prerequisites>
+    <maven>3.0</maven>
+  </prerequisites>
+
+  <properties>
+    <!-- Versioning -->
+    <versionNumber>1.0.0</versionNumber>
+    <computedVersion>${versionNumber}-SNAPSHOT</computedVersion>
+
+    <skipITs>true</skipITs>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+  </properties>
+
+  <scm>
+    <connection>scm:git:git@git.hpcloud.net:mon/mon-common.git</connection>
+    <developerConnection>scm:git:git@git.hpcloud.net:mon/mon-common.git</developerConnection>
+  </scm>
+
+  <modules>
+    <module>mon-collectd</module>
+    <module>mon-dropwizard</module>
+    <module>mon-model</module>
+    <module>mon-persistence</module>
+    <module>mon-testing</module>
+    <module>mon-util</module>
+  </modules>
+
+  <repositories>
+    <repository>
+      <id>nexus releases</id>
+      <url>http://nexus.paas.hpcloud.net:8081/nexus/content/repositories/releases</url>
+    </repository>
+    <repository>
+      <id>nexus 3rd party</id>
+      <url>http://nexus.paas.hpcloud.net:8081/nexus/content/repositories/thirdparty</url>
+    </repository>
+    <repository>
+      <id>nexus-snapshots</id>
+      <name>nexus snapshots</name>
+      <url>http://nexus.paas.hpcloud.net:8081/nexus/content/repositories/snapshots</url>
+    </repository>
+  </repositories>
+
+  <distributionManagement>
+    <repository>
+      <id>nexus</id>
+      <name>Internal Releases</name>
+      <url>http://nexus.paas.hpcloud.net:8081/nexus/content/repositories/releases</url>
+    </repository>
+    <snapshotRepository>
+      <id>nexus</id>
+      <name>Snapshots</name>
+      <uniqueVersion>false</uniqueVersion>
+      <url>http://nexus.paas.hpcloud.net:8081/nexus/content/repositories/snapshots</url>
+    </snapshotRepository>
+  </distributionManagement>
+
+  <profiles>
+    <profile>
+      <id>release-deploy-url-override</id>
+      <activation>
+        <property>
+          <name>BUILD_NUM</name>
+        </property>
+      </activation>
+      <properties>
+        <computedVersion>${versionNumber}.${BUILD_NUM}</computedVersion>
+      </properties>
+    </profile>
+  </profiles>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>1.7</source>
+          <target>1.7</target>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <excludedGroups>performance,functional,integration,database,slow</excludedGroups>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-failsafe-plugin</artifactId>
+        <configuration>
+          <groups>performance,functional,integration,database,slow</groups>
+          <skipTests>${skipITs}</skipTests>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>integration-test</goal>
+            </goals>
+            <configuration>
+              <includes>
+                <include>**/*.class</include>
+              </includes>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>attach-sources</id>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-scm-plugin</artifactId>
+        <configuration>
+          <tag>${project.version}</tag>
+        </configuration>
+      </plugin>
+      <!-- Resources, Install and Deploy configuration enable variable replacement on deployment. From 
+        http://www.axelfontaine.com/2011/01/maven-releases-on-steroids-2-preparing.html -->
+      <plugin>
+        <artifactId>maven-resources-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>replace-pom-placeholder</id>
+            <phase>package</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <resources>
+                <resource>
+                  <directory>${basedir}</directory>
+                  <includes>
+                    <include>pom.xml</include>
+                  </includes>
+                  <filtering>true</filtering>
+                </resource>
+              </resources>
+              <outputDirectory>${project.build.directory}/pom-install-deploy-fix</outputDirectory>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-install-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>overwrite-pom</id>
+            <phase>install</phase>
+            <goals>
+              <goal>install-file</goal>
+            </goals>
+            <configuration>
+              <packaging>pom</packaging>
+              <file>target/pom-install-deploy-fix/pom.xml</file>
+              <pomFile>target/pom-install-deploy-fix/pom.xml</pomFile>
+              <version>${project.version}</version>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-deploy-plugin</artifactId>
+        <configuration>
+          <updateReleaseInfo>${isRelease}</updateReleaseInfo>
+        </configuration>
+        <executions>
+          <execution>
+            <id>overwrite-pom</id>
+            <phase>deploy</phase>
+            <goals>
+              <goal>deploy-file</goal>
+            </goals>
+            <configuration>
+              <packaging>pom</packaging>
+              <file>target/pom-install-deploy-fix/pom.xml</file>
+              <pomFile>target/pom-install-deploy-fix/pom.xml</pomFile>
+              <repositoryId>${deployRepoId}</repositoryId>
+              <url>${deployRepoUrl}</url>
+              <version>${project.version}</version>
+              <updateReleaseInfo>${isRelease}</updateReleaseInfo>
+              <uniqueVersion>false</uniqueVersion>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>

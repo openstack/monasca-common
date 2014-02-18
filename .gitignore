@@ -1,0 +1,10 @@
+*.cache
+*.classpath
+*.project
+*.target/
+*.settings/
+target/
+test-output/
+test-config.yml
+*.swp
+*.iml

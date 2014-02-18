@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite verbose="2" name="ps-common suite">
+  <test name="All" preserve-order="false" verbose="1">
+    <groups>
+      <run>
+        <exclude name="performance" />
+        <exclude name="functional" />
+        <exclude name="integration" />
+        <exclude name="database" />
+      </run>
+    </groups>
+    <packages>
+      <package name="com.hpcloud.*" />
+    </packages>
+  </test>
+
+  <listeners>
+    <!-- <listener class-name="com.hpcloud.LoggingListener" /> -->
+  </listeners>
+</suite>
