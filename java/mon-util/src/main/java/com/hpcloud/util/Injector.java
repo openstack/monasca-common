@@ -1,17 +1,11 @@
 package com.hpcloud.util;
 
-import java.io.Serializable;
-
-import com.google.common.base.Preconditions;
 import com.google.inject.AbstractModule;
 import com.google.inject.ConfigurationException;
 import com.google.inject.Guice;
 import com.google.inject.Key;
 import com.google.inject.Module;
 import com.google.inject.ProvisionException;
-import com.google.inject.TypeLiteral;
-import com.google.inject.matcher.AbstractMatcher;
-import com.google.inject.matcher.Matcher;
 import com.google.inject.name.Names;
 
 /**
@@ -21,53 +15,6 @@ import com.google.inject.name.Names;
  */
 public final class Injector {
   private static volatile com.google.inject.Injector injector;
-
-  /**
-   * Supplementary factory methods for producing type literal based Guice Matchers.
-   */
-  public static class TypeLiteralMatchers {
-    private static class SubtypeOf extends AbstractMatcher<TypeLiteral<?>> implements Serializable {
-      private static final long serialVersionUID = 1239939466206498961L;
-      private final TypeLiteral<?> supertype;
-
-      /**
-       * @param superType
-       */
-      public SubtypeOf(TypeLiteral<?> superType) {
-        super();
-        this.supertype = Preconditions.checkNotNull(superType, "supertype");
-      }
-
-      @Override
-      public boolean equals(Object other) {
-        return other instanceof SubtypeOf && ((SubtypeOf) other).supertype.equals(supertype);
-      }
-
-      @Override
-      public int hashCode() {
-        return 37 * supertype.hashCode();
-      }
-
-      @Override
-      public boolean matches(TypeLiteral<?> subtype) {
-        return (subtype.equals(supertype) || supertype.getRawType().isAssignableFrom(
-            subtype.getRawType()));
-      }
-
-      @Override
-      public String toString() {
-        return "subtypeOf(" + supertype.getRawType() + ".class)";
-      }
-    }
-
-    public static Matcher<? super TypeLiteral<?>> subtypeOf(final Class<?> superclass) {
-      return new SubtypeOf(TypeLiteral.get(superclass));
-    }
-
-    public static Matcher<? super TypeLiteral<?>> subtypeOf(final TypeLiteral<?> supertype) {
-      return new SubtypeOf(supertype);
-    }
-  }
 
   private Injector() {
   }

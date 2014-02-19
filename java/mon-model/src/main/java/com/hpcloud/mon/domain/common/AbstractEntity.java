@@ -1,16 +1,12 @@
 package com.hpcloud.mon.domain.common;
 
-import java.io.Serializable;
-
 /**
  * Defines an entity with a surrogate key.
  * 
  * @author Jonathan Halterman
  * @see http://domaindrivendesign.org/search/node/Entity
  */
-public abstract class AbstractEntity implements Serializable {
-  private static final long serialVersionUID = -7055330640094842914L;
-
+public abstract class AbstractEntity {
   protected String id;
 
   @Override

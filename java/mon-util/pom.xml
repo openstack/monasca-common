@@ -10,8 +10,9 @@
   <packaging>jar</packaging>
 
   <properties>
-    <jackson.version>2.3.1</jackson.version>
+    <jackson.version>2.1.1</jackson.version>
     <logback.version>1.1.1</logback.version>
+    <metrics.version>2.2.0</metrics.version>
   </properties>
 
   <dependencies>
@@ -98,6 +99,18 @@
       <groupId>javassist</groupId>
       <artifactId>javassist</artifactId>
       <version>3.12.1.GA</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.yammer.metrics</groupId>
+      <artifactId>metrics-core</artifactId>
+      <version>${metrics.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.yammer.metrics</groupId>
+      <artifactId>metrics-guice</artifactId>
+      <version>${metrics.version}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
