@@ -1,16 +1,17 @@
 package com.hpcloud.dropwizard;
 
+import io.dropwizard.Application;
+import io.dropwizard.Configuration;
+import io.dropwizard.cli.Cli;
+import io.dropwizard.setup.Bootstrap;
+import io.dropwizard.util.JarLocation;
+
 import java.io.File;
 import java.net.URL;
 
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
-
-import com.yammer.dropwizard.Service;
-import com.yammer.dropwizard.cli.Cli;
-import com.yammer.dropwizard.config.Bootstrap;
-import com.yammer.dropwizard.config.Configuration;
 
 /**
  * Extend and have at it. Note, this class is in the "integration" group. So the server will only
@@ -21,8 +22,8 @@ import com.yammer.dropwizard.config.Configuration;
  * @param <C> configuration type
  */
 @Test(groups = "integration")
-public abstract class DropwizardTestCase<S extends Service<C>, C extends Configuration> {
-  protected static volatile Service<?> service;
+public abstract class DropwizardTestCase<S extends Application<C>, C extends Configuration> {
+  protected static volatile Application<?> service;
   private static TestableServerCommand<?> command;
   private final Class<S> serviceType;
   private final Class<C> configurationType;
@@ -58,7 +59,7 @@ public abstract class DropwizardTestCase<S extends Service<C>, C extends Configu
             command = new TestableServerCommand<C>(localService, configurationType);
             bootstrap.addCommand(command);
             localService.initialize(bootstrap);
-            final Cli cli = new Cli(this.getClass(), bootstrap);
+            final Cli cli = new Cli(new JarLocation(getClass()), bootstrap, System.out, System.err);
             cli.run(new String[] { "test-server", configFile.getAbsolutePath() });
           } catch (Exception e) {
             throw new RuntimeException(e);

@@ -10,7 +10,7 @@
 	<packaging>jar</packaging>
 
 	<properties>
-		<dropwizard.version>0.6.2</dropwizard.version>
+		<dropwizard.version>0.7.0-rc1</dropwizard.version>
 	</properties>
 
 	<dependencies>
@@ -20,19 +20,19 @@
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>com.yammer.dropwizard</groupId>
+			<groupId>io.dropwizard</groupId>
 			<artifactId>dropwizard-core</artifactId>
 			<version>${dropwizard.version}</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>com.yammer.dropwizard</groupId>
+			<groupId>io.dropwizard</groupId>
 			<artifactId>dropwizard-db</artifactId>
 			<version>${dropwizard.version}</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>com.yammer.dropwizard</groupId>
+			<groupId>io.dropwizard</groupId>
 			<artifactId>dropwizard-jdbi</artifactId>
 			<version>${dropwizard.version}</version>
 			<scope>provided</scope>

@@ -1,14 +1,15 @@
 package com.hpcloud.dropwizard.persistence;
 
+import io.dropwizard.db.DataSourceFactory;
+import io.dropwizard.jdbi.DBIFactory;
+import io.dropwizard.setup.Environment;
+
 import org.skife.jdbi.v2.DBI;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provider;
 import com.google.inject.ProvisionException;
 import com.google.inject.Scopes;
-import com.yammer.dropwizard.config.Environment;
-import com.yammer.dropwizard.db.DatabaseConfiguration;
-import com.yammer.dropwizard.jdbi.DBIFactory;
 
 /**
  * Module that binds DBI types to a single database instance provided for the specified environment
@@ -18,16 +19,16 @@ import com.yammer.dropwizard.jdbi.DBIFactory;
  */
 public class DatabaseModule extends AbstractModule {
   private final Environment environment;
-  private final DatabaseConfiguration config;
+  private final DataSourceFactory config;
 
-  public DatabaseModule(Environment environment, DatabaseConfiguration config) {
+  public DatabaseModule(Environment environment, DataSourceFactory config) {
     this.environment = environment;
     this.config = config;
   }
 
   @Override
   protected void configure() {
-    bind(DatabaseConfiguration.class).toInstance(config);
+    bind(DataSourceFactory.class).toInstance(config);
     bind(DBI.class).toProvider(new Provider<DBI>() {
       @Override
       public DBI get() {

@@ -1,27 +1,21 @@
 package com.hpcloud.dropwizard;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import io.dropwizard.Application;
+import io.dropwizard.Configuration;
+import io.dropwizard.cli.ConfiguredCommand;
+import io.dropwizard.setup.Bootstrap;
+import io.dropwizard.setup.Environment;
 
 import java.lang.management.ManagementFactory;
-import java.net.URI;
-import java.net.URISyntaxException;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
+import javax.validation.Validation;
 
 import net.sourceforge.argparse4j.inf.Namespace;
 
-import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
-
-import com.yammer.dropwizard.Service;
-import com.yammer.dropwizard.cli.ConfiguredCommand;
-import com.yammer.dropwizard.config.Bootstrap;
-import com.yammer.dropwizard.config.Configuration;
-import com.yammer.dropwizard.config.Environment;
-import com.yammer.dropwizard.config.ServerFactory;
-import com.yammer.dropwizard.lifecycle.ServerLifecycleListener;
-import com.yammer.dropwizard.validation.Validator;
 
 /**
  * Normally ServerCommand is in charge of starting the service, but that's not particularly well
@@ -35,11 +29,11 @@ import com.yammer.dropwizard.validation.Validator;
  * @author Jonathan Halterman
  */
 public class TestableServerCommand<C extends Configuration> extends ConfiguredCommand<C> {
-  private final Service<C> service;
+  private final Application<C> service;
   private final Class<C> configurationType;
   private Server server;
 
-  public TestableServerCommand(Service<C> service, Class<C> configurationType) {
+  public TestableServerCommand(Application<C> service, Class<C> configurationType) {
     super("test-server", "Starts an HTTP test-server running the service");
     this.service = service;
     this.configurationType = configurationType;
@@ -52,18 +46,20 @@ public class TestableServerCommand<C extends Configuration> extends ConfiguredCo
 
   @Override
   protected void run(Bootstrap<C> bootstrap, Namespace namespace, C configuration) throws Exception {
-    Environment environment = new Environment(bootstrap.getName(), configuration,
-        bootstrap.getObjectMapperFactory().copy(), new Validator());
-    bootstrap.runWithBundles(configuration, environment);
-    ServerFactory serverFactory = new ServerFactory(configuration.getHttpConfiguration(),
-        environment.getName());
-    Server server = serverFactory.buildServer(environment);
+    final Environment environment = new Environment(bootstrap.getApplication().getName(),
+        bootstrap.getObjectMapper(),
+        Validation.buildDefaultValidatorFactory()
+                  .getValidator(),
+        bootstrap.getMetricRegistry(),
+        bootstrap.getClassLoader());
+    configuration.getMetricsFactory().configure(environment.lifecycle(),
+        bootstrap.getMetricRegistry());
+    bootstrap.run(configuration, environment);
+    Server server = configuration.getServerFactory().build(environment);
 
     service.run(configuration, environment);
 
     try {
-      for (ServerLifecycleListener listener : environment.getServerListeners())
-        listener.serverStarted(server);
       server.start();
     } catch (Exception e) {
       System.out.println("Unable to start test-server, shutting down");
@@ -100,23 +96,5 @@ public class TestableServerCommand<C extends Configuration> extends ConfiguredCo
 
   public boolean isRunning() {
     return server.isRunning();
-  }
-
-  public URI getRootUriForConnector(String connectorName) {
-    try {
-      Connector connector = getConnectorNamed(connectorName);
-      String host = connector.getHost() != null ? connector.getHost() : "localhost";
-      return new URI("http://" + host + ":" + connector.getPort());
-    } catch (URISyntaxException e) {
-      throw new IllegalStateException(e);
-    }
-  }
-
-  private Connector getConnectorNamed(String name) {
-    Connector[] connectors = server.getConnectors();
-    for (Connector connector : connectors)
-      if (connector.getName().equals(name))
-        return connector;
-    throw new IllegalStateException("No connector named " + name);
   }
 }
