@@ -10,7 +10,6 @@ import javax.annotation.Nullable;
 import com.google.common.base.Charsets;
 import com.google.common.base.Preconditions;
 import com.google.common.hash.HashCode;
-import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
 
 /**
@@ -22,14 +21,14 @@ public class MetricDefinition implements Serializable {
   private static final long serialVersionUID = -3074228641225201445L;
 
   public String namespace;
-  public SortedMap<String, String> dimensions;
+  public Map<String, String> dimensions;
 
   public MetricDefinition() {
   }
 
   public MetricDefinition(String namespace, @Nullable Map<String, String> dimensions) {
     this.namespace = Preconditions.checkNotNull(namespace, "namespace");
-    setDimensions(new TreeMap<>(dimensions));
+    setDimensions(dimensions);
   }
 
   @Override
@@ -63,7 +62,7 @@ public class MetricDefinition implements Serializable {
     return result;
   }
 
-  public void setDimensions(SortedMap<String, String> dimensions) {
+  public void setDimensions(Map<String, String> dimensions) {
     this.dimensions = dimensions == null || dimensions.isEmpty() ? null : dimensions;
   }
 
@@ -86,6 +85,10 @@ public class MetricDefinition implements Serializable {
    * @return MD5 128 bit hash of namespace + ordered dimensions
    */
   public HashCode toHashCode() {
+    // Lazily sort dimensions
+    if (!(dimensions instanceof SortedMap))
+      dimensions = new TreeMap<>(dimensions);
+
     StringBuilder sb = new StringBuilder(namespace);
     sb.append('=');
     if (dimensions != null) {
@@ -98,9 +101,8 @@ public class MetricDefinition implements Serializable {
         sb.append(dimension.getKey()).append(':').append(dimension.getValue());
       }
     }
-    HashFunction hf = Hashing.md5();
-    HashCode hc = hf.newHasher().putString(sb.toString(), Charsets.UTF_8).hash();
-    return hc;
+
+    return Hashing.md5().newHasher().putString(sb.toString(), Charsets.UTF_8).hash();
   }
 
   @Override

@@ -1,7 +1,7 @@
 package com.hpcloud.mon.common.model.metric;
 
 import java.util.Arrays;
-import java.util.SortedMap;
+import java.util.Map;
 
 import javax.annotation.Nullable;
 
@@ -15,7 +15,7 @@ import com.google.common.base.Preconditions;
  */
 public class Metric {
   public String namespace;
-  public SortedMap<String, String> dimensions;
+  public Map<String, String> dimensions;
   public long timestamp;
   public double value;
   public double[][] timeValues;
@@ -24,7 +24,7 @@ public class Metric {
   public Metric() {
   }
 
-  public Metric(String namespace, @Nullable SortedMap<String, String> dimensions, long timestamp,
+  public Metric(String namespace, @Nullable Map<String, String> dimensions, long timestamp,
       double value) {
     this.namespace = Preconditions.checkNotNull(namespace, "namespace");
     setDimensions(dimensions);
@@ -32,7 +32,7 @@ public class Metric {
     this.value = Preconditions.checkNotNull(value, "value");
   }
 
-  public Metric(String namespace, @Nullable SortedMap<String, String> dimensions, long timestamp,
+  public Metric(String namespace, @Nullable Map<String, String> dimensions, long timestamp,
       double[][] timeValues) {
     this.namespace = Preconditions.checkNotNull(namespace, "namespace");
     setDimensions(dimensions);
@@ -94,7 +94,7 @@ public class Metric {
   }
 
   @JsonProperty
-  public void setDimensions(SortedMap<String, String> dimensions) {
+  public void setDimensions(Map<String, String> dimensions) {
     if (this.dimensions == null)
       this.dimensions = dimensions;
     else
