@@ -1,9 +1,9 @@
 package com.hpcloud.mon.common.model.alarm;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import com.hpcloud.mon.common.model.metric.MetricDefinition;
 
@@ -16,12 +16,11 @@ class AlarmSubExpressionListener extends AlarmExpressionBaseListener {
   private final boolean simpleExpression;
   private AggregateFunction function;
   private String namespace;
-  private Map<String, String> dimensions;
+  private SortedMap<String, String> dimensions;
   private AlarmOperator operator;
   private double threshold;
   private int period = AlarmSubExpression.DEFAULT_PERIOD;
   private int periods = AlarmSubExpression.DEFAULT_PERIODS;
-
   private List<Object> elements = new ArrayList<Object>();
 
   AlarmSubExpressionListener(boolean simpleExpression) {
@@ -87,7 +86,7 @@ class AlarmSubExpressionListener extends AlarmExpressionBaseListener {
   @Override
   public void enterDimension(AlarmExpressionParser.DimensionContext ctx) {
     if (dimensions == null)
-      dimensions = new HashMap<String, String>();
+      dimensions = new TreeMap<String, String>();
     String dimensionName = ctx.getChild(0).getText();
     if (dimensions.put(dimensionName, ctx.getChild(2).getText()) != null)
       throw new IllegalArgumentException("More than one value was given for dimension "

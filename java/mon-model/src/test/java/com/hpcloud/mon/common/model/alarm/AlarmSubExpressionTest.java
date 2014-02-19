@@ -127,7 +127,8 @@ public class AlarmSubExpressionTest {
   }
 
   public void shouldDefaultPeriodAndPeriods() {
-    AlarmExpression expr = new AlarmExpression("avg(hpcs.compute{metric_name=cpu, device=1, instance_id=5}) > 5");
+    AlarmExpression expr = new AlarmExpression(
+        "avg(hpcs.compute{metric_name=cpu, device=1, instance_id=5}) > 5");
     AlarmSubExpression alarm = expr.getSubExpressions().get(0);
     assertEquals(alarm.getPeriod(), 60);
     assertEquals(alarm.getPeriods(), 1);
@@ -144,9 +145,10 @@ public class AlarmSubExpressionTest {
   }
 
   public void shouldGetExpression() {
-    assertEquals(AlarmSubExpression.of("avg(hpcs.compute{metric_name=cpu, device=1}) > 5").getExpression(),
-        "avg(hpcs.compute{device=1, metric_name=cpu}) > 5.0");
-    assertEquals(AlarmSubExpression.of("avg(hpcs.compute{metric_name=cpu, device=1}, 45) > 5 times 4").getExpression(),
-        "avg(hpcs.compute{device=1, metric_name=cpu}, 45) > 5.0 times 4");
+    assertEquals(AlarmSubExpression.of("avg(hpcs.compute{metric_name=cpu, device=1}) > 5")
+        .getExpression(), "avg(hpcs.compute{device=1, metric_name=cpu}) > 5.0");
+    assertEquals(
+        AlarmSubExpression.of("avg(hpcs.compute{metric_name=cpu, device=1}, 45) > 5 times 4")
+            .getExpression(), "avg(hpcs.compute{device=1, metric_name=cpu}, 45) > 5.0 times 4");
   }
 }
