@@ -30,6 +30,11 @@
       <version>${metrics.version}</version>
     </dependency>
     <dependency>
+      <groupId>com.codahale.metrics</groupId>
+      <artifactId>metrics-healthchecks</artifactId>
+      <version>${metrics.version}</version>
+    </dependency>
+    <dependency>
       <groupId>net.jodah</groupId>
       <artifactId>typetools</artifactId>
       <version>0.3.1</version>
@@ -46,14 +51,6 @@
         <exclusion>
           <groupId>com.sun.jmx</groupId>
           <artifactId>jmxri</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>com.yammer.metrics</groupId>
-          <artifactId>metrics-core</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>com.yammer.metrics</groupId>
-          <artifactId>metrics-annotation</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
