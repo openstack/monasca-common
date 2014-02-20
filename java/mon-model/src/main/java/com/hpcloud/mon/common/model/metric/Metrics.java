@@ -1,7 +1,7 @@
 package com.hpcloud.mon.common.model.metric;
 
 import java.io.IOException;
-import java.util.SortedMap;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 
@@ -15,22 +15,22 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.hpcloud.util.Exceptions;
 
 /**
- * Utilities for working with FlatMetrics.
+ * Utilities for working with Metrics.
  * 
  * @author Jonathan Halterman
  */
 public final class Metrics {
-  private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+  static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
   static {
     OBJECT_MAPPER.setPropertyNamingStrategy(PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES);
     SimpleModule module = new SimpleModule();
-    module.addSerializer(new FlatMetricSerializer());
+    module.addSerializer(new MetricSerializer());
     OBJECT_MAPPER.registerModule(module);
   }
 
-  /** FlatMetric serializer */
-  private static class FlatMetricSerializer extends JsonSerializer<Metric> {
+  /** Metric serializer */
+  private static class MetricSerializer extends JsonSerializer<Metric> {
     @Override
     public Class<Metric> handledType() {
       return Metric.class;
@@ -66,38 +66,37 @@ public final class Metrics {
   }
 
   /**
-   * Returns the FlatMetric for the {@code flatMetricJson}.
+   * Returns the Metric for the {@code metricJson}.
    * 
-   * @throws RuntimeException if an error occurs while parsing {@code flatMetricJson}
+   * @throws RuntimeException if an error occurs while parsing {@code metricJson}
    */
-  public static Metric fromJson(byte[] flatMetricJson) {
+  public static Metric fromJson(byte[] metricJson) {
     try {
-      String jsonStr = StringEscapeUtils.unescapeJava(new String(flatMetricJson, "UTF-8"));
+      String jsonStr = StringEscapeUtils.unescapeJava(new String(metricJson, "UTF-8"));
       return OBJECT_MAPPER.readValue(jsonStr, Metric.class);
     } catch (Exception e) {
-      throw Exceptions.uncheck(e, "Failed to parse flat metric json: %s",
-          new String(flatMetricJson));
+      throw Exceptions.uncheck(e, "Failed to parse metric json: %s", new String(metricJson));
     }
   }
 
   /**
-   * Returns the JSON representation of the {@code flatMetric} else null if it could not be
-   * converted to JSON.
+   * Returns the JSON representation of the {@code metric} else null if it could not be converted to
+   * JSON.
    */
-  public static String toJson(Metric flatMetric) {
+  public static String toJson(Metric metric) {
     try {
-      return OBJECT_MAPPER.writeValueAsString(flatMetric);
+      return OBJECT_MAPPER.writeValueAsString(metric);
     } catch (JsonProcessingException e) {
       return null;
     }
   }
 
   /**
-   * Returns a metric for the {@code flatMetric} and {@code dimensions}.
+   * Returns a metric for the {@code metric} and {@code dimensions}.
    */
-  public static Metric of(Metric flatMetric, SortedMap<String, String> dimensions) {
-    return flatMetric.timeValues == null ? new Metric(flatMetric.namespace, dimensions,
-        flatMetric.timestamp, flatMetric.value) : new Metric(flatMetric.namespace, dimensions,
-        flatMetric.timestamp, flatMetric.timeValues);
+  public static Metric of(Metric metric, Map<String, String> dimensions) {
+    return metric.timeValues == null ? new Metric(metric.namespace, dimensions, metric.timestamp,
+        metric.value) : new Metric(metric.namespace, dimensions, metric.timestamp,
+        metric.timeValues);
   }
 }
