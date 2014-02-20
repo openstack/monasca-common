@@ -1,4 +1,4 @@
-package com.hpcloud.dropwizard.testing;
+package com.hpcloud.dropwizard;
 
 import io.dropwizard.testing.FixtureHelpers;
 
