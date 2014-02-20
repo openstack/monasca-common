@@ -1,36 +1,32 @@
 package com.hpcloud.messaging.internal;
 
 import com.google.common.base.Preconditions;
-import com.hpcloud.messaging.ChannelAdapter;
 import com.hpcloud.messaging.MessageChannel;
 import com.hpcloud.messaging.MessageDispatcher;
+import com.hpcloud.messaging.MessageTranslator;
 
 /**
  * Base message channel implementation.
  * 
- * @param <I> inbound message data type
- * @param <O> outbound message data type
  * @author Jonathan Halterman
  */
-public abstract class AbstractMessageChannel<I, O> implements MessageChannel {
+public abstract class AbstractMessageChannel implements MessageChannel {
   protected final String name;
   protected final String qualifiedName;
-  protected final ChannelAdapter<I, O> adapter;
+  protected final MessageTranslator<Object, ?> inboundTranslator;
+  protected final MessageTranslator<?, Object> outboundTranslator;
   protected MessageDispatcher dispatcher;
 
   protected AbstractMessageChannel() {
-    this(null, null);
+    this(null, null, null);
   }
 
-  protected AbstractMessageChannel(String name, ChannelAdapter<I, O> adapter) {
+  protected AbstractMessageChannel(String name, MessageTranslator<Object, ?> inboundTranslator,
+      MessageTranslator<?, Object> outboundTranslator) {
     this.name = name;
-    this.adapter = adapter;
+    this.inboundTranslator = inboundTranslator;
+    this.outboundTranslator = outboundTranslator;
     qualifiedName = name == null ? "" : name + "://";
-  }
-
-  @Override
-  public ChannelAdapter<I, O> adapter() {
-    return adapter;
   }
 
   @Override
@@ -40,7 +36,25 @@ public abstract class AbstractMessageChannel<I, O> implements MessageChannel {
   }
 
   @Override
+  public void close() {
+  }
+
+  @Override
+  public MessageTranslator<?, ?> inboundTranslator() {
+    return inboundTranslator;
+  }
+
+  @Override
   public String name() {
     return name;
+  }
+
+  @Override
+  public void open() {
+  }
+
+  @Override
+  public MessageTranslator<?, ?> outboundTranslator() {
+    return outboundTranslator;
   }
 }

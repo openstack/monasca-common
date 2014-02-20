@@ -7,11 +7,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.codahale.metrics.MetricRegistry;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.base.Preconditions;
 import com.hpcloud.messaging.MessageHandler;
+import com.hpcloud.messaging.MessageTranslator;
 import com.hpcloud.messaging.internal.AbstractPublishSubscribeChannel;
-import com.hpcloud.messaging.internal.StandardChannelAdapter;
 
 /**
  * Kafka channel implementation.
@@ -19,7 +18,7 @@ import com.hpcloud.messaging.internal.StandardChannelAdapter;
  * @author Jonathan Halterman
  */
 @Singleton
-public class KafkaChannel extends AbstractPublishSubscribeChannel<JsonNode, JsonNode> {
+public class KafkaChannel extends AbstractPublishSubscribeChannel {
   private static final Logger LOG = LoggerFactory.getLogger(KafkaChannel.class);
 
   private final KafkaConfiguration config;
@@ -27,9 +26,9 @@ public class KafkaChannel extends AbstractPublishSubscribeChannel<JsonNode, Json
   private volatile boolean open;
 
   @Inject
-  public KafkaChannel(KafkaConfiguration config, MetricRegistry metricRegistry) {
-    super("kafka", new StandardChannelAdapter<JsonNode, JsonNode>(JsonNode.class, JsonNode.class),
-        metricRegistry);
+  public KafkaChannel(KafkaConfiguration config, MessageTranslator<Object, ?> inboundTranslator,
+      MessageTranslator<?, Object> outboundTranslator, MetricRegistry metricRegistry) {
+    super("kafka", inboundTranslator, outboundTranslator, metricRegistry);
     this.config = config;
     Preconditions.checkNotNull(config, "config");
   }
@@ -64,12 +63,11 @@ public class KafkaChannel extends AbstractPublishSubscribeChannel<JsonNode, Json
   }
 
   /**
-   * Subscribes the {@code subscriber} to the {@code address} where {@code address} should consist
-   * of exchangeName/routingKey.
+   * Subscribes the {@code subscriber} to the {@code topic}.
    */
   @Override
-  public void subscribe(MessageHandler<?> subscriber, String address) {
-    super.subscribe(subscriber, address);
+  public void subscribe(MessageHandler<?> subscriber, String topic) {
+    super.subscribe(subscriber, topic);
     if (!open)
       return;
 
@@ -77,12 +75,11 @@ public class KafkaChannel extends AbstractPublishSubscribeChannel<JsonNode, Json
   }
 
   /**
-   * Unsubscribes the {@code subscriber} for the {@code address} where {@code address} should
-   * consist of exchangeName/routingKey.
+   * Unsubscribes the {@code subscriber} for the {@code topic}.
    */
   @Override
-  public void unsubscribe(MessageHandler<?> subscriber, String address) {
-    super.unsubscribe(subscriber, address);
+  public void unsubscribe(MessageHandler<?> subscriber, String topic) {
+    super.unsubscribe(subscriber, topic);
 
     // TODO remove topic subscription
   }

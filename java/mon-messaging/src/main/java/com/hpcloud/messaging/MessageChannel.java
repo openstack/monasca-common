@@ -7,11 +7,6 @@ package com.hpcloud.messaging;
  */
 public interface MessageChannel {
   /**
-   * Returns the channel's message adapter.
-   */
-  ChannelAdapter<?, ?> adapter();
-
-  /**
    * Binds the dispatcher to the channel.
    * 
    * @throws NullPointerException if the {@code dispatcher} is null
@@ -24,6 +19,11 @@ public interface MessageChannel {
   void close();
 
   /**
+   * Returns the channel's inbound message translator.
+   */
+  MessageTranslator<?, ?> inboundTranslator();
+
+  /**
    * Returns the name of channel.
    */
   String name();
@@ -34,6 +34,11 @@ public interface MessageChannel {
    * @throws ChannelOpenException if the channel cannot be opened
    */
   void open();
+
+  /**
+   * Returns the channel's outbound message translator.
+   */
+  MessageTranslator<?, ?> outboundTranslator();
 
   /**
    * Sends the {@code message} to the {@code address}.

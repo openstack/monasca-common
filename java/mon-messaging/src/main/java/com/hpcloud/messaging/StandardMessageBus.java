@@ -38,7 +38,7 @@ public class StandardMessageBus extends ManagedService implements MessageBus {
 
   @Inject
   public StandardMessageBus(MessageBusConfiguration config, MetricRegistry metricRegistry) {
-    this(config, new ThreadPoolingMessageDispatcher(), metricRegistry);
+    this(config, new ThreadPoolingMessageDispatcher(metricRegistry), metricRegistry);
   }
 
   public StandardMessageBus(MessageBusConfiguration config, MessageDispatcher dispatcher,

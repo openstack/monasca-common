@@ -5,6 +5,7 @@ import java.util.concurrent.ExecutorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.codahale.metrics.MetricRegistry;
 import com.hpcloud.messaging.MessageDispatcher;
 import com.hpcloud.messaging.MessageHandler;
 import com.hpcloud.util.Types;
@@ -17,7 +18,12 @@ import com.hpcloud.util.concurrent.ThreadPools;
  */
 public class ThreadPoolingMessageDispatcher implements MessageDispatcher {
   private final Logger LOG = LoggerFactory.getLogger(ThreadPoolingMessageDispatcher.class);
+  private final MetricRegistry metricRegistry;
   private ExecutorService executor;
+
+  public ThreadPoolingMessageDispatcher(MetricRegistry metricRegistry) {
+    this.metricRegistry = metricRegistry;
+  }
 
   @Override
   public <T> void dispatch(final T message, final MessageHandler<T> handler) {
@@ -37,7 +43,7 @@ public class ThreadPoolingMessageDispatcher implements MessageDispatcher {
 
   @Override
   public void start() throws Exception {
-    executor = ThreadPools.newInstrumentedCachedThreadPool("MessageBus");
+    executor = ThreadPools.newInstrumentedCachedThreadPool(metricRegistry, "message-bus");
   }
 
   @Override

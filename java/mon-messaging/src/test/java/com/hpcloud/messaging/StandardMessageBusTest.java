@@ -87,7 +87,7 @@ public class StandardMessageBusTest extends ConcurrentTestCase {
   }
 
   public void shouldPublishToChannel() throws Throwable {
-    MessageChannel channel = new AbstractPublishSubscribeChannel<Object, Object>() {
+    MessageChannel channel = new AbstractPublishSubscribeChannel() {
       @Override
       public void send(Object message, String address) {
         threadAssertEquals(testMessage, message);

@@ -14,8 +14,8 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
-import com.hpcloud.messaging.ChannelAdapter;
 import com.hpcloud.messaging.MessageHandler;
+import com.hpcloud.messaging.MessageTranslator;
 import com.hpcloud.messaging.PublishSubscribeChannel;
 import com.hpcloud.util.Serialization;
 
@@ -25,18 +25,19 @@ import com.hpcloud.util.Serialization;
  * @author Jonathan Halterman
  */
 @ThreadSafe
-public abstract class AbstractPublishSubscribeChannel<I, O> extends AbstractMessageChannel<I, O>
-    implements PublishSubscribeChannel {
+public abstract class AbstractPublishSubscribeChannel extends AbstractMessageChannel implements
+    PublishSubscribeChannel {
   protected final Multimap<String, MessageHandler<?>> subscribers = Multimaps.synchronizedMultimap(HashMultimap.<String, MessageHandler<?>>create());
   protected final Meter messagesReceived;
 
   public AbstractPublishSubscribeChannel() {
-    this(null, null, new MetricRegistry());
+    this(null, null, null, new MetricRegistry());
   }
 
-  public AbstractPublishSubscribeChannel(String name, ChannelAdapter<I, O> adapter,
-      MetricRegistry metricRegistry) {
-    super(name, adapter);
+  public AbstractPublishSubscribeChannel(String name,
+      MessageTranslator<Object, ?> inboundTranslator,
+      MessageTranslator<?, Object> outboundTranslator, MetricRegistry metricRegistry) {
+    super(name, inboundTranslator, outboundTranslator);
     messagesReceived = metricRegistry.meter(getClass().getName() + ".messages.received");
     metricRegistry.register(getClass().getName() + ".subscribers", new Gauge<Integer>() {
       @Override
@@ -78,9 +79,9 @@ public abstract class AbstractPublishSubscribeChannel<I, O> extends AbstractMess
    * dispatcher.
    */
   @SuppressWarnings("unchecked")
-  protected void handle(I messageBody, String address) {
+  protected void handle(Object message, String address) {
     Preconditions.checkState(dispatcher != null, "A dispatcher has not yet been bound");
-    Object message = adaptedMessageFor(messageBody, address);
+    message = inboundTranslator == null ? message : inboundTranslator.translate(message);
     if (message == null)
       return;
 
@@ -98,9 +99,5 @@ public abstract class AbstractPublishSubscribeChannel<I, O> extends AbstractMess
     }
 
     messagesReceived.mark();
-  }
-
-  private Object adaptedMessageFor(I messageBody, String address) {
-    return adapter == null ? messageBody : adapter.adaptInboundMessage(messageBody, address);
   }
 }

@@ -8,7 +8,7 @@ import javax.inject.Singleton;
  * @author Jonathan Halterman
  */
 @Singleton
-public class LocalChannel extends AbstractPublishSubscribeChannel<Object, Object> {
+public class LocalChannel extends AbstractPublishSubscribeChannel {
   /**
    * Handles outbound messages using the inbound handler.
    */
