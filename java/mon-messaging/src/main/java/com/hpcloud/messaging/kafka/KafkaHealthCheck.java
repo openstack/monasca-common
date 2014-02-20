@@ -29,11 +29,9 @@ import com.google.common.base.Joiner;
  */
 public class KafkaHealthCheck extends HealthCheck {
   private final KafkaConfiguration config;
-  private final String healthTopic;
 
-  public KafkaHealthCheck(KafkaConfiguration config, String healthTopic) {
+  public KafkaHealthCheck(KafkaConfiguration config) {
     this.config = config;
-    this.healthTopic = healthTopic;
   }
 
   @Override
@@ -47,15 +45,16 @@ public class KafkaHealthCheck extends HealthCheck {
       consumer = createConsumer();
 
       // Send
-      KeyedMessage<String, String> keyedMessage = new KeyedMessage<>(healthTopic, null, "test");
+      KeyedMessage<String, String> keyedMessage = new KeyedMessage<>(config.healthCheckTopic, null,
+          "test");
       producer.send(keyedMessage);
 
       // Receive
       Map<String, Integer> topicCountMap = new HashMap<String, Integer>();
-      topicCountMap.put(healthTopic, Integer.valueOf(1));
+      topicCountMap.put(config.healthCheckTopic, Integer.valueOf(1));
       final ConsumerIterator<byte[], byte[]> streamIterator = consumer.createMessageStreams(
           topicCountMap)
-          .get(healthTopic)
+          .get(config.healthCheckTopic)
           .get(0)
           .iterator();
 

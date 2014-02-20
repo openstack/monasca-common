@@ -8,4 +8,5 @@ import org.hibernate.validator.constraints.NotEmpty;
 public class KafkaConfiguration {
   @NotEmpty public String[] zookeeperUris;
   @NotEmpty public String[] brokerUris;
+  @NotEmpty public String healthCheckTopic;
 }
