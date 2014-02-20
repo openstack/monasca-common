@@ -88,10 +88,16 @@ public class KafkaHealthCheck extends HealthCheck {
       if (executor != null)
         executor.shutdownNow();
       if (producer != null)
-        producer.close();
+        try {
+          producer.close();
+        } catch (Exception ignore) {
+        }
       if (consumer != null) {
         consumer.commitOffsets();
-        consumer.shutdown();
+        try {
+          consumer.shutdown();
+        } catch (Exception ignore) {
+        }
       }
     }
   }
