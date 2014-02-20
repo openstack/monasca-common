@@ -12,13 +12,13 @@ import net.sf.cglib.proxy.NoOp;
 
 import org.testng.annotations.Test;
 
+import com.codahale.metrics.annotation.Timed;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonRootName;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.base.Preconditions;
 import com.google.inject.AbstractModule;
-import com.yammer.metrics.annotation.Timed;
-import com.yammer.metrics.guice.InstrumentationModule;
+import com.palominolabs.metrics.guice.InstrumentationModule;
 
 @Test
 public class SerializationTest {

@@ -12,11 +12,11 @@ import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.yammer.metrics.Metrics;
-import com.yammer.metrics.core.Gauge;
-import com.yammer.metrics.core.Meter;
-import com.yammer.metrics.core.Timer;
-import com.yammer.metrics.util.RatioGauge;
+import com.codahale.metrics.Gauge;
+import com.codahale.metrics.Meter;
+import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.RatioGauge;
+import com.codahale.metrics.Timer;
 
 /**
  * ThreadPoolExecutor instrumented with extensive metrics.
@@ -32,49 +32,46 @@ public class InstrumentedThreadPoolExecutor extends ThreadPoolExecutor {
   private final ThreadLocal<Long> startTime = new ThreadLocal<Long>();
   private final Set<ExecutionListener> listeners = new HashSet<ExecutionListener>();
 
-  InstrumentedThreadPoolExecutor(String name, int corePoolSize, int maximumPoolSize,
-      long keepAliveTime, TimeUnit unit, final BlockingQueue<Runnable> workQueue,
-      ThreadFactory factory) {
+  InstrumentedThreadPoolExecutor(MetricRegistry metricRegistry, String name, int corePoolSize,
+      int maximumPoolSize, long keepAliveTime, TimeUnit unit,
+      final BlockingQueue<Runnable> workQueue, ThreadFactory factory) {
     super(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue, factory);
     this.name = name;
-    requestRate = Metrics.newMeter(getClass(), "request", name, "requests", TimeUnit.SECONDS);
-    rejectedRate = Metrics.newMeter(getClass(), "rejected", name, "requests", TimeUnit.SECONDS);
-    executionTimer = Metrics.newTimer(getClass(), "execution", name);
-    Metrics.newGauge(getClass(), "queue size", name, new Gauge<Integer>() {
+    requestRate = metricRegistry.meter(MetricRegistry.name(getClass(), "request"));
+    rejectedRate = metricRegistry.meter(MetricRegistry.name(getClass(), "rejected"));
+    executionTimer = metricRegistry.timer(MetricRegistry.name(getClass(), "execution"));
+    metricRegistry.register(MetricRegistry.name(getClass(), "queue.size"), new Gauge<Integer>() {
       @Override
-      public Integer value() {
+      public Integer getValue() {
         return getQueue().size();
       }
     });
-    Metrics.newGauge(getClass(), "threads", name, new Gauge<Integer>() {
+    metricRegistry.register(MetricRegistry.name(getClass(), "threads.count"), new Gauge<Integer>() {
       @Override
-      public Integer value() {
+      public Integer getValue() {
         return getPoolSize();
       }
     });
-    Metrics.newGauge(getClass(), "active threads", name, new Gauge<Integer>() {
+    metricRegistry.register(MetricRegistry.name(getClass(), "threads.active"),
+        new Gauge<Integer>() {
+          @Override
+          public Integer getValue() {
+            return getActiveCount();
+          }
+        });
+    metricRegistry.register(MetricRegistry.name(getClass(), "threads.idle"), new Gauge<Integer>() {
       @Override
-      public Integer value() {
-        return getActiveCount();
-      }
-    });
-    Metrics.newGauge(getClass(), "idle threads", name, new Gauge<Integer>() {
-      @Override
-      public Integer value() {
+      public Integer getValue() {
         return getPoolSize() - getActiveCount();
       }
     });
-    Metrics.newGauge(getClass(), "percent active", name, new RatioGauge() {
-      @Override
-      protected double getDenominator() {
-        return getPoolSize();
-      }
-
-      @Override
-      protected double getNumerator() {
-        return getActiveCount();
-      }
-    });
+    metricRegistry.register(MetricRegistry.name(getClass(), "threads.percent-active"),
+        new RatioGauge() {
+          @Override
+          protected Ratio getRatio() {
+            return Ratio.of(getPoolSize(), getActiveCount());
+          }
+        });
 
     setRejectedExecutionHandler(new RejectedExecutionHandler() {
       @Override
