@@ -8,7 +8,7 @@ import com.codahale.metrics.MetricRegistry;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
 /**
- * Factory methods for producing thread pools.
+ * Factory methods for creating thread pools.
  * 
  * @author Jonathan Halterman
  */
