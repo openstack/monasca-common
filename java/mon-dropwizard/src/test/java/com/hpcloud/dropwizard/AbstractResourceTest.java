@@ -6,6 +6,7 @@ import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jersey.DropwizardResourceConfig;
 import io.dropwizard.jersey.jackson.JacksonMessageBodyProvider;
 import io.dropwizard.logging.LoggingFactory;
+import io.dropwizard.setup.Environment;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -40,6 +41,8 @@ public abstract class AbstractResourceTest {
   protected final ObjectMapper objectMapper = Jackson.newObjectMapper();
   protected final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
   protected final MetricRegistry metricRegistry = new MetricRegistry();
+  protected final Environment environment = new Environment("test", objectMapper, validator,
+      metricRegistry, Thread.currentThread().getContextClassLoader());
   private JerseyTest test;
 
   static {
