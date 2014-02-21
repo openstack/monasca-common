@@ -21,6 +21,7 @@ import com.beust.jcommander.internal.Maps;
 import com.codahale.metrics.MetricRegistry;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Sets;
+import com.google.common.io.Resources;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.test.framework.AppDescriptor;
 import com.sun.jersey.test.framework.JerseyTest;
@@ -117,7 +118,7 @@ public abstract class AbstractResourceTest {
     final ConfigurationFactory<T> configurationFactory = new ConfigurationFactory<>(
         configurationClass, validator, objectMapper, "dw");
     if (filename != null) {
-      final File file = new File(filename);
+      final File file = new File(Resources.getResource(filename).getFile());
       if (!file.exists())
         throw new FileNotFoundException("File " + file + " not found");
       return configurationFactory.build(file);
