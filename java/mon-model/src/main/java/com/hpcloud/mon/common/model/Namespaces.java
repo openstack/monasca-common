@@ -9,7 +9,6 @@ import java.util.Map;
  * Utilities for working with Namespaces.
  * 
  * @author Jonathan Halterman
- * @author Todd Walk
  */
 public class Namespaces {
   // HPCS namespace constants
@@ -28,6 +27,21 @@ public class Namespaces {
     INFO.put(OBJECT_STORE_NAMESPACE, new ObjectStoreNamespaceInfo());
   }
 
+  public static List<String> getRequiredDimensions(String namespace) {
+    NamespaceInfo namespaceInfo = INFO.get(namespace);
+    return namespaceInfo == null ? Collections.<String>emptyList()
+        : namespaceInfo.getRequiredDimensions();
+  }
+
+  /**
+   * Returns the dimension name that represents the resource id for the {@code namespace}, else
+   * {@code null}.
+   */
+  public static String getResourceIdDimension(String namespace) {
+    NamespaceInfo namespaceInfo = INFO.get(namespace);
+    return namespaceInfo == null ? null : namespaceInfo.getResourceIdDimension();
+  }
+
   /**
    * Returns whether the {@code namespace} is reserved (hpcs).
    */
@@ -41,12 +55,6 @@ public class Namespaces {
   public static boolean isValidDimensionName(String namespace, String dimensionName) {
     NamespaceInfo namespaceInfo = INFO.get(namespace);
     return namespaceInfo == null || namespaceInfo.getSupportedDimensions().contains(dimensionName);
-  }
-
-  public static List<String> getRequiredDimensions(String namespace) {
-    NamespaceInfo namespaceInfo = INFO.get(namespace);
-    return namespaceInfo == null ? Collections.<String>emptyList()
-        : namespaceInfo.getRequiredDimensions();
   }
 
   /**
