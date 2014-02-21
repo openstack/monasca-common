@@ -1,10 +1,14 @@
 package com.hpcloud.dropwizard;
 
+import io.dropwizard.Configuration;
+import io.dropwizard.configuration.ConfigurationFactory;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jersey.DropwizardResourceConfig;
 import io.dropwizard.jersey.jackson.JacksonMessageBodyProvider;
 import io.dropwizard.logging.LoggingFactory;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.Map;
 import java.util.Set;
 
@@ -32,8 +36,9 @@ public abstract class AbstractResourceTest {
   private final Set<Class<?>> providers = Sets.newHashSet();
   private final Map<String, Boolean> features = Maps.newHashMap();
   private final Map<String, Object> properties = Maps.newHashMap();
-  private final ObjectMapper mapper = Jackson.newObjectMapper();
-  private final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
+  protected final ObjectMapper objectMapper = Jackson.newObjectMapper();
+  protected final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
+  protected final MetricRegistry metricRegistry = new MetricRegistry();
   private JerseyTest test;
 
   static {
@@ -71,14 +76,6 @@ public abstract class AbstractResourceTest {
     return test;
   }
 
-  public ObjectMapper getObjectMapper() {
-    return mapper;
-  }
-
-  public Validator getValidator() {
-    return validator;
-  }
-
   @BeforeMethod
   protected void afterTestCase() throws Exception {
     if (test != null)
@@ -96,20 +93,37 @@ public abstract class AbstractResourceTest {
     test = new JerseyTest() {
       @Override
       protected AppDescriptor configure() {
-        final DropwizardResourceConfig config = DropwizardResourceConfig.forTesting(new MetricRegistry());
+        final DropwizardResourceConfig config = DropwizardResourceConfig.forTesting(metricRegistry);
         for (Class<?> provider : providers)
           config.getClasses().add(provider);
         for (Map.Entry<String, Boolean> feature : features.entrySet())
           config.getFeatures().put(feature.getKey(), feature.getValue());
         for (Map.Entry<String, Object> property : properties.entrySet())
           config.getProperties().put(property.getKey(), property.getValue());
-        config.getSingletons().add(new JacksonMessageBodyProvider(mapper, validator));
+        config.getSingletons().add(new JacksonMessageBodyProvider(objectMapper, validator));
         config.getSingletons().addAll(singletons);
         return new LowLevelAppDescriptor.Builder(config).build();
       }
     };
 
     test.setUp();
+  }
+
+  /**
+   * Returns a configuration object read in from the {@code fileName}.
+   */
+  protected <T extends Configuration> T getConfiguration(String filename,
+      Class<T> configurationClass) throws Exception {
+    final ConfigurationFactory<T> configurationFactory = new ConfigurationFactory<>(
+        configurationClass, validator, objectMapper, "dw");
+    if (filename != null) {
+      final File file = new File(filename);
+      if (!file.exists())
+        throw new FileNotFoundException("File " + file + " not found");
+      return configurationFactory.build(file);
+    }
+
+    return configurationFactory.build();
   }
 
   protected abstract void setupResources() throws Exception;
