@@ -20,7 +20,7 @@ public class KafkaHealthCheckTest {
   }
 
   public void shouldCheckHealth() throws Exception {
-    Result result = new KafkaHealthCheck(config, "healthcheck").check();
+    Result result = new KafkaHealthCheck(config).check();
     if (!result.isHealthy() && result.getClass() != null)
       fail(result.getMessage(), result.getError());
     assertTrue(result.isHealthy(), result.getMessage());
