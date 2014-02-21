@@ -41,7 +41,7 @@
     <!-- Test dependencies -->
     <dependency>
       <groupId>com.hpcloud</groupId>
-      <artifactId>ps-testing</artifactId>
+      <artifactId>mon-testing</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
