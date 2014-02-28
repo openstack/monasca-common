@@ -37,35 +37,38 @@ public class InstrumentedThreadPoolExecutor extends ThreadPoolExecutor {
       final BlockingQueue<Runnable> workQueue, ThreadFactory factory) {
     super(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue, factory);
     this.name = name;
-    requestRate = metricRegistry.meter(MetricRegistry.name(getClass(), "request"));
-    rejectedRate = metricRegistry.meter(MetricRegistry.name(getClass(), "rejected"));
-    executionTimer = metricRegistry.timer(MetricRegistry.name(getClass(), "execution"));
-    metricRegistry.register(MetricRegistry.name(getClass(), "queue.size"), new Gauge<Integer>() {
-      @Override
-      public Integer getValue() {
-        return getQueue().size();
-      }
-    });
-    metricRegistry.register(MetricRegistry.name(getClass(), "threads.count"), new Gauge<Integer>() {
-      @Override
-      public Integer getValue() {
-        return getPoolSize();
-      }
-    });
-    metricRegistry.register(MetricRegistry.name(getClass(), "threads.active"),
+    requestRate = metricRegistry.meter(MetricRegistry.name(getClass(), name, "request"));
+    rejectedRate = metricRegistry.meter(MetricRegistry.name(getClass(), name, "rejected"));
+    executionTimer = metricRegistry.timer(MetricRegistry.name(getClass(), name, "execution"));
+    metricRegistry.register(MetricRegistry.name(getClass(), name, "queue.size"),
+        new Gauge<Integer>() {
+          @Override
+          public Integer getValue() {
+            return getQueue().size();
+          }
+        });
+    metricRegistry.register(MetricRegistry.name(getClass(), name, "threads.count"),
+        new Gauge<Integer>() {
+          @Override
+          public Integer getValue() {
+            return getPoolSize();
+          }
+        });
+    metricRegistry.register(MetricRegistry.name(getClass(), name, "threads.active"),
         new Gauge<Integer>() {
           @Override
           public Integer getValue() {
             return getActiveCount();
           }
         });
-    metricRegistry.register(MetricRegistry.name(getClass(), "threads.idle"), new Gauge<Integer>() {
-      @Override
-      public Integer getValue() {
-        return getPoolSize() - getActiveCount();
-      }
-    });
-    metricRegistry.register(MetricRegistry.name(getClass(), "threads.percent-active"),
+    metricRegistry.register(MetricRegistry.name(getClass(), name, "threads.idle"),
+        new Gauge<Integer>() {
+          @Override
+          public Integer getValue() {
+            return getPoolSize() - getActiveCount();
+          }
+        });
+    metricRegistry.register(MetricRegistry.name(getClass(), name, "threads.percent-active"),
         new RatioGauge() {
           @Override
           protected Ratio getRatio() {
