@@ -16,3 +16,11 @@
 * [mon-service](https://git.hpcloud.net/mon/mon-common/tree/master/java/mon-service) - Simple service abstractions and utilities.
 * [mon-testing](https://git.hpcloud.net/mon/mon-common/tree/master/java/mon-testing) - A set of testing related dependencies.
 * [mon-util](https://git.hpcloud.net/mon/mon-common/tree/master/java/mon-util) - Various utilities such as for serialization, dependency injection, date and time, invocation retries, concurrency, etc.
+
+### Deploying to Nexus
+
+To deploy to nexus, just run the command below, inserting a version number that is greater than the current nexus version (this command is usually performed by Jenkins):
+
+```
+mvn deploy -DBUILD_NUM=[verion_number]
+```

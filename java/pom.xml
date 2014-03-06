@@ -16,7 +16,15 @@
     <!-- Versioning -->
     <versionNumber>1.0.0</versionNumber>
     <computedVersion>${versionNumber}-SNAPSHOT</computedVersion>
-
+    
+    <!-- Auto versioning and deployment -->
+    <snapshotRepoUrl>http://nexus.paas.hpcloud.net:8081/nexus/content/repositories/snapshots/</snapshotRepoUrl>
+    <releaseRepoUrl>http://nexus.paas.hpcloud.net:8081/nexus/content/repositories/releases/</releaseRepoUrl>
+    <snapshotRepoId>nexus</snapshotRepoId>
+    <releaseRepoId>nexus</releaseRepoId>
+    <deployRepoId>${snapshotRepoId}</deployRepoId>
+    <deployRepoUrl>${snapshotRepoUrl}</deployRepoUrl>
+    
     <skipITs>true</skipITs>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -41,32 +49,30 @@
 
   <repositories>
     <repository>
-      <id>nexus releases</id>
-      <url>http://nexus.paas.hpcloud.net:8081/nexus/content/repositories/releases</url>
+      <id>ps-snapshots</id>
+      <url>${snapshotRepoUrl}</url>
     </repository>
     <repository>
-      <id>nexus 3rd party</id>
+      <id>ps-releases</id>
+      <url>${releaseRepoUrl}</url>
+    </repository>
+    <repository>
+      <id>ps-3rd-party</id>
       <url>http://nexus.paas.hpcloud.net:8081/nexus/content/repositories/thirdparty</url>
-    </repository>
-    <repository>
-      <id>nexus-snapshots</id>
-      <name>nexus snapshots</name>
-      <url>http://nexus.paas.hpcloud.net:8081/nexus/content/repositories/snapshots</url>
     </repository>
   </repositories>
 
   <distributionManagement>
-    <repository>
-      <id>nexus</id>
-      <name>Internal Releases</name>
-      <url>http://nexus.paas.hpcloud.net:8081/nexus/content/repositories/releases</url>
-    </repository>
     <snapshotRepository>
-      <id>nexus</id>
-      <name>Snapshots</name>
-      <uniqueVersion>false</uniqueVersion>
-      <url>http://nexus.paas.hpcloud.net:8081/nexus/content/repositories/snapshots</url>
+      <id>${snapshotRepoId}</id>
+      <name>Snapshots Repo</name>
+      <url>${snapshotRepoUrl}</url>
     </snapshotRepository>
+    <repository>
+      <id>${releaseRepoId}</id>
+      <name>Release Repo</name>
+      <url>${releaseRepoUrl}</url>
+    </repository>
   </distributionManagement>
 
   <profiles>
@@ -78,6 +84,9 @@
         </property>
       </activation>
       <properties>
+        <deployRepoId>${releaseRepoId}</deployRepoId>
+        <deployRepoUrl>${releaseRepoUrl}</deployRepoUrl>
+        <isRelease>true</isRelease>
         <computedVersion>${versionNumber}.${BUILD_NUM}</computedVersion>
       </properties>
     </profile>
