@@ -20,14 +20,14 @@ import com.google.common.hash.Hashing;
 public class MetricDefinition implements Serializable {
   private static final long serialVersionUID = -3074228641225201445L;
 
-  public String namespace;
+  public String name;
   public Map<String, String> dimensions;
 
   public MetricDefinition() {
   }
 
-  public MetricDefinition(String namespace, @Nullable Map<String, String> dimensions) {
-    this.namespace = Preconditions.checkNotNull(namespace, "namespace");
+  public MetricDefinition(String name, @Nullable Map<String, String> dimensions) {
+    this.name = Preconditions.checkNotNull(name, "name");
     setDimensions(dimensions);
   }
 
@@ -45,10 +45,10 @@ public class MetricDefinition implements Serializable {
         return false;
     } else if (!dimensions.equals(other.dimensions))
       return false;
-    if (namespace == null) {
-      if (other.namespace != null)
+    if (name == null) {
+      if (other.name != null)
         return false;
-    } else if (!namespace.equals(other.namespace))
+    } else if (!name.equals(other.name))
       return false;
     return true;
   }
@@ -58,7 +58,7 @@ public class MetricDefinition implements Serializable {
     final int prime = 31;
     int result = 1;
     result = prime * result + ((dimensions == null) ? 0 : dimensions.hashCode());
-    result = prime * result + ((namespace == null) ? 0 : namespace.hashCode());
+    result = prime * result + ((name == null) ? 0 : name.hashCode());
     return result;
   }
 
@@ -71,25 +71,25 @@ public class MetricDefinition implements Serializable {
    */
   public String toExpression() {
     StringBuilder b = new StringBuilder();
-    b.append(namespace);
+    b.append(name);
     if (dimensions != null)
       b.append(dimensions);
     return b.toString();
   }
 
   /**
-   * Returns a string represents a hash of the namespace + dimensions. Convert that string to a
-   * UTF-8 character encoded language neutral UUID. This encoding must be reproduceable in other
+   * Returns a string represents a hash of the name + dimensions. Convert that string to a UTF-8
+   * character encoded language neutral UUID. This encoding must be reproduceable in other
    * languages. Uses 128 bit MD5.
    * 
-   * @return MD5 128 bit hash of namespace + ordered dimensions
+   * @return MD5 128 bit hash of name + ordered dimensions
    */
   public HashCode toHashCode() {
     // Lazily sort dimensions
     if (!(dimensions instanceof SortedMap))
       dimensions = new TreeMap<>(dimensions);
 
-    StringBuilder sb = new StringBuilder(namespace);
+    StringBuilder sb = new StringBuilder(name);
     sb.append('=');
     if (dimensions != null) {
       boolean first = true;
@@ -108,7 +108,7 @@ public class MetricDefinition implements Serializable {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("MetricDefinition [").append(namespace);
+    sb.append("MetricDefinition [").append(name);
     if (dimensions != null && !dimensions.isEmpty())
       sb.append(dimensions);
     return sb.append(']').toString();

@@ -14,7 +14,7 @@ import com.google.common.base.Preconditions;
  * @author Jonathan Halterman
  */
 public class Metric {
-  public String namespace;
+  public String name;
   public Map<String, String> dimensions;
   public long timestamp;
   public double value;
@@ -24,17 +24,17 @@ public class Metric {
   public Metric() {
   }
 
-  public Metric(String namespace, @Nullable Map<String, String> dimensions, long timestamp,
+  public Metric(String name, @Nullable Map<String, String> dimensions, long timestamp,
       double value) {
-    this.namespace = Preconditions.checkNotNull(namespace, "namespace");
+    this.name = Preconditions.checkNotNull(name, "name");
     setDimensions(dimensions);
     this.timestamp = Preconditions.checkNotNull(timestamp, "timestamp");
     this.value = Preconditions.checkNotNull(value, "value");
   }
 
-  public Metric(String namespace, @Nullable Map<String, String> dimensions, long timestamp,
+  public Metric(String name, @Nullable Map<String, String> dimensions, long timestamp,
       double[][] timeValues) {
-    this.namespace = Preconditions.checkNotNull(namespace, "namespace");
+    this.name = Preconditions.checkNotNull(name, "name");
     setDimensions(dimensions);
     this.timestamp = Preconditions.checkNotNull(timestamp, "timestamp");
     this.timeValues = Preconditions.checkNotNull(timeValues, "timeValues");
@@ -45,7 +45,7 @@ public class Metric {
    */
   public MetricDefinition definition() {
     if (definition == null)
-      definition = new MetricDefinition(namespace, dimensions);
+      definition = new MetricDefinition(name, dimensions);
     return definition;
   }
 
@@ -63,10 +63,10 @@ public class Metric {
         return false;
     } else if (!dimensions.equals(other.dimensions))
       return false;
-    if (namespace == null) {
-      if (other.namespace != null)
+    if (name == null) {
+      if (other.name != null)
         return false;
-    } else if (!namespace.equals(other.namespace))
+    } else if (!name.equals(other.name))
       return false;
     // Note - Deep Equals is used here
     if (!Arrays.deepEquals(timeValues, other.timeValues))
@@ -83,7 +83,7 @@ public class Metric {
     final int prime = 31;
     int result = 1;
     result = prime * result + ((dimensions == null) ? 0 : dimensions.hashCode());
-    result = prime * result + ((namespace == null) ? 0 : namespace.hashCode());
+    result = prime * result + ((name == null) ? 0 : name.hashCode());
     // Note Deep hash code is used here
     result = prime * result + Arrays.deepHashCode(timeValues);
     result = prime * result + (int) (timestamp ^ (timestamp >>> 32));
@@ -103,7 +103,7 @@ public class Metric {
 
   @Override
   public String toString() {
-    return String.format("Metric [namespace=%s, dimensions=%s, timestamp=%s, value(s)=%s]",
-        namespace, dimensions, timestamp, timeValues == null ? value : Arrays.toString(timeValues));
+    return String.format("Metric [name=%s, dimensions=%s, timestamp=%s, value(s)=%s]", name,
+        dimensions, timestamp, timeValues == null ? value : Arrays.toString(timeValues));
   }
 }

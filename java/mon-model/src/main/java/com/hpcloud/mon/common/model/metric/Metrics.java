@@ -40,7 +40,7 @@ public final class Metrics {
         throws IOException, JsonProcessingException {
       jgen.writeStartObject();
 
-      jgen.writeStringField("namespace", value.namespace);
+      jgen.writeStringField("name", value.name);
       if (value.dimensions != null && !value.dimensions.isEmpty())
         jgen.writeObjectField("dimensions", value.dimensions);
       jgen.writeNumberField("timestamp", value.timestamp);
@@ -95,8 +95,7 @@ public final class Metrics {
    * Returns a metric for the {@code metric} and {@code dimensions}.
    */
   public static Metric of(Metric metric, Map<String, String> dimensions) {
-    return metric.timeValues == null ? new Metric(metric.namespace, dimensions, metric.timestamp,
-        metric.value) : new Metric(metric.namespace, dimensions, metric.timestamp,
-        metric.timeValues);
+    return metric.timeValues == null ? new Metric(metric.name, dimensions, metric.timestamp,
+        metric.value) : new Metric(metric.name, dimensions, metric.timestamp, metric.timeValues);
   }
 }

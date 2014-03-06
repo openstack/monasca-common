@@ -25,7 +25,7 @@ public class MetricsTest {
     String json = Metrics.toJson(metric);
     assertEquals(
         json,
-        "{\"namespace\":\"hpcs.compute\",\"dimensions\":{\"instance_id\":\"123\",\"metric_name\":\"cpu\"},\"timestamp\":123345,\"value\":5.0}");
+        "{\"name\":\"hpcs.compute\",\"dimensions\":{\"instance_id\":\"123\",\"metric_name\":\"cpu\"},\"timestamp\":123345,\"value\":5.0}");
   }
 
   public void shouldSerializeTimeValues() {
@@ -39,7 +39,7 @@ public class MetricsTest {
     String json = Metrics.toJson(metric);
     assertEquals(
         json,
-        "{\"namespace\":\"hpcs.compute\",\"dimensions\":{\"device\":\"2\",\"instance_id\":\"123\",\"metric_name\":\"cpu\"},\"timestamp\":123345,\"time_values\":[[123,5.0],[456,6.0]]}");
+        "{\"name\":\"hpcs.compute\",\"dimensions\":{\"device\":\"2\",\"instance_id\":\"123\",\"metric_name\":\"cpu\"},\"timestamp\":123345,\"time_values\":[[123,5.0],[456,6.0]]}");
   }
 
   public void shouldSerializeAndDeserialize() {
@@ -63,7 +63,7 @@ public class MetricsTest {
     String json = Metrics.toJson(metric);
     assertEquals(
         json,
-        "{\"namespace\":\"hpcs.compute\",\"dimensions\":{\"instance_id\":\"123\",\"metric_name\":\"foôbár\"},\"timestamp\":123345,\"value\":5.0}");
+        "{\"name\":\"hpcs.compute\",\"dimensions\":{\"instance_id\":\"123\",\"metric_name\":\"foôbár\"},\"timestamp\":123345,\"value\":5.0}");
   }
 
   public void shouldSerializeAndDeserializeUTF8() throws UnsupportedEncodingException {
