@@ -43,6 +43,7 @@
     <module>mon-model</module>
     <module>mon-persistence</module>
     <module>mon-service</module>
+    <module>mon-streaming</module>
     <module>mon-testing</module>
     <module>mon-util</module>
   </modules>
