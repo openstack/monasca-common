@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Map;
 
 import javax.annotation.Nullable;
+import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Preconditions;
@@ -24,8 +25,15 @@ public class Metric {
   public Metric() {
   }
 
-  public Metric(String name, @Nullable Map<String, String> dimensions, long timestamp,
-      double value) {
+  public Metric(@NotNull MetricDefinition definition, long timestamp, double value) {
+    this.definition = Preconditions.checkNotNull(definition, "definition");
+    this.name = definition.name;
+    setDimensions(definition.dimensions);
+    this.timestamp = Preconditions.checkNotNull(timestamp, "timestamp");
+    this.value = Preconditions.checkNotNull(value, "value");
+  }
+
+  public Metric(String name, @Nullable Map<String, String> dimensions, long timestamp, double value) {
     this.name = Preconditions.checkNotNull(name, "name");
     setDimensions(dimensions);
     this.timestamp = Preconditions.checkNotNull(timestamp, "timestamp");
