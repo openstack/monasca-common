@@ -81,6 +81,11 @@
       <artifactId>jackson-dataformat-yaml</artifactId>
       <version>${jackson.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate-validator</artifactId>
+      <version>4.3.0.Final</version>
+    </dependency>
 
     <!-- Test dependencies -->
     <dependency>
