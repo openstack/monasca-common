@@ -24,16 +24,16 @@ public enum AggregateFunction {
     return name().toLowerCase();
   }
 
-  public Class<? extends Statistic> toStatistic(AggregateFunction aggregateFunction) {
-    if (AggregateFunction.AVG.equals(aggregateFunction))
+  public Class<? extends Statistic> toStatistic() {
+    if (AggregateFunction.AVG.equals(this))
       return Average.class;
-    if (AggregateFunction.COUNT.equals(aggregateFunction))
+    if (AggregateFunction.COUNT.equals(this))
       return Count.class;
-    if (AggregateFunction.SUM.equals(aggregateFunction))
+    if (AggregateFunction.SUM.equals(this))
       return Sum.class;
-    if (AggregateFunction.MIN.equals(aggregateFunction))
+    if (AggregateFunction.MIN.equals(this))
       return Min.class;
-    if (AggregateFunction.MAX.equals(aggregateFunction))
+    if (AggregateFunction.MAX.equals(this))
       return Max.class;
     return null;
   }
