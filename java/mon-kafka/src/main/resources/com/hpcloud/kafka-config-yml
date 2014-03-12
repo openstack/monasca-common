@@ -1,0 +1,25 @@
+#Kafka settings.
+kafkaConfiguration:
+# See http://kafka.apache.org/documentation.html#api for semantics and defaults.
+  topic: test
+  numThreads: 1
+  groupId: 1
+  zookeeperConnect: localhost:2181
+  consumerId: 1
+  socketTimeoutMs: 30000
+  socketReceiveBufferBytes : 65536
+  fetchMessageMaxBytes: 1048576
+  autoCommitEnable: true
+  autoCommitIntervalMs: 60000
+  queuedMaxMessageChunks: 10
+  rebalanceMaxRetries: 4
+  fetchMinBytes:  1
+  fetchWaitMaxMs:  100
+  rebalanceBackoffMs: 2000
+  refreshLeaderBackoffMs: 200
+  autoOffsetReset: largest
+  consumerTimeoutMs:  -1
+  clientId : 1
+  zookeeperSessionTimeoutMs : 6000
+  zookeeperConnectionTimeoutMs : 6000
+  zookeeperSyncTimeMs: 2000

@@ -46,6 +46,7 @@
     <module>mon-streaming</module>
     <module>mon-testing</module>
     <module>mon-util</module>
+    <module>mon-kafka</module>
   </modules>
 
   <repositories>
