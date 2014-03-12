@@ -1,33 +1,33 @@
-# See http://kafka.apache.org/documentation.html#api for semantics and defaults.
+# See http://kafkaapacheorg/documentationhtml#api for semantics and defaults
 
 # Required
-metadata.broker.list: localhost:9092
+metadataBrokerList: localhost:9092
 
 # Required
-request.required.acks: 	1
+requestRequiredAcks: 	1
 
-#request.timeout.ms:
+#requestTimeoutMs:
 
 # Required
 # async | sync
-producer.type: 	sync
+producerType: 	sync
 
 # Required
-serializer.class: kafka.serializer.StringEncoder
+serializerClass: kafkaserializerStringEncoder
 
-#key.serializer.class:
+#keyserializerclass:
 
 #Required
-partitioner.class: com.hpcloud.SimplePartitioner
+partitionerClass: comhpcloudSimplePartitioner
 
-#compression.codec:
-#compressed.topics :
-#message.send.max.retries:
-#retry.backoff.ms:
-#topic.metadata.refresh.interval.ms:
-#queue.buffering.max.ms:
-#queue.buffering.max.messages:
-#queue.enqueue.timeout.ms:
-#batch.num.messages:
-#send.buffer.bytes:
-#client.id:
+#compressionCodec:
+#compressedTopics :
+#messageSendMaxRetries:
+#retryBackoffMs:
+#topicMetadataRefreshIntervalMs:
+#queueBufferingMaxMs:
+#queueBufferingMaxMessages:
+#queueEnqueueTimeoutMs:
+#batchNumMessages:
+#sendBufferBytes:
+#clientId:
