@@ -1,5 +1,6 @@
 package com.hpcloud.mon.common.model.metric;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Map;
 
@@ -14,7 +15,10 @@ import com.google.common.base.Preconditions;
  * 
  * @author Jonathan Halterman
  */
-public class Metric {
+public class Metric implements Serializable {
+  
+  private static final long serialVersionUID = 3455749495426525633L;
+
   public String name;
   public Map<String, String> dimensions;
   public long timestamp;
