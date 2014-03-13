@@ -1,8 +1,11 @@
 package com.hpcloud.configuration;
 
+import java.io.Serializable;
 import java.util.Properties;
 
-public class KafkaConsumerProperties {
+public class KafkaConsumerProperties implements Serializable {
+
+    private static final long serialVersionUID = 2369697347070190744L;
 
     public static Properties createKafkaProperties(KafkaConsumerConfiguration kafkaConfiguration) {
         Properties properties = new Properties();

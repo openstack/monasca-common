@@ -1,8 +1,12 @@
 package com.hpcloud.configuration;
 
+import java.io.Serializable;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class KafkaConsumerConfiguration {
+public class KafkaConsumerConfiguration implements Serializable {
+
+    private static final long serialVersionUID = -1666706655354785832L;
 
     @JsonProperty
     String topic;
