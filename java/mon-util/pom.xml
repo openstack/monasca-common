@@ -4,7 +4,7 @@
   <parent>
     <groupId>com.hpcloud</groupId>
     <artifactId>mon-common</artifactId>
-    <version>${computedVersion}</version>
+    <version>1.0.0-SNAPSHOT</version>
   </parent>
   <artifactId>mon-util</artifactId>
   <packaging>jar</packaging>

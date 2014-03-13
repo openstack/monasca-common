@@ -4,7 +4,7 @@
 
   <groupId>com.hpcloud</groupId>
   <artifactId>mon-common</artifactId>
-  <version>${computedVersion}</version>
+  <version>1.0.0-SNAPSHOT</version>
   <url>http://hpcloud.net</url>
   <packaging>pom</packaging>
 
