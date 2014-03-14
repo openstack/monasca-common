@@ -16,6 +16,7 @@
 * [mon-service](https://git.hpcloud.net/mon/mon-common/tree/master/java/mon-service) - Simple service abstractions and utilities.
 * [mon-testing](https://git.hpcloud.net/mon/mon-common/tree/master/java/mon-testing) - A set of testing related dependencies.
 * [mon-util](https://git.hpcloud.net/mon/mon-common/tree/master/java/mon-util) - Various utilities such as for serialization, dependency injection, date and time, invocation retries, concurrency, etc.
+* [mon-kafka](https://git.hpcloud.net/mon/mon-common/tree/master/java/mon-kafka) - Various utilities for working with Kafka.
 
 ### Deploying to Nexus
 
