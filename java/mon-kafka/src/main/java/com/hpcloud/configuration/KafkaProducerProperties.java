@@ -12,8 +12,8 @@ public class KafkaProducerProperties {
         properties.put("request.timeout.ms", kafkaProducerConfiguration.getRequestTimeoutMs().toString());
         properties.put("producer.type", kafkaProducerConfiguration.getProducerType());
         properties.put("serializer.class", kafkaProducerConfiguration.getSerializerClass());
-        properties.put("key.serializer.class", kafkaProducerConfiguration.getKeySerializerClass());
-        properties.put("partitioner.class", kafkaProducerConfiguration.getPartitionerClass());
+        setIfHasValue("key.serializer.class", kafkaProducerConfiguration.getKeySerializerClass(), properties);
+        setIfHasValue("partitioner.class", kafkaProducerConfiguration.getPartitionerClass(), properties);
         properties.put("compression.codec", kafkaProducerConfiguration.getCompressionCodec());
         properties.put("compressed.topics", kafkaProducerConfiguration.getCompressedTopics());
         properties.put("message.send.max.retries", kafkaProducerConfiguration.getMessageSendMaxRetries().toString());
@@ -27,5 +27,11 @@ public class KafkaProducerProperties {
         properties.put("client.id", kafkaProducerConfiguration.getClientId());
 
         return properties;
+    }
+
+    private static void setIfHasValue(final String name, final String value, final Properties properties) {
+        if ((value != null) && !value.isEmpty()) {
+            properties.setProperty(name, value);
+        }
     }
 }
