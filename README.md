@@ -22,5 +22,5 @@
 To deploy to nexus, just run the command below, inserting a version number that is greater than the current nexus version (this command is usually performed by Jenkins):
 
 ```
-mvn deploy -DBUILD_NUM=[verion_number]
+mvn deploy -DBUILD_NUM=[version_number]
 ```
