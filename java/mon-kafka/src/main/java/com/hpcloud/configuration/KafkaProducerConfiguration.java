@@ -5,6 +5,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class KafkaProducerConfiguration {
 
     @JsonProperty
+    String topic;
+
+    @JsonProperty
     String metadataBrokerList;
 
     @JsonProperty
@@ -58,6 +61,10 @@ public class KafkaProducerConfiguration {
     @JsonProperty
     String clientId;
 
+
+    public String getTopic() {
+        return topic;
+    }
 
     public String getMetadataBrokerList() {
         return metadataBrokerList;

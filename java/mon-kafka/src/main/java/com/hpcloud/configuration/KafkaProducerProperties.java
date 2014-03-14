@@ -2,7 +2,7 @@ package com.hpcloud.configuration;
 
 import java.util.Properties;
 
-public class kafkaProducerProperties {
+public class KafkaProducerProperties {
 
     public static Properties createKafkaProperties(KafkaProducerConfiguration kafkaProducerConfiguration) {
         Properties properties = new Properties();
