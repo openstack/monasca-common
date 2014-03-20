@@ -11,8 +11,8 @@ import com.google.common.collect.Sets;
  * 
  * @author Jonathan Halterman
  */
-class ObjectStoreNamespaceInfo implements NamespaceInfo {
-  private final Set<String> supportedMetrics = Sets.newHashSet("project_write_bytes",
+class ObjectStoreServiceInfo implements ServiceInfo {
+  private final Set<String> supportedMetricNames = Sets.newHashSet("project_write_bytes",
       "project_read_bytes", "project_put_ops", "project_get_ops", "container_write_bytes",
       "container_read_bytes", "container_put_ops", "container_get_ops",
       "container_write_bytes_proxy", "container_read_bytes_proxy", "container_put_ops_proxy",
@@ -20,12 +20,6 @@ class ObjectStoreNamespaceInfo implements NamespaceInfo {
       "number_of_containers", "projects_bytes_used_replica", "container_bytes_used_replica",
       "number_of_objects_replica", "number_of_containers_replica");
   private final List<String> supportedDims = Arrays.asList("container");
-  private final List<String> requiredDims = Arrays.asList("container");
-
-  @Override
-  public List<String> getRequiredDimensions() {
-    return requiredDims;
-  }
 
   @Override
   public String getResourceIdDimension() {
@@ -38,7 +32,7 @@ class ObjectStoreNamespaceInfo implements NamespaceInfo {
   }
 
   @Override
-  public Set<String> getSupportedMetrics() {
-    return supportedMetrics;
+  public Set<String> getSupportedMetricNames() {
+    return supportedMetricNames;
   }
 }

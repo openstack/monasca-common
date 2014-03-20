@@ -9,11 +9,11 @@ import org.testng.annotations.Test;
 @Test
 public class NamespacesTest {
   public void shouldReturnEmptyForRequiredUserDefinedDimensions() {
-    List<String> list = Namespaces.getRequiredDimensions("userdefined");
+    List<String> list = Services.getRequiredDimensions("userdefined");
     assertTrue(list.isEmpty());
   }
 
   public void shouldValidateObjectStoreMetricName() {
-    assertTrue(Namespaces.isValidMetricName("hpcs.object-store", "project_write_bytes"));
+    assertTrue(Services.isValidMetricName("hpcs.object-store", "project_write_bytes"));
   }
 }

@@ -4,14 +4,9 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Provides information for a namespace.
+ * Provides information for a service.
  */
-interface NamespaceInfo {
-  /**
-   * Returns the required dimensions.
-   */
-  List<String> getRequiredDimensions();
-
+interface ServiceInfo {
   /**
    * Returns the dimension name that represents the resource id, else {@code null}.
    */
@@ -23,7 +18,7 @@ interface NamespaceInfo {
   List<String> getSupportedDimensions();
 
   /**
-   * Returns the supported metrics.
+   * Returns the supported metric names.
    */
-  Set<String> getSupportedMetrics();
+  Set<String> getSupportedMetricNames();
 }
