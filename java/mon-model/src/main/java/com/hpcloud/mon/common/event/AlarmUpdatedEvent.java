@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonRootName;
+import com.hpcloud.mon.common.model.alarm.AlarmState;
 import com.hpcloud.mon.common.model.alarm.AlarmSubExpression;
 
 /**
@@ -19,6 +20,8 @@ public class AlarmUpdatedEvent implements Serializable {
   public String alarmId;
   public String alarmName;
   public String alarmExpression;
+  public AlarmState alarmState;
+  public boolean alarmEnabled;
   public Map<String, AlarmSubExpression> oldAlarmSubExpressions;
   public Map<String, AlarmSubExpression> newAlarmSubExpressions;
 
@@ -26,12 +29,15 @@ public class AlarmUpdatedEvent implements Serializable {
   }
 
   public AlarmUpdatedEvent(String tenantId, String alarmId, String alarmName,
-      String alarmExpression, Map<String, AlarmSubExpression> oldAlarmSubExpressions,
+      String alarmExpression, AlarmState alarmState, boolean alarmEnabled,
+      Map<String, AlarmSubExpression> oldAlarmSubExpressions,
       Map<String, AlarmSubExpression> newAlarmSubExpressions) {
     this.tenantId = tenantId;
     this.alarmId = alarmId;
     this.alarmName = alarmName;
     this.alarmExpression = alarmExpression;
+    this.alarmState = alarmState;
+    this.alarmEnabled = alarmEnabled;
     this.oldAlarmSubExpressions = oldAlarmSubExpressions;
     this.newAlarmSubExpressions = newAlarmSubExpressions;
   }
@@ -45,6 +51,8 @@ public class AlarmUpdatedEvent implements Serializable {
     if (getClass() != obj.getClass())
       return false;
     AlarmUpdatedEvent other = (AlarmUpdatedEvent) obj;
+    if (alarmEnabled != other.alarmEnabled)
+      return false;
     if (alarmExpression == null) {
       if (other.alarmExpression != null)
         return false;
@@ -59,6 +67,8 @@ public class AlarmUpdatedEvent implements Serializable {
       if (other.alarmName != null)
         return false;
     } else if (!alarmName.equals(other.alarmName))
+      return false;
+    if (alarmState != other.alarmState)
       return false;
     if (newAlarmSubExpressions == null) {
       if (other.newAlarmSubExpressions != null)
@@ -82,9 +92,11 @@ public class AlarmUpdatedEvent implements Serializable {
   public int hashCode() {
     final int prime = 31;
     int result = 1;
+    result = prime * result + (alarmEnabled ? 1231 : 1237);
     result = prime * result + ((alarmExpression == null) ? 0 : alarmExpression.hashCode());
     result = prime * result + ((alarmId == null) ? 0 : alarmId.hashCode());
     result = prime * result + ((alarmName == null) ? 0 : alarmName.hashCode());
+    result = prime * result + ((alarmState == null) ? 0 : alarmState.hashCode());
     result = prime * result
         + ((newAlarmSubExpressions == null) ? 0 : newAlarmSubExpressions.hashCode());
     result = prime * result
@@ -96,7 +108,7 @@ public class AlarmUpdatedEvent implements Serializable {
   @Override
   public String toString() {
     return String.format(
-        "AlarmUpdatedEvent [tenantId=%s, alarmId=%s, alarmName=%s, expression=%s]", tenantId,
-        alarmId, alarmName, alarmExpression);
+        "AlarmUpdatedEvent [tenantId=%s, alarmId=%s, alarmName=%s, alarmExpression=%s, alarmState=%s, alarmEnabled=%s]",
+        tenantId, alarmId, alarmName, alarmExpression, alarmState, alarmEnabled);
   }
 }
