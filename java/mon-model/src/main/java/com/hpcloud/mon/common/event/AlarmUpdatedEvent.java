@@ -23,6 +23,7 @@ public class AlarmUpdatedEvent implements Serializable {
   public AlarmState alarmState;
   public boolean alarmEnabled;
   public Map<String, AlarmSubExpression> oldAlarmSubExpressions;
+  public Map<String, AlarmSubExpression> changedSubExpressions;
   public Map<String, AlarmSubExpression> newAlarmSubExpressions;
 
   public AlarmUpdatedEvent() {
@@ -31,6 +32,7 @@ public class AlarmUpdatedEvent implements Serializable {
   public AlarmUpdatedEvent(String tenantId, String alarmId, String alarmName,
       String alarmExpression, AlarmState alarmState, boolean alarmEnabled,
       Map<String, AlarmSubExpression> oldAlarmSubExpressions,
+      Map<String, AlarmSubExpression> changedSubExpressions,
       Map<String, AlarmSubExpression> newAlarmSubExpressions) {
     this.tenantId = tenantId;
     this.alarmId = alarmId;
@@ -39,6 +41,7 @@ public class AlarmUpdatedEvent implements Serializable {
     this.alarmState = alarmState;
     this.alarmEnabled = alarmEnabled;
     this.oldAlarmSubExpressions = oldAlarmSubExpressions;
+    this.changedSubExpressions = changedSubExpressions;
     this.newAlarmSubExpressions = newAlarmSubExpressions;
   }
 
@@ -70,6 +73,11 @@ public class AlarmUpdatedEvent implements Serializable {
       return false;
     if (alarmState != other.alarmState)
       return false;
+    if (changedSubExpressions == null) {
+      if (other.changedSubExpressions != null)
+        return false;
+    } else if (!changedSubExpressions.equals(other.changedSubExpressions))
+      return false;
     if (newAlarmSubExpressions == null) {
       if (other.newAlarmSubExpressions != null)
         return false;
@@ -97,6 +105,8 @@ public class AlarmUpdatedEvent implements Serializable {
     result = prime * result + ((alarmId == null) ? 0 : alarmId.hashCode());
     result = prime * result + ((alarmName == null) ? 0 : alarmName.hashCode());
     result = prime * result + ((alarmState == null) ? 0 : alarmState.hashCode());
+    result = prime * result
+        + ((changedSubExpressions == null) ? 0 : changedSubExpressions.hashCode());
     result = prime * result
         + ((newAlarmSubExpressions == null) ? 0 : newAlarmSubExpressions.hashCode());
     result = prime * result
