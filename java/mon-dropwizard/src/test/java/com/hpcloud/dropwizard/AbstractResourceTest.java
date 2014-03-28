@@ -16,6 +16,7 @@ import java.util.Set;
 import javax.validation.Validation;
 import javax.validation.Validator;
 
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 
 import com.beust.jcommander.internal.Maps;
@@ -80,7 +81,7 @@ public abstract class AbstractResourceTest {
     return test;
   }
 
-  @BeforeMethod
+  @AfterMethod
   protected void afterTestCase() throws Exception {
     if (test != null)
       test.tearDown();
