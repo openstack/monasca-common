@@ -57,6 +57,10 @@ public class MetricDefinition implements Serializable {
     return result;
   }
 
+  public void setDimensions(Map<String, String> dimensions) {
+    this.dimensions = dimensions;
+  }
+
   /**
    * Returns an expression representation of the metric definition.
    */
