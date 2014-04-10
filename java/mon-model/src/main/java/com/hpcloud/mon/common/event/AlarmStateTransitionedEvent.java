@@ -13,6 +13,7 @@ public class AlarmStateTransitionedEvent {
   public String tenantId;
   public String alarmId;
   public String alarmName;
+  public String alarmDescription;
   public AlarmState oldState;
   public AlarmState newState;
   public String stateChangeReason;
@@ -22,10 +23,11 @@ public class AlarmStateTransitionedEvent {
   }
 
   public AlarmStateTransitionedEvent(String tenantId, String alarmId, String alarmName,
-      AlarmState oldState, AlarmState newState, String stateChangeReason, long timestamp) {
+      String alarmDescription, AlarmState oldState, AlarmState newState, String stateChangeReason, long timestamp) {
     this.tenantId = tenantId;
     this.alarmId = alarmId;
     this.alarmName = alarmName;
+    this.alarmDescription = alarmDescription;
     this.oldState = oldState;
     this.newState = newState;
     this.stateChangeReason = stateChangeReason;
@@ -35,7 +37,7 @@ public class AlarmStateTransitionedEvent {
   @Override
   public String toString() {
     return String.format(
-        "AlarmStateTransitionedEvent [tenantId=%s, alarmId=%s, alarmName=%s, oldState=%s, newState=%s, stateChangeReason=%s, timestamp=%s]",
-        tenantId, alarmId, alarmName, oldState, newState, stateChangeReason, timestamp);
+        "AlarmStateTransitionedEvent [tenantId=%s, alarmId=%s, alarmName=%s, alarmDescription=%s oldState=%s, newState=%s, stateChangeReason=%s, timestamp=%s]",
+        tenantId, alarmId, alarmName, alarmDescription, oldState, newState, stateChangeReason, timestamp);
   }
 }
