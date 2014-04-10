@@ -23,7 +23,7 @@ public class MetricDefinition implements Serializable {
 
   public MetricDefinition(String name, @Nullable Map<String, String> dimensions) {
     this.name = Preconditions.checkNotNull(name, "name");
-    setDimensions(dimensions);
+    this.dimensions = dimensions;
   }
 
   @Override
@@ -55,10 +55,6 @@ public class MetricDefinition implements Serializable {
     result = prime * result + ((dimensions == null) ? 0 : dimensions.hashCode());
     result = prime * result + ((name == null) ? 0 : name.hashCode());
     return result;
-  }
-
-  public void setDimensions(Map<String, String> dimensions) {
-    this.dimensions = dimensions == null || dimensions.isEmpty() ? null : dimensions;
   }
 
   /**
