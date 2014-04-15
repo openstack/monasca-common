@@ -22,7 +22,7 @@ public class AlarmUpdatedEvent implements Serializable {
   public String alarmDescription;
   public String alarmExpression;
   public AlarmState alarmState;
-  public boolean alarmEnabled;
+  public boolean alarmActionsEnabled;
   public Map<String, AlarmSubExpression> oldAlarmSubExpressions;
   public Map<String, AlarmSubExpression> changedSubExpressions;
   public Map<String, AlarmSubExpression> newAlarmSubExpressions;
@@ -31,8 +31,8 @@ public class AlarmUpdatedEvent implements Serializable {
   }
 
   public AlarmUpdatedEvent(String tenantId, String alarmId, String alarmName,
-      String alarmDescription, String alarmExpression, AlarmState alarmState, boolean alarmEnabled,
-      Map<String, AlarmSubExpression> oldAlarmSubExpressions,
+      String alarmDescription, String alarmExpression, AlarmState alarmState,
+      boolean alarmActionsEnabled, Map<String, AlarmSubExpression> oldAlarmSubExpressions,
       Map<String, AlarmSubExpression> changedSubExpressions,
       Map<String, AlarmSubExpression> newAlarmSubExpressions) {
     this.tenantId = tenantId;
@@ -41,7 +41,7 @@ public class AlarmUpdatedEvent implements Serializable {
     this.alarmDescription = alarmDescription;
     this.alarmExpression = alarmExpression;
     this.alarmState = alarmState;
-    this.alarmEnabled = alarmEnabled;
+    this.alarmActionsEnabled = alarmActionsEnabled;
     this.oldAlarmSubExpressions = oldAlarmSubExpressions;
     this.changedSubExpressions = changedSubExpressions;
     this.newAlarmSubExpressions = newAlarmSubExpressions;
@@ -61,7 +61,7 @@ public class AlarmUpdatedEvent implements Serializable {
         return false;
     } else if (!alarmDescription.equals(other.alarmDescription))
       return false;
-    if (alarmEnabled != other.alarmEnabled)
+    if (alarmActionsEnabled != other.alarmActionsEnabled)
       return false;
     if (alarmExpression == null) {
       if (other.alarmExpression != null)
@@ -108,7 +108,7 @@ public class AlarmUpdatedEvent implements Serializable {
     final int prime = 31;
     int result = 1;
     result = prime * result + ((alarmDescription == null) ? 0 : alarmDescription.hashCode());
-    result = prime * result + (alarmEnabled ? 1231 : 1237);
+    result = prime * result + (alarmActionsEnabled ? 1231 : 1237);
     result = prime * result + ((alarmExpression == null) ? 0 : alarmExpression.hashCode());
     result = prime * result + ((alarmId == null) ? 0 : alarmId.hashCode());
     result = prime * result + ((alarmName == null) ? 0 : alarmName.hashCode());
@@ -126,7 +126,7 @@ public class AlarmUpdatedEvent implements Serializable {
   @Override
   public String toString() {
     return String.format(
-        "AlarmUpdatedEvent [tenantId=%s, alarmId=%s, alarmName=%s, alarmExpression=%s, alarmState=%s, alarmEnabled=%s]",
-        tenantId, alarmId, alarmName, alarmExpression, alarmState, alarmEnabled);
+        "AlarmUpdatedEvent [tenantId=%s, alarmId=%s, alarmName=%s, alarmExpression=%s, alarmState=%s, alarmActionsEnabled=%s]",
+        tenantId, alarmId, alarmName, alarmExpression, alarmState, alarmActionsEnabled);
   }
 }
