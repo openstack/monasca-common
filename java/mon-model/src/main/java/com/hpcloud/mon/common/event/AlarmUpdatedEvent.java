@@ -19,6 +19,7 @@ public class AlarmUpdatedEvent implements Serializable {
   public String tenantId;
   public String alarmId;
   public String alarmName;
+  public String alarmDescription;
   public String alarmExpression;
   public AlarmState alarmState;
   public boolean alarmEnabled;
@@ -30,13 +31,14 @@ public class AlarmUpdatedEvent implements Serializable {
   }
 
   public AlarmUpdatedEvent(String tenantId, String alarmId, String alarmName,
-      String alarmExpression, AlarmState alarmState, boolean alarmEnabled,
+      String alarmDescription, String alarmExpression, AlarmState alarmState, boolean alarmEnabled,
       Map<String, AlarmSubExpression> oldAlarmSubExpressions,
       Map<String, AlarmSubExpression> changedSubExpressions,
       Map<String, AlarmSubExpression> newAlarmSubExpressions) {
     this.tenantId = tenantId;
     this.alarmId = alarmId;
     this.alarmName = alarmName;
+    this.alarmDescription = alarmDescription;
     this.alarmExpression = alarmExpression;
     this.alarmState = alarmState;
     this.alarmEnabled = alarmEnabled;
@@ -54,6 +56,11 @@ public class AlarmUpdatedEvent implements Serializable {
     if (getClass() != obj.getClass())
       return false;
     AlarmUpdatedEvent other = (AlarmUpdatedEvent) obj;
+    if (alarmDescription == null) {
+      if (other.alarmDescription != null)
+        return false;
+    } else if (!alarmDescription.equals(other.alarmDescription))
+      return false;
     if (alarmEnabled != other.alarmEnabled)
       return false;
     if (alarmExpression == null) {
@@ -100,6 +107,7 @@ public class AlarmUpdatedEvent implements Serializable {
   public int hashCode() {
     final int prime = 31;
     int result = 1;
+    result = prime * result + ((alarmDescription == null) ? 0 : alarmDescription.hashCode());
     result = prime * result + (alarmEnabled ? 1231 : 1237);
     result = prime * result + ((alarmExpression == null) ? 0 : alarmExpression.hashCode());
     result = prime * result + ((alarmId == null) ? 0 : alarmId.hashCode());
