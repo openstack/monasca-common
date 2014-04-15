@@ -21,7 +21,7 @@ public final class MetricEnvelopes {
    */
   public static MetricEnvelope fromJson(byte[] metricJson) {
     try {
-      String jsonStr = StringEscapeUtils.unescapeJava(new String(metricJson, "UTF-8"));
+      String jsonStr = new String(metricJson, "UTF-8");
       return Metrics.OBJECT_MAPPER.readValue(jsonStr, MetricEnvelope.class);
     } catch (Exception e) {
       throw Exceptions.uncheck(e, "Failed to parse metric json: %s", new String(metricJson));
