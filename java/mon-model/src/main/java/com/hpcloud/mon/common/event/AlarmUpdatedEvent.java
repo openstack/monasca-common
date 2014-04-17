@@ -23,9 +23,12 @@ public class AlarmUpdatedEvent implements Serializable {
   public String alarmExpression;
   public AlarmState alarmState;
   public boolean alarmActionsEnabled;
-  public Map<String, AlarmSubExpression> oldAlarmSubExpressions;
-  public Map<String, AlarmSubExpression> changedSubExpressions;
-  public Map<String, AlarmSubExpression> newAlarmSubExpressions;
+  /** Sub expressions which have been removed from the updated alarm expression. */
+  Map<String, AlarmSubExpression> oldAlarmSubExpressions;
+  /** Sub expressions which have had their operator or threshold changed. */
+  Map<String, AlarmSubExpression> changedSubExpressions;
+  /** Sub expressions which have been added to the updated alarm expression. */
+  Map<String, AlarmSubExpression> newAlarmSubExpressions;
 
   public AlarmUpdatedEvent() {
   }
