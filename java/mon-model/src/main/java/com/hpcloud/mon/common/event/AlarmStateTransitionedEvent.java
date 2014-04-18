@@ -18,13 +18,15 @@ public class AlarmStateTransitionedEvent {
   public AlarmState newState;
   public boolean actionsEnabled;
   public String stateChangeReason;
+  /** POSIX timestamp */
   public long timestamp;
 
   public AlarmStateTransitionedEvent() {
   }
 
   public AlarmStateTransitionedEvent(String tenantId, String alarmId, String alarmName,
-      String alarmDescription, AlarmState oldState, AlarmState newState, boolean actionsEnabled, String stateChangeReason, long timestamp) {
+      String alarmDescription, AlarmState oldState, AlarmState newState, boolean actionsEnabled,
+      String stateChangeReason, long timestamp) {
     this.tenantId = tenantId;
     this.alarmId = alarmId;
     this.alarmName = alarmName;
@@ -40,6 +42,7 @@ public class AlarmStateTransitionedEvent {
   public String toString() {
     return String.format(
         "AlarmStateTransitionedEvent [tenantId=%s, alarmId=%s, alarmName=%s, alarmDescription=%s oldState=%s, newState=%s, actionsEnabled=%s, stateChangeReason=%s, timestamp=%s]",
-        tenantId, alarmId, alarmName, alarmDescription, oldState, newState, actionsEnabled, stateChangeReason, timestamp);
+        tenantId, alarmId, alarmName, alarmDescription, oldState, newState, actionsEnabled,
+        stateChangeReason, timestamp);
   }
 }
