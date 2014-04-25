@@ -32,6 +32,10 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.ISODateTimeFormat;
 import org.skife.jdbi.v2.StatementContext;
 import org.skife.jdbi.v2.tweak.ResultSetMapper;
 
@@ -43,6 +47,9 @@ import org.skife.jdbi.v2.tweak.ResultSetMapper;
  * Additionally this bean mapper maps pascal case named columns to camel case named bean properties.
  */
 public class BeanMapper<T> implements ResultSetMapper<T> {
+  public static final DateTimeFormatter DATETIME_FORMATTER = ISODateTimeFormat.dateTimeNoMillis()
+      .withZoneUTC();
+
   private final Class<T> type;
   private final Map<String, PropertyDescriptor> properties = new HashMap<String, PropertyDescriptor>();
 
@@ -117,8 +124,14 @@ public class BeanMapper<T> implements ResultSetMapper<T> {
           value = rs.getTime(i);
         } else if (type.isAssignableFrom(Date.class)) {
           value = rs.getDate(i);
+        } else if (type.isAssignableFrom(DateTime.class)) {
+          Timestamp ts = rs.getTimestamp(i);
+          value = ts == null ? null : new DateTime(ts.getTime(), DateTimeZone.UTC);
         } else if (type.isAssignableFrom(String.class)) {
-          value = rs.getString(i);
+          if (metadata.getColumnType(i) == Types.TIMESTAMP)
+            value = DATETIME_FORMATTER.print(rs.getTimestamp(i).getTime());
+          else
+            value = rs.getString(i);
         } else {
           value = rs.getObject(i);
         }
