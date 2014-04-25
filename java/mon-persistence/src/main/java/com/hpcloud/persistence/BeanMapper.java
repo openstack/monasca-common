@@ -27,6 +27,7 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Time;
 import java.sql.Timestamp;
+import java.sql.Types;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -100,7 +101,10 @@ public class BeanMapper<T> implements ResultSetMapper<T> {
         } else if (type.isAssignableFrom(Integer.class) || type.isAssignableFrom(int.class)) {
           value = rs.getInt(i);
         } else if (type.isAssignableFrom(Long.class) || type.isAssignableFrom(long.class)) {
-          value = rs.getLong(i);
+          if (metadata.getColumnType(i) == Types.TIMESTAMP)
+            value = rs.getTimestamp(i).getTime();
+          else
+            value = rs.getLong(i);
         } else if (type.isAssignableFrom(Float.class) || type.isAssignableFrom(float.class)) {
           value = rs.getFloat(i);
         } else if (type.isAssignableFrom(Double.class) || type.isAssignableFrom(double.class)) {
