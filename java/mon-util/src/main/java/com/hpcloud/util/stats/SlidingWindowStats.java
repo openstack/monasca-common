@@ -183,7 +183,6 @@ public class SlidingWindowStats {
    * @param timestamp slide view to
    */
   public void slideViewTo(long timestamp) {
-    timestamp = timescale.adjust(timestamp);
     if (timestamp <= viewEndTimestamp)
       return;
     long timeDiff = timestamp - slotEndTimestamp;
