@@ -10,8 +10,6 @@ import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.hpcloud.mon.common.model.alarm.AlarmExpressionLexer;
-import com.hpcloud.mon.common.model.alarm.AlarmExpressionParser;
 import com.hpcloud.util.Stack;
 
 /**
@@ -104,6 +102,31 @@ public class AlarmExpression {
    */
   public String getExpression() {
     return expression;
+  }
+
+  /** Returns a boolean tree representation of the alarm expression. */
+  public Object getExpressionTree() {
+    Stack<Object> stack = new Stack<Object>();
+
+    for (Object element : elements) {
+      if (element instanceof AlarmSubExpression) {
+        stack.push(element);
+      } else {
+        BooleanOperator operator = (BooleanOperator) element;
+        Object operandA = stack.pop();
+        Object operandB = stack.pop();
+        BooleanExpression expr = null;
+        if (operandB instanceof BooleanExpression
+            && ((BooleanExpression) operandB).operator.equals(operator)) {
+          expr = (BooleanExpression) operandB;
+          expr.operands.add(operandA);
+        } else
+          expr = new BooleanExpression(operator, operandB, operandA);
+        stack.push(expr);
+      }
+    }
+
+    return stack.pop();
   }
 
   /**

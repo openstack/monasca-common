@@ -5,15 +5,13 @@ import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotEquals;
 import static org.testng.Assert.assertTrue;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMap;
-import com.hpcloud.mon.common.model.alarm.AggregateFunction;
-import com.hpcloud.mon.common.model.alarm.AlarmExpression;
-import com.hpcloud.mon.common.model.alarm.AlarmOperator;
-import com.hpcloud.mon.common.model.alarm.AlarmSubExpression;
 import com.hpcloud.mon.common.model.metric.MetricDefinition;
 
 /**
@@ -98,7 +96,8 @@ public class AlarmExpressionTest {
   }
 
   public void shouldDefaultPeriodAndPeriods() {
-    AlarmExpression expr = new AlarmExpression("avg(hpcs.compute{instance_id=5,metric_name=cpu,device=1}) > 5");
+    AlarmExpression expr = new AlarmExpression(
+        "avg(hpcs.compute{instance_id=5,metric_name=cpu,device=1}) > 5");
     AlarmSubExpression alarm = expr.getSubExpressions().get(0);
     assertEquals(alarm.getPeriod(), 60);
     assertEquals(alarm.getPeriods(), 1);
@@ -116,6 +115,22 @@ public class AlarmExpressionTest {
                     .put("metric_name", "mem")
                     .build()), AlarmOperator.LT, 4, 2, 3), true)
         .build());
+  }
+
+  public void shouldGetAlarmExpressionTree() {
+    Object expr = AlarmExpression.of(
+        "(avg(foo) > 1 and avg(bar) < 2 and avg(baz) > 3) or (avg(foo) > 4 and avg(bar) < 5 and avg(baz) > 6)")
+        .getExpressionTree();
+    assertEquals(
+        expr.toString(),
+        "((avg(foo) > 1.0 AND avg(bar) < 2.0 AND avg(baz) > 3.0) OR (avg(foo) > 4.0 AND avg(bar) < 5.0 AND avg(baz) > 6.0))");
+
+    expr = AlarmExpression.of(
+        "(avg(foo) > 1 and (avg(bar) < 2 or avg(baz) > 3)) and (avg(foo) > 4 or avg(bar) < 5 or avg(baz) > 6)")
+        .getExpressionTree();
+    assertEquals(
+        expr.toString(),
+        "(avg(foo) > 1.0 AND (avg(bar) < 2.0 OR avg(baz) > 3.0) AND (avg(foo) > 4.0 OR avg(bar) < 5.0 OR avg(baz) > 6.0))");
   }
 
   @Test(enabled = false)
