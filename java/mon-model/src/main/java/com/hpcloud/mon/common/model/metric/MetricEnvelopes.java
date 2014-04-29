@@ -1,7 +1,5 @@
 package com.hpcloud.mon.common.model.metric;
 
-import org.apache.commons.lang3.StringEscapeUtils;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.hpcloud.util.Exceptions;
 
