@@ -31,8 +31,6 @@ import com.sun.jersey.test.framework.LowLevelAppDescriptor;
 
 /**
  * Support class for testing resources.
- * 
- * @author Jonathan Halterman
  */
 public abstract class AbstractResourceTest {
   private final Set<Object> singletons = Sets.newHashSet();

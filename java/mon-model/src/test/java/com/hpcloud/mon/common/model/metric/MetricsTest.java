@@ -11,9 +11,6 @@ import org.testng.annotations.Test;
 import com.hpcloud.mon.common.model.metric.Metric;
 import com.hpcloud.mon.common.model.metric.Metrics;
 
-/**
- * @author Jonathan Halterman
- */
 @Test
 public class MetricsTest {
   public void shouldSerializeValue() {
@@ -33,8 +30,8 @@ public class MetricsTest {
     dimensions.put("metric_name", "cpu");
     dimensions.put("device", "2");
     dimensions.put("instance_id", "123");
-    Metric metric = new Metric("hpcs.compute", dimensions, 123345, new double[][] {
-        { 123, 5 }, { 456, 6 } });
+    Metric metric = new Metric("hpcs.compute", dimensions, 123345, new double[][] { { 123, 5 },
+        { 456, 6 } });
 
     String json = Metrics.toJson(metric);
     assertEquals(
@@ -47,8 +44,8 @@ public class MetricsTest {
     dimensions.put("metric_name", "cpu");
     dimensions.put("device", "2");
     dimensions.put("instance_id", "123");
-    Metric expected = new Metric("hpcs.compute", dimensions, 123345, new double[][] {
-        { 123, 5 }, { 456, 6 } });
+    Metric expected = new Metric("hpcs.compute", dimensions, 123345, new double[][] { { 123, 5 },
+        { 456, 6 } });
 
     Metric metric = Metrics.fromJson(Metrics.toJson(expected).getBytes());
     assertEquals(metric, expected);
@@ -71,8 +68,8 @@ public class MetricsTest {
     dimensions.put("metric_name", "foôbár");
     dimensions.put("device", "2");
     dimensions.put("instance_id", "123");
-    Metric expected = new Metric("hpcs.compute", dimensions, 123345, new double[][] {
-        { 123, 5 }, { 456, 6 } });
+    Metric expected = new Metric("hpcs.compute", dimensions, 123345, new double[][] { { 123, 5 },
+        { 456, 6 } });
 
     Metric metric;
     metric = Metrics.fromJson(Metrics.toJson(expected).getBytes("UTF-8"));
@@ -84,8 +81,8 @@ public class MetricsTest {
     dimensions.put("metric_name", "fo\u00f4b\u00e1r");
     dimensions.put("device", "2");
     dimensions.put("instance_id", "123");
-    Metric expected = new Metric("hpcs.compute", dimensions, 123345, new double[][] {
-        { 123, 5 }, { 456, 6 } });
+    Metric expected = new Metric("hpcs.compute", dimensions, 123345, new double[][] { { 123, 5 },
+        { 456, 6 } });
 
     Metric metric;
     metric = Metrics.fromJson(Metrics.toJson(expected).getBytes("UTF-8"));
@@ -101,10 +98,10 @@ public class MetricsTest {
     dimensions2.put("metric_name", "foôbár");
     dimensions2.put("device", "2");
     dimensions2.put("instance_id", "123");
-    Metric expected_escaped = new Metric("hpcs.compute", dimensions, 123345,
-        new double[][] { { 123, 5 }, { 456, 6 } });
-    Metric expected_nonescaped = new Metric("hpcs.compute", dimensions2, 123345,
-        new double[][] { { 123, 5 }, { 456, 6 } });
+    Metric expected_escaped = new Metric("hpcs.compute", dimensions, 123345, new double[][] {
+        { 123, 5 }, { 456, 6 } });
+    Metric expected_nonescaped = new Metric("hpcs.compute", dimensions2, 123345, new double[][] {
+        { 123, 5 }, { 456, 6 } });
 
     Metric metric;
     metric = Metrics.fromJson(Metrics.toJson(expected_escaped).getBytes("UTF-8"));

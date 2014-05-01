@@ -13,9 +13,6 @@ import com.hpcloud.mon.common.model.alarm.AlarmOperator;
 import com.hpcloud.mon.common.model.alarm.AlarmSubExpression;
 import com.hpcloud.mon.common.model.metric.MetricDefinition;
 
-/**
- * @author Jonathan Halterman
- */
 @Test
 public class AlarmSubExpressionTest {
   public void shouldParseExpression() {

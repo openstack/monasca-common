@@ -15,9 +15,6 @@ import org.testng.annotations.Test;
 
 import com.google.inject.AbstractModule;
 
-/**
- * @author Jonathan Halterman
- */
 @Test
 public class TypesTest {
   static class TestClass {
@@ -51,6 +48,7 @@ public class TypesTest {
     assertEquals(Types.deProxy(Injector.getInstance(TestClass.class).getClass()), TestClass.class);
   }
 
+  @Test(enabled = false)
   public void shouldDeProxyJavassistProxy() {
     ProxyFactory proxyFactory = new ProxyFactory();
     proxyFactory.setSuperclass(ArrayList.class);

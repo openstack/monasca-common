@@ -8,9 +8,6 @@ import org.testng.annotations.Test;
 
 import com.hpcloud.util.time.TimeResolution;
 
-/**
- * @author Jonathan Halterman
- */
 @Test
 public class SlidingWindowStatsTest {
   public void testIndexOf() {

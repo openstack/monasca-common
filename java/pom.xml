@@ -36,17 +36,13 @@
   </scm>
 
   <modules>
-    <module>mon-collectd</module>
     <module>mon-dropwizard</module>
-    <module>mon-http</module>
-    <module>mon-messaging</module>
+    <module>mon-kafka</module>
     <module>mon-model</module>
     <module>mon-persistence</module>
-    <module>mon-service</module>
     <module>mon-streaming</module>
     <module>mon-testing</module>
     <module>mon-util</module>
-    <module>mon-kafka</module>
   </modules>
 
   <repositories>

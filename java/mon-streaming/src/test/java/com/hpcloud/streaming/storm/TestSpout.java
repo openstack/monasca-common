@@ -10,9 +10,6 @@ import backtype.storm.topology.base.BaseRichSpout;
 
 import com.hpcloud.streaming.storm.TupleDeserializer;
 
-/**
- * @author Jonathan Halterman
- */
 public class TestSpout extends BaseRichSpout {
   private static final long serialVersionUID = 849564133745588803L;
 

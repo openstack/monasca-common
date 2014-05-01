@@ -5,9 +5,6 @@ import static org.testng.Assert.assertEquals;
 import org.joda.time.DateTime;
 import org.testng.annotations.Test;
 
-/**
- * @author Jonathan Halterman
- */
 @Test
 public class TimesTest {
   public void shouldRoundDownToNearestMinute() {

@@ -11,9 +11,6 @@ import backtype.storm.generated.StormTopology;
 import com.google.common.base.Preconditions;
 import com.hpcloud.util.Injector;
 
-/**
- * @author Jonathan Halterman
- */
 @Test(groups = "integration")
 public class TopologyTestCase {
   public static final String TEST_TOPOLOGY_NAME = "test-maas-alarming";

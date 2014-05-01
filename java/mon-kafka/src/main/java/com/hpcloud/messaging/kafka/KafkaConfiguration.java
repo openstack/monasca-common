@@ -14,17 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.hpcloud.mon.common.model.alarm;
+package com.hpcloud.messaging.kafka;
 
-import org.antlr.v4.runtime.BaseErrorListener;
-import org.antlr.v4.runtime.RecognitionException;
-import org.antlr.v4.runtime.Recognizer;
+import org.hibernate.validator.constraints.NotEmpty;
 
-class AlarmExpressionErrorListener extends BaseErrorListener {
-  @Override
-  public void syntaxError(Recognizer<?, ?> recognizer, Object offendingSymbol, int line,
-      int charPositionInLine, String msg, RecognitionException e) {
-    throw new IllegalArgumentException(String.format("Syntax Error [%d] %s: %s",
-        charPositionInLine, msg, offendingSymbol));
-  }
+public class KafkaConfiguration {
+  @NotEmpty public String[] zookeeperUris;
+  @NotEmpty public String[] brokerUris;
+  @NotEmpty public String healthCheckTopic;
 }

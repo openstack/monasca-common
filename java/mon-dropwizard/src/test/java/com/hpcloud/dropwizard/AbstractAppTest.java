@@ -23,7 +23,6 @@ import com.google.common.collect.ImmutableMap;
 /**
  * Support class for testing applications. Starts and stops the server once for the test suite.
  * 
- * @author Jonathan Halterman
  * @param <C> configuration type
  */
 @Test

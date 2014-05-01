@@ -12,9 +12,6 @@ import org.testng.annotations.Test;
 import com.google.common.collect.ImmutableMap;
 import com.hpcloud.mon.common.model.metric.MetricDefinition;
 
-/**
- * @author Jonathan Halterman
- */
 @Test
 public class AlarmExpressionTest {
   public void shouldParseExpression() {

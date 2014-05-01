@@ -11,9 +11,6 @@ import com.hpcloud.util.stats.Statistics.Max;
 import com.hpcloud.util.stats.Statistics.Min;
 import com.hpcloud.util.stats.Statistics.Sum;
 
-/**
- * @author Jonathan Halterman
- */
 @Test
 public class StatisticsTest {
   @DataProvider(name = "metricTypes")
