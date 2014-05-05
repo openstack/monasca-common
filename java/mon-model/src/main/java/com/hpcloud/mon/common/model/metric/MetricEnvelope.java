@@ -26,6 +26,7 @@ import com.google.common.base.Preconditions;
 public class MetricEnvelope {
   public Metric metric;
   public Map<String, Object> meta;
+  public long creationTime;
 
   protected MetricEnvelope() {
   }
@@ -33,12 +34,12 @@ public class MetricEnvelope {
   public MetricEnvelope(Metric metric) {
     Preconditions.checkNotNull(metric, "metric");
     this.metric = metric;
+    this.creationTime = System.currentTimeMillis();
   }
 
   public MetricEnvelope(Metric metric, Map<String, Object> meta) {
-    Preconditions.checkNotNull(metric, "metric");
+    this(metric);
     Preconditions.checkNotNull(meta, "meta");
-    this.metric = metric;
     this.meta = meta;
   }
 }
