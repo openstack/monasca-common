@@ -66,7 +66,7 @@ public class MetricDefinition implements Serializable {
   public int hashCode() {
     final int prime = 31;
     int result = 1;
-    result = prime * result + ((dimensions == null) ? 0 : dimensions.hashCode());
+    result = prime * result + ((dimensions == null) || dimensions.isEmpty() ? 0 : dimensions.hashCode());
     result = prime * result + ((name == null) ? 0 : name.hashCode());
     return result;
   }
