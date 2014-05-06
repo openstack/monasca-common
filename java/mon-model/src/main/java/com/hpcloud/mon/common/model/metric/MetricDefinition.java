@@ -49,8 +49,8 @@ public class MetricDefinition implements Serializable {
     if (getClass() != obj.getClass())
       return false;
     MetricDefinition other = (MetricDefinition) obj;
-    if (dimensions == null) {
-      if (other.dimensions != null)
+    if ((dimensions == null) || dimensions.isEmpty()) {
+      if ((other.dimensions != null) && !other.dimensions.isEmpty())
         return false;
     } else if (!dimensions.equals(other.dimensions))
       return false;
