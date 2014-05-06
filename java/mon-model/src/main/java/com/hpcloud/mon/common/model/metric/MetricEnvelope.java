@@ -34,7 +34,7 @@ public class MetricEnvelope {
   public MetricEnvelope(Metric metric) {
     Preconditions.checkNotNull(metric, "metric");
     this.metric = metric;
-    this.creationTime = System.currentTimeMillis();
+    this.creationTime = System.currentTimeMillis()/1000;
   }
 
   public MetricEnvelope(Metric metric, Map<String, Object> meta) {
