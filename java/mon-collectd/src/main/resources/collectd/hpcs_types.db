@@ -1,9 +1,0 @@
-tail_counter_default    value:COUNTER:U:U
-tail_counter_io         value:COUNTER:U:U
-tail_counter_stacked    value:COUNTER:U:U
-tail_derive_default     value:DERIVE:0:U
-tail_derive_io          value:DERIVE:0:U
-tail_derive_stacked     value:DERIVE:0:U
-tail_gauge_default      value:GAUGE:0:U
-tail_gauge_io           value:GAUGE:0:U
-tail_gauge_stacked      value:GAUGE:0:U
