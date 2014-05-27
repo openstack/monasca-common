@@ -213,7 +213,7 @@ public class SlidingWindowStats {
       windowEndTimestamp += slotWidth;
     }
 
-    viewEndTimestamp = timestamp;
+    viewEndTimestamp = viewEndTimestamp + slotsToAdvance * slotWidth;
   }
 
   /**
