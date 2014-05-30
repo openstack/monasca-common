@@ -36,11 +36,14 @@ public class AlarmUpdatedEvent implements Serializable {
   public String alarmDescription;
   public String alarmExpression;
   public AlarmState alarmState;
+  public AlarmState oldAlarmState;
   public boolean alarmActionsEnabled;
   /** Sub expressions which have been removed from the updated alarm expression. */
   public Map<String, AlarmSubExpression> oldAlarmSubExpressions;
   /** Sub expressions which have had their operator or threshold changed. */
   public Map<String, AlarmSubExpression> changedSubExpressions;
+  /** Sub expressions which have not changed. */
+  public Map<String, AlarmSubExpression> unchangedSubExpressions;
   /** Sub expressions which have been added to the updated alarm expression. */
   public Map<String, AlarmSubExpression> newAlarmSubExpressions;
 
@@ -49,8 +52,10 @@ public class AlarmUpdatedEvent implements Serializable {
 
   public AlarmUpdatedEvent(String tenantId, String alarmId, String alarmName,
       String alarmDescription, String alarmExpression, AlarmState alarmState,
-      boolean alarmActionsEnabled, Map<String, AlarmSubExpression> oldAlarmSubExpressions,
+      AlarmState oldAlarmState, boolean alarmActionsEnabled,
+      Map<String, AlarmSubExpression> oldAlarmSubExpressions,
       Map<String, AlarmSubExpression> changedSubExpressions,
+      Map<String, AlarmSubExpression> unchangedSubExpressions,
       Map<String, AlarmSubExpression> newAlarmSubExpressions) {
     this.tenantId = tenantId;
     this.alarmId = alarmId;
@@ -58,9 +63,11 @@ public class AlarmUpdatedEvent implements Serializable {
     this.alarmDescription = alarmDescription;
     this.alarmExpression = alarmExpression;
     this.alarmState = alarmState;
+    this.oldAlarmState = oldAlarmState;
     this.alarmActionsEnabled = alarmActionsEnabled;
     this.oldAlarmSubExpressions = oldAlarmSubExpressions;
     this.changedSubExpressions = changedSubExpressions;
+    this.unchangedSubExpressions = unchangedSubExpressions;
     this.newAlarmSubExpressions = newAlarmSubExpressions;
   }
 

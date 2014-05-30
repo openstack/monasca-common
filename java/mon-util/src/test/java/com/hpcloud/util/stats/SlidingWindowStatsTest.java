@@ -259,11 +259,11 @@ public class SlidingWindowStatsTest {
     SlidingWindowStats smallWindow = new SlidingWindowStats(Statistics.Sum.class,
         TimeResolution.ABSOLUTE, 5, 3, 2, 20);
     assertEquals(smallWindow.toString(),
-        "SlidingWindowStats [(5=NaN, 10=NaN, 15=NaN), 20=NaN, 25=NaN]");
+        "SlidingWindowStats timescale = ABSOLUTE slotWidth = 5 viewEndTimestamp = 20 slotEndTimestamp = 20 [(5=NaN, 10=NaN, 15=NaN), 20=NaN, 25=NaN]");
 
     SlidingWindowStats bigWindow = new SlidingWindowStats(Statistics.Sum.class,
         TimeResolution.ABSOLUTE, 10, 10, 2, 50);
     assertEquals(bigWindow.toString(),
-        "SlidingWindowStats [(... 20=NaN, 30=NaN, 40=NaN), 50=NaN, 60=NaN]");
+        "SlidingWindowStats timescale = ABSOLUTE slotWidth = 10 viewEndTimestamp = 50 slotEndTimestamp = 50 [(... 20=NaN, 30=NaN, 40=NaN), 50=NaN, 60=NaN]");
   }
 }

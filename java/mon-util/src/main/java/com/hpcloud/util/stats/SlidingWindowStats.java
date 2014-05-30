@@ -224,7 +224,9 @@ public class SlidingWindowStats {
     final int viewSlotsToDisplay = 3;
 
     StringBuilder b = new StringBuilder();
-    b.append("SlidingWindowStats [(");
+    b.append("SlidingWindowStats ");
+    b.append(String.format("timescale = %s slotWidth = %d viewEndTimestamp = %d slotEndTimestamp = %d [(",
+                           timescale, slotWidth, viewEndTimestamp, slotEndTimestamp));
     int startIndex = numViewSlots > viewSlotsToDisplay ? numViewSlots - viewSlotsToDisplay : 0;
     if (startIndex != 0)
       b.append("... ");
