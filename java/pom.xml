@@ -5,7 +5,7 @@
   <groupId>com.hpcloud</groupId>
   <artifactId>mon-common</artifactId>
   <version>${computedVersion}</version>
-  <url>http://hpcloud.net</url>
+  <url>http://github.com/hpcloud-mon/mon-thresh</url>
   <packaging>pom</packaging>
 
   <prerequisites>
@@ -17,22 +17,14 @@
     <versionNumber>1.0.0</versionNumber>
     <computedVersion>${versionNumber}-SNAPSHOT</computedVersion>
 
-    <!-- Auto versioning and deployment -->
-    <snapshotRepoUrl>http://nexus.paas.hpcloud.net:8081/nexus/content/repositories/snapshots/</snapshotRepoUrl>
-    <releaseRepoUrl>http://nexus.paas.hpcloud.net:8081/nexus/content/repositories/releases/</releaseRepoUrl>
-    <snapshotRepoId>nexus</snapshotRepoId>
-    <releaseRepoId>nexus</releaseRepoId>
-    <deployRepoId>${snapshotRepoId}</deployRepoId>
-    <deployRepoUrl>${snapshotRepoUrl}</deployRepoUrl>
-
     <skipITs>true</skipITs>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
   </properties>
 
   <scm>
-    <connection>scm:git:git@git.hpcloud.net:mon/mon-common.git</connection>
-    <developerConnection>scm:git:git@git.hpcloud.net:mon/mon-common.git</developerConnection>
+    <connection>scm:git:git@github.com:hpcloud-mon/mon-common</connection>
+    <developerConnection>scm:git:git@github.com:hpcloud-mon/mon-common</developerConnection>
   </scm>
 
   <modules>
@@ -45,35 +37,6 @@
     <module>mon-util</module>
   </modules>
 
-  <repositories>
-    <repository>
-      <id>ps-snapshots</id>
-      <url>${snapshotRepoUrl}</url>
-    </repository>
-    <repository>
-      <id>ps-releases</id>
-      <url>${releaseRepoUrl}</url>
-    </repository>
-    <repository>
-      <id>ps-3rd-party</id>
-      <url>http://nexus.paas.hpcloud.net:8081/nexus/content/repositories/thirdparty</url>
-    </repository>
-  </repositories>
-
-
-  <distributionManagement>
-    <snapshotRepository>
-      <id>${snapshotRepoId}</id>
-      <name>Snapshots Repo</name>
-      <url>${snapshotRepoUrl}</url>
-    </snapshotRepository>
-    <repository>
-      <id>${releaseRepoId}</id>
-      <name>Release Repo</name>
-      <url>${releaseRepoUrl}</url>
-    </repository>
-  </distributionManagement>
-
   <profiles>
     <profile>
       <id>release-deploy-url-override</id>
@@ -83,10 +46,7 @@
         </property>
       </activation>
       <properties>
-        <deployRepoId>${releaseRepoId}</deployRepoId>
-        <deployRepoUrl>${releaseRepoUrl}</deployRepoUrl>
-        <isRelease>true</isRelease>
-        <computedVersion>${versionNumber}.${BUILD_NUM}</computedVersion>
+        <computedVersion>${project.version}</computedVersion>
       </properties>
     </profile>
   </profiles>
@@ -196,33 +156,6 @@
               <file>target/pom-install-deploy-fix/pom.xml</file>
               <pomFile>target/pom-install-deploy-fix/pom.xml</pomFile>
               <version>${project.version}</version>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-deploy-plugin</artifactId>
-        <version>2.8.1</version>
-        <configuration>
-          <updateReleaseInfo>${isRelease}</updateReleaseInfo>
-        </configuration>
-        <executions>
-          <execution>
-            <id>overwrite-pom</id>
-            <phase>deploy</phase>
-            <goals>
-              <goal>deploy-file</goal>
-            </goals>
-            <configuration>
-              <packaging>pom</packaging>
-              <file>target/pom-install-deploy-fix/pom.xml</file>
-              <pomFile>target/pom-install-deploy-fix/pom.xml</pomFile>
-              <repositoryId>${deployRepoId}</repositoryId>
-              <url>${deployRepoUrl}</url>
-              <version>${project.version}</version>
-              <updateReleaseInfo>${isRelease}</updateReleaseInfo>
-              <uniqueVersion>false</uniqueVersion>
             </configuration>
           </execution>
         </executions>
