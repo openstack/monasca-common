@@ -2,6 +2,13 @@
 
 `mon-common` is a collection of sub-projects containing reusable application and platform code for building monitoring related services.
 
+### Build Instructions
+Download and do mvn install from within the java directory.
+```
+cd java
+mvn clean install
+```
+
 ### Application Specific Sub-Projects
 
 * [mon-model](https://git.hpcloud.net/mon/mon-common/tree/master/java/mon-model) - Common domain and event models for monitoring services.
