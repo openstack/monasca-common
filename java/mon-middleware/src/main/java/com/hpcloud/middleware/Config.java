@@ -118,14 +118,14 @@ public class Config implements AuthConstants {
       adminAuthMethod = getValue(ADMIN_AUTH_METHOD, "");
       adminProjectId = getValue(ADMIN_PROJECT_ID, "");
       timeToCacheToken = getValue(TIME_TO_CACHE_TOKEN, 600);
-      long maxTokenCacheTime = getValue(MAX_TOKEN_CACHE_SIZE, 1048576);
+      long maxTokenCacheSize = getValue(MAX_TOKEN_CACHE_SIZE, 1048576);
 
       this.factory = AuthClientFactory.build(host, port, timeout,
-        clientAuth, null, null, trustStore, trustPass,
+        clientAuth, null, null, null, null,
         maxActive, maxIdle, evictPeriod, minIdleTime, adminToken);
 
       verifyRequiredParamsForAuthMethod();
-      this.client = new TokenCache<>(timeToCacheToken, timeToCacheToken, map);
+      this.client = new TokenCache<>(timeToCacheToken, maxTokenCacheSize, map);
       logger.info("Auth host (2-way SSL: " + clientAuth + "): " + host);
       logger.info("Read Servlet Initialization Parameters ");
       initialized = true;

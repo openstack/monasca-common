@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.apache.thrift.TException;
+import com.google.common.util.concurrent.UncheckedExecutionException;
 
 public enum TokenExceptionHandler {
 
@@ -61,7 +62,23 @@ public enum TokenExceptionHandler {
           + ie.getMessage() + " " + ie);
       }
     }
-  },
+  },UncheckedExecutionException {
+    @Override
+    public void onException(Exception e, ServletResponse resp, String token) {
+      UncheckedExecutionException t = (UncheckedExecutionException) e;
+      logger.error("Http Client Exception " + t.getMessage() + " " + t);
+      try {
+        ((HttpServletResponse) resp).sendError(
+          HttpServletResponse.SC_UNAUTHORIZED,
+          ExceptionHandlerUtil.getStatusText(HttpServletResponse.SC_UNAUTHORIZED)
+            + " " + token);
+      } catch (IOException ie) {
+        logger.debug("Error in writing the HTTP response "
+          + ie.getMessage() + " " + ie);
+      }
+    }
+  }
+  ,
   AuthException {
     @Override
     public void onException(Exception e, ServletResponse resp, String token) {
@@ -83,7 +100,7 @@ public enum TokenExceptionHandler {
   }, ServiceUnavailableException {
     @Override
     public void onException(Exception e, ServletResponse resp, String token) {
-      AuthException ae = (AuthException) e;
+      ServiceUnavailableException ae = (ServiceUnavailableException) e;
       logger.error(ae.getMessage() + " " + ae);
       String statusText = ae.getMessage();
       if (statusText == null || statusText.isEmpty()) {

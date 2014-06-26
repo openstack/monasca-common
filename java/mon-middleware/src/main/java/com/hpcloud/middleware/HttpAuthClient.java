@@ -169,7 +169,7 @@ public class HttpAuthClient implements AuthClient {
 
 		}catch(ConnectException c) {
       get.abort();
-      throw new UnavailableException(c.getMessage());
+      throw new ServiceUnavailableException(c.getMessage());
     }
     catch (IOException e) {
 			get.abort();

@@ -1,7 +1,6 @@
 package com.hpcloud.middleware;
 
 import java.io.IOException;
-import org.apache.http.client.ClientProtocolException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,6 +13,8 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.common.util.concurrent.UncheckedExecutionException;
+import org.apache.http.client.ClientProtocolException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,7 +39,7 @@ import org.slf4j.LoggerFactory;
  * @author liemmn
  * 
  */
-public class TokenAuth implements Filter, AuthConstants {
+public class TokenAuth implements Filter, com.hpcloud.middleware.AuthConstants {
 
 	private static final String TOKEN_NOTFOUND = "Bad Request: Token not found in the request";
 	private static final String SERVICE_IDS_PARAM = "serviceIds";
@@ -46,7 +47,7 @@ public class TokenAuth implements Filter, AuthConstants {
 	private static final String SERVICE_CATALOG_PARAM = "includeCatalog";
 	private static final String API_VERSION_PARAM = "apiVersion";
 
-  private final Config appConfig = Config.getInstance();
+  private final com.hpcloud.middleware.Config appConfig = Config.getInstance();
 	
 	private FilterConfig filterConfig;
 
@@ -98,12 +99,21 @@ public class TokenAuth implements Filter, AuthConstants {
       do {
         try {
           auth = FilterUtils.getCachedToken(token);
-        }catch(UnavailableException e) {
-          TokenExceptionHandler handler = TokenExceptionHandler
-            .valueOf("UnavailableException");
-          handler.onException(e,resp,token);
-        }
-        catch(ClientProtocolException e) {
+        }catch(ServiceUnavailableException e) {
+          if (numberOfTries < retries) {
+            FilterUtils.pause(pauseTime);
+            logger.debug("Retrying connection after "
+              + pauseTime + " seconds.");
+            numberOfTries++;
+            continue;
+          } else {
+            logger.debug("Exhausted retries..");
+            TokenExceptionHandler handler = TokenExceptionHandler
+              .valueOf("ServiceUnavailableException");
+            handler.onException(e, resp, token);
+          }
+          return;
+        } catch(ClientProtocolException e) {
           if (numberOfTries < retries) {
             FilterUtils.pause(pauseTime);
             logger.debug("Retrying connection after "
@@ -117,7 +127,13 @@ public class TokenAuth implements Filter, AuthConstants {
             handler.onException(e, resp, token);
           }
           return;
+        } catch (UncheckedExecutionException e) {
+          TokenExceptionHandler handler = TokenExceptionHandler
+            .valueOf("UncheckedExecutionException");
+          handler.onException(e, resp, token);
+          return;
         }
+
 
       }while(auth==null && numberOfTries<=retries);
     }
