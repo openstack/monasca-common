@@ -1,0 +1,16 @@
+.swp
+*.iml
+.DS_Store
+.cache
+.classpath
+.idea
+.project
+.target/
+debs/*
+.settings/
+target/
+test-output/
+logs/
+log/
+*config*.yml
+db/config.yml
