@@ -35,6 +35,7 @@
     <module>mon-streaming</module>
     <module>mon-testing</module>
     <module>mon-util</module>
+    <module>mon-middleware</module>
   </modules>
 
   <profiles>
