@@ -73,7 +73,7 @@ public class TokenAuth implements Filter, com.hpcloud.middleware.AuthConstants {
   public void doFilter(ServletRequest req, ServletResponse resp,
                        FilterChain chain) throws IOException, ServletException {
     // According to CORS spec OPTIONS method does not pass auth info
-    if (((HttpServletRequest) req).getMethod().equals("OPTIONS")) {
+    if (req.getMethod().equals("OPTIONS")) {
       chain.doFilter(req, resp);
       return;
     }
