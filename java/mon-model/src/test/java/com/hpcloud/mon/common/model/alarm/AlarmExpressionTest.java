@@ -14,26 +14,52 @@ import com.hpcloud.mon.common.model.metric.MetricDefinition;
 
 @Test
 public class AlarmExpressionTest {
-  public void shouldParseExpression() {
-    AlarmExpression expr = new AlarmExpression(
-        "avg(hpcs.compute{instance_id=5,metric_name=cpu,device=1}, 1) > 5 times 3 and avg(hpcs.compute{flavor_id=3,metric_name=mem}, 2) < 4 times 3");
-    List<AlarmSubExpression> alarms = expr.getSubExpressions();
+    public void shouldParseExpression() {
+        AlarmExpression expr = new AlarmExpression(
+                "avg(hpcs.compute{instance_id=5,metric_name=cpu,device=1}, 1) > 5 times 3 and avg(hpcs.compute{flavor_id=3,metric_name=mem}, 2) < 4 times 3");
+        List<AlarmSubExpression> alarms = expr.getSubExpressions();
 
-    AlarmSubExpression expected1 = new AlarmSubExpression(AggregateFunction.AVG,
-        new MetricDefinition("hpcs.compute", ImmutableMap.<String, String>builder()
-            .put("instance_id", "5")
-            .put("metric_name", "cpu")
-            .put("device", "1")
-            .build()), AlarmOperator.GT, 5, 1, 3);
-    AlarmSubExpression expected2 = new AlarmSubExpression(AggregateFunction.AVG,
-        new MetricDefinition("hpcs.compute", ImmutableMap.<String, String>builder()
-            .put("flavor_id", "3")
-            .put("metric_name", "mem")
-            .build()), AlarmOperator.LT, 4, 2, 3);
+        AlarmSubExpression expected1 = new AlarmSubExpression(AggregateFunction.AVG,
+                new MetricDefinition("hpcs.compute", ImmutableMap.<String, String>builder()
+                        .put("instance_id", "5")
+                        .put("metric_name", "cpu")
+                        .put("device", "1")
+                        .build()), AlarmOperator.GT, 5, 1, 3);
+        AlarmSubExpression expected2 = new AlarmSubExpression(AggregateFunction.AVG,
+                new MetricDefinition("hpcs.compute", ImmutableMap.<String, String>builder()
+                        .put("flavor_id", "3")
+                        .put("metric_name", "mem")
+                        .build()), AlarmOperator.LT, 4, 2, 3);
 
-    assertEquals(alarms.get(0), expected1);
-    assertEquals(alarms.get(1), expected2);
-  }
+        assertEquals(alarms.get(0), expected1);
+        assertEquals(alarms.get(1), expected2);
+    }
+
+    public void shouldParseString() {
+
+
+        AlarmExpression expr = new AlarmExpression(
+                "avg(hpcs.compute{instance_id=5,metric_name=cpu,device=1, url=\"https://www.google.com/?startpage=3&happygoing\"}, 1) > 5 times 3 and avg(hpcs.compute{flavor_id=3,metric_name=mem, specialchars=\"!@#$%^&*()~<>{}[],.\"}, 2) < 4 times 3");
+        List<AlarmSubExpression> alarms = expr.getSubExpressions();
+
+        AlarmSubExpression expected1 = new AlarmSubExpression(AggregateFunction.AVG,
+                new MetricDefinition("hpcs.compute", ImmutableMap.<String, String>builder()
+                        .put("instance_id", "5")
+                        .put("metric_name", "cpu")
+                        .put("url","\"https://www.google.com/?startpage=3&happygoing\"" )
+                        .put("device", "1")
+                        .build()), AlarmOperator.GT, 5, 1, 3);
+
+        AlarmSubExpression expected2 = new AlarmSubExpression(AggregateFunction.AVG,
+                new MetricDefinition("hpcs.compute", ImmutableMap.<String, String>builder()
+                        .put("flavor_id", "3")
+                        .put("metric_name", "mem")
+                        .put("specialchars","\"!@#$%^&*()~<>{}[],.\"")
+                        .build()), AlarmOperator.LT, 4, 2, 3);
+
+        assertEquals(alarms.get(0), expected1);
+        assertEquals(alarms.get(1), expected2);
+    }
 
   public void shouldParseExpressionWithoutType() {
     AlarmExpression expr = new AlarmExpression(
