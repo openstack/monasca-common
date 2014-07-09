@@ -111,6 +111,7 @@ ext_identifier
 	| EXT_IDENTIFIER
     | INTEGER
     | keyword
+    | STRING
 	;
 
 keyword
@@ -218,6 +219,10 @@ IDENTIFIER
 EXT_IDENTIFIER
   : (LETTER|DIGIT|UNDERSCORE|DASH|PERIOD)+
   ;
+
+STRING
+  : '"' .*? '"'
+  ; 
 
 fragment
 LETTER
