@@ -23,8 +23,8 @@
   </properties>
 
   <scm>
-    <connection>scm:git:git@github.com:hpcloud-mon/mon-common</connection>
-    <developerConnection>scm:git:git@github.com:hpcloud-mon/mon-common</developerConnection>
+    <connection>scm:git:git@github.com:stackforge/monasca-common</connection>
+    <developerConnection>scm:git:git@github.com:stackforge/monasca-common</developerConnection>
   </scm>
 
   <modules>
