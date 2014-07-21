@@ -36,6 +36,7 @@
     <module>mon-testing</module>
     <module>mon-util</module>
     <module>mon-middleware</module>
+    <module>mon-influxdb</module>
   </modules>
 
   <profiles>
@@ -113,7 +114,7 @@
           <tag>${project.version}</tag>
         </configuration>
       </plugin>
-      <!-- Resources, Install and Deploy configuration enable variable replacement on deployment. From 
+      <!-- Resources, Install and Deploy configuration enable variable replacement on deployment. From
         http://www.axelfontaine.com/2011/01/maven-releases-on-steroids-2-preparing.html -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
