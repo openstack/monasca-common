@@ -11,7 +11,7 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.hpcloud.mon.infrastructure.persistence.influxdb;
+package com.hpcloud.configuration;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.hpcloud.mon.persister.configuration;
+package com.hpcloud.configuration;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
