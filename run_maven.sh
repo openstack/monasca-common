@@ -14,4 +14,9 @@ shift
 
 # Invoke the maven 3 on the real pom.xml
 ( cd java; ${MVN} $* )
+
+# Copy the jars where the publisher will find them
+mkdir -p target
+cp java/*/target/*.jar target
+
 rm -fr apache-maven-3.2.1*

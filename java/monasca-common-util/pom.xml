@@ -2,11 +2,11 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>com.hpcloud</groupId>
-    <artifactId>mon-common</artifactId>
+    <groupId>monasca-common</groupId>
+    <artifactId>monasca-common</artifactId>
     <version>${computedVersion}</version>
   </parent>
-  <artifactId>mon-util</artifactId>
+  <artifactId>monasca-common-util</artifactId>
   <packaging>jar</packaging>
 
   <properties>
@@ -89,8 +89,8 @@
 
     <!-- Test dependencies -->
     <dependency>
-      <groupId>com.hpcloud</groupId>
-      <artifactId>mon-testing</artifactId>
+      <groupId>monasca-common</groupId>
+      <artifactId>monasca-common-testing</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>

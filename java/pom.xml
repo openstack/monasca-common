@@ -2,10 +2,10 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>com.hpcloud</groupId>
-  <artifactId>mon-common</artifactId>
+  <groupId>monasca-common</groupId>
+  <artifactId>monasca-common</artifactId>
   <version>${computedVersion}</version>
-  <url>http://github.com/hpcloud-mon/mon-thresh</url>
+  <url>http://github.com/stackforge/monasca-common</url>
   <packaging>pom</packaging>
 
   <prerequisites>
@@ -28,15 +28,15 @@
   </scm>
 
   <modules>
-    <module>mon-dropwizard</module>
-    <module>mon-kafka</module>
-    <module>mon-model</module>
-    <module>mon-persistence</module>
-    <module>mon-streaming</module>
-    <module>mon-testing</module>
-    <module>mon-util</module>
-    <module>mon-middleware</module>
-    <module>mon-influxdb</module>
+    <module>monasca-common-dropwizard</module>
+    <module>monasca-common-kafka</module>
+    <module>monasca-common-model</module>
+    <module>monasca-common-persistence</module>
+    <module>monasca-common-streaming</module>
+    <module>monasca-common-testing</module>
+    <module>monasca-common-util</module>
+    <module>monasca-common-middleware</module>
+    <module>monasca-common-influxdb</module>
   </modules>
 
   <profiles>
