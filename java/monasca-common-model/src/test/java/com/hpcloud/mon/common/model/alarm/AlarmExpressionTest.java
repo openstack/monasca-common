@@ -69,7 +69,7 @@ public class AlarmExpressionTest {
         List<AlarmSubExpression> alarms = expr.getSubExpressions();
 
 
-        AlarmExpression containsDirectories = new AlarmExpression("avg(hpcs.compute{instance_id=5,metric_name=cpu,device=1,global=$_globalVariable,special=__useSparingly,dos=C:\\system32\\}, 1) > 5 times 3 and avg(hpcs.compute{flavor_id=3,metric_name=mem,$globalVariable=global,__useSparingly=special,unix=/opt/vertica/bin/}, 2) < 4 times 3");
+        AlarmExpression containsDirectories = new AlarmExpression("avg(hpcs.compute{instance_id=5,metric_name=cpu,device=1,global=$_globalVariable,special=__useSparingly,dos=\\system32\\, windows=C:\\system32\\}, 1) > 5 times 3 and avg(hpcs.compute{flavor_id=3,metric_name=mem,$globalVariable=global,__useSparingly=special,unix=/opt/vertica/bin/}, 2) < 4 times 3");
         List<AlarmSubExpression> alarmsContainsDirectories = containsDirectories.getSubExpressions();
 
         AlarmSubExpression expected1 = new AlarmSubExpression(AggregateFunction.AVG,
@@ -94,7 +94,8 @@ public class AlarmExpressionTest {
                         .put("device", "1")
                         .put("global", "$_globalVariable")
                         .put("special", "__useSparingly")
-                        .put("dos", "C:\\system32\\")
+                        .put("dos", "\\system32\\")
+                        .put("windows", "C:\\system32\\")
                         .build()), AlarmOperator.GT, 5, 1, 3);
 
         AlarmSubExpression expected4 = new AlarmSubExpression(AggregateFunction.AVG,
