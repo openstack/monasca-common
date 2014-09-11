@@ -11,11 +11,11 @@
       </run>
     </groups>
     <packages>
-      <package name="com.hpcloud.*" />
+      <package name="monasca.*" />
     </packages>
   </test>
 
   <listeners>
-    <!-- <listener class-name="com.hpcloud.LoggingListener" /> -->
+    <!-- <listener class-name="monasca.LoggingListener" /> -->
   </listeners>
 </suite>

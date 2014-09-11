@@ -1,0 +1,33 @@
+# See http://kafkaapacheorg/documentationhtml#api for semantics and defaults
+
+# Required
+metadataBrokerList: localhost:9092
+
+# Required
+requestRequiredAcks: 	1
+
+#requestTimeoutMs:
+
+# Required
+# async | sync
+producerType: 	sync
+
+# Required
+serializerClass: kafkaserializerStringEncoder
+
+#keyserializerclass:
+
+#Required
+partitionerClass: monascaSimplePartitioner
+
+#compressionCodec:
+#compressedTopics :
+#messageSendMaxRetries:
+#retryBackoffMs:
+#topicMetadataRefreshIntervalMs:
+#queueBufferingMaxMs:
+#queueBufferingMaxMessages:
+#queueEnqueueTimeoutMs:
+#batchNumMessages:
+#sendBufferBytes:
+#clientId:
