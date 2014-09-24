@@ -2,18 +2,16 @@ package com.hpcloud.persistence;
 
 /*
  * Copyright 2004 - 2011 Brian McCallister
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License. You may obtain a copy of the License at
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the License
+ * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing permissions and limitations under
+ * the License.
  */
 
 import java.beans.BeanInfo;
@@ -28,8 +26,10 @@ import java.sql.SQLException;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.sql.Types;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.joda.time.DateTime;
@@ -39,6 +39,9 @@ import org.joda.time.format.ISODateTimeFormat;
 import org.skife.jdbi.v2.StatementContext;
 import org.skife.jdbi.v2.tweak.ResultSetMapper;
 
+import com.google.common.base.Splitter;
+import com.google.common.base.Strings;
+
 /**
  * A result set mapper which maps the fields in a statement into a JavaBean. This uses the JDK's
  * built in bean mapping facilities, so it does not support nested properties.
@@ -47,11 +50,13 @@ import org.skife.jdbi.v2.tweak.ResultSetMapper;
  * Additionally this bean mapper maps pascal case named columns to camel case named bean properties.
  */
 public class BeanMapper<T> implements ResultSetMapper<T> {
+  private static final Splitter COMMA_SPLITTER = Splitter.on(',').trimResults();
   public static final DateTimeFormatter DATETIME_FORMATTER = ISODateTimeFormat.dateTimeNoMillis()
       .withZoneUTC();
 
   private final Class<T> type;
-  private final Map<String, PropertyDescriptor> properties = new HashMap<String, PropertyDescriptor>();
+  private final Map<String, PropertyDescriptor> properties =
+      new HashMap<String, PropertyDescriptor>();
 
   public BeanMapper(Class<T> type) {
     this.type = type;
@@ -78,7 +83,7 @@ public class BeanMapper<T> implements ResultSetMapper<T> {
     return sb.toString();
   }
 
-  @SuppressWarnings({ "rawtypes", "unchecked" })
+  @SuppressWarnings({"rawtypes", "unchecked"})
   public T map(int row, ResultSet rs, StatementContext ctx) throws SQLException {
     T bean;
     try {
@@ -132,6 +137,11 @@ public class BeanMapper<T> implements ResultSetMapper<T> {
             value = DATETIME_FORMATTER.print(rs.getTimestamp(i).getTime());
           else
             value = rs.getString(i);
+        } else if (type.isAssignableFrom(List.class)) {
+          String commaStr = rs.getString(i);
+          value =
+              Strings.isNullOrEmpty(commaStr) ? Collections.emptyList() : COMMA_SPLITTER
+                  .splitToList(commaStr);
         } else {
           value = rs.getObject(i);
         }

@@ -46,11 +46,11 @@ public class MetricDefinition implements Serializable {
       return true;
     if (obj == null)
       return false;
-    if (getClass() != obj.getClass())
+    if (!(obj instanceof MetricDefinition))
       return false;
     MetricDefinition other = (MetricDefinition) obj;
-    if ((dimensions == null) || dimensions.isEmpty()) {
-      if ((other.dimensions != null) && !other.dimensions.isEmpty())
+    if (dimensions == null) {
+      if (other.dimensions != null)
         return false;
     } else if (!dimensions.equals(other.dimensions))
       return false;
@@ -66,7 +66,7 @@ public class MetricDefinition implements Serializable {
   public int hashCode() {
     final int prime = 31;
     int result = 1;
-    result = prime * result + ((dimensions == null) || dimensions.isEmpty() ? 0 : dimensions.hashCode());
+    result = prime * result + ((dimensions == null) ? 0 : dimensions.hashCode());
     result = prime * result + ((name == null) ? 0 : name.hashCode());
     return result;
   }

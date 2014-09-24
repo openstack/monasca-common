@@ -1,27 +1,26 @@
 /*
  * Copyright (c) 2014 Hewlett-Packard Development Company, L.P.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
- * implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the License
+ * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing permissions and limitations under
+ * the License.
  */
 package com.hpcloud.mon.common.model.metric;
 
 import java.io.Serializable;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Preconditions;
 
 import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
+
 import java.util.Arrays;
 import java.util.Map;
 
@@ -29,7 +28,6 @@ import java.util.Map;
  * Metric with definition information flattened alongside value information.
  */
 public class Metric implements Serializable {
-
   private static final long serialVersionUID = 3455749495426525634L;
 
   public String name;
@@ -39,8 +37,7 @@ public class Metric implements Serializable {
   public double[][] timeValues = null;
   private MetricDefinition definition;
 
-  public Metric() {
-  }
+  public Metric() {}
 
   public Metric(@NotNull MetricDefinition definition, long timestamp, double value) {
     this.definition = Preconditions.checkNotNull(definition, "definition");
@@ -58,7 +55,7 @@ public class Metric implements Serializable {
   }
 
   public Metric(String name, @Nullable Map<String, String> dimensions, long timestamp,
-                double[][] timeValues) {
+      double[][] timeValues) {
     this.name = Preconditions.checkNotNull(name, "name");
     setDimensions(dimensions);
     this.timestamp = Preconditions.checkNotNull(timestamp, "timestamp");
@@ -76,13 +73,9 @@ public class Metric implements Serializable {
 
   @Override
   public String toString() {
-    return "Metric{" +
-      "name='" + name + '\'' +
-      ", dimensions=" + dimensions +
-      ", timeStamp='" + timestamp + '\'' +
-      ", value=" + value +
-      ", timeValues=" + Arrays.toString(timeValues) +
-      '}';
+    return "Metric{" + "name='" + name + '\'' + ", dimensions=" + dimensions + ", timeStamp='"
+        + timestamp + '\'' + ", value=" + value + ", timeValues=" + Arrays.toString(timeValues)
+        + '}';
   }
 
   @Override
@@ -91,9 +84,14 @@ public class Metric implements Serializable {
       return true;
     if (obj == null)
       return false;
-    if (getClass() != obj.getClass())
+    if (!(obj instanceof Metric))
       return false;
     Metric other = (Metric) obj;
+    if (definition == null) {
+      if (other.definition != null)
+        return false;
+    } else if (!definition.equals(other.definition))
+      return false;
     if (dimensions == null) {
       if (other.dimensions != null)
         return false;
@@ -104,7 +102,6 @@ public class Metric implements Serializable {
         return false;
     } else if (!name.equals(other.name))
       return false;
-    // Note - Deep Equals is used here
     if (!Arrays.deepEquals(timeValues, other.timeValues))
       return false;
     if (timestamp != other.timestamp)
@@ -118,10 +115,10 @@ public class Metric implements Serializable {
   public int hashCode() {
     final int prime = 31;
     int result = 1;
+    result = prime * result + ((definition == null) ? 0 : definition.hashCode());
     result = prime * result + ((dimensions == null) ? 0 : dimensions.hashCode());
     result = prime * result + ((name == null) ? 0 : name.hashCode());
-    // Note Deep hash code is used here
-    result = prime * result + Arrays.deepHashCode(timeValues);
+    result = prime * result + Arrays.hashCode(timeValues);
     result = prime * result + (int) (timestamp ^ (timestamp >>> 32));
     long temp;
     temp = Double.doubleToLongBits(value);
