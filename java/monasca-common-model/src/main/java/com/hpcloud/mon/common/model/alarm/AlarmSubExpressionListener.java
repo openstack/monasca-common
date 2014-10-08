@@ -30,7 +30,7 @@ class AlarmSubExpressionListener extends AlarmExpressionBaseListener {
   private final boolean simpleExpression;
   private AggregateFunction function;
   private String namespace;
-  private SortedMap<String, String> dimensions;
+  private SortedMap<String, String> dimensions = new TreeMap<String, String>();
   private AlarmOperator operator;
   private double threshold;
   private int period = AlarmSubExpression.DEFAULT_PERIOD;
@@ -48,7 +48,7 @@ class AlarmSubExpressionListener extends AlarmExpressionBaseListener {
 
     function = null;
     namespace = null;
-    dimensions = null;
+    dimensions = new TreeMap<String, String>();
     operator = null;
     threshold = 0;
     period = AlarmSubExpression.DEFAULT_PERIOD;
@@ -99,8 +99,6 @@ class AlarmSubExpressionListener extends AlarmExpressionBaseListener {
 
   @Override
   public void enterDimension(AlarmExpressionParser.DimensionContext ctx) {
-    if (dimensions == null)
-      dimensions = new TreeMap<String, String>();
     String dimensionName = ctx.getChild(0).getText();
     if (dimensions.put(dimensionName, ctx.getChild(2).getText()) != null)
       throw new IllegalArgumentException("More than one value was given for dimension "

@@ -81,7 +81,7 @@ public class MetricDefinition implements Serializable {
   public String toExpression() {
     StringBuilder b = new StringBuilder();
     b.append(name);
-    if (dimensions != null)
+    if (dimensions != null && !dimensions.isEmpty())
       b.append(dimensions);
     return b.toString();
   }

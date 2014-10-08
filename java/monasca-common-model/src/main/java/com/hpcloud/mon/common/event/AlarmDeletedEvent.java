@@ -18,6 +18,8 @@ import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonRootName;
+
+import com.hpcloud.mon.common.model.alarm.AlarmSubExpression;
 import com.hpcloud.mon.common.model.metric.MetricDefinition;
 
 /**
@@ -31,17 +33,17 @@ public class AlarmDeletedEvent implements Serializable {
   public String alarmId;
   public List<MetricDefinition> alarmMetrics;
   public String alarmDefinitionId;
-  public Map<String, MetricDefinition> subAlarmMetricDefinitions;
+  public Map<String, AlarmSubExpression> subAlarms;
 
   public AlarmDeletedEvent() {}
 
   public AlarmDeletedEvent(String tenantId, String alarmId, List<MetricDefinition> alarmMetrics,
-      String alarmDefinitionId, Map<String, MetricDefinition> subAlarmMetricDefinitions) {
+      String alarmDefinitionId, Map<String, AlarmSubExpression> subAlarms) {
     this.tenantId=tenantId;
     this.alarmId = alarmId;
     this.alarmMetrics = alarmMetrics;
     this.alarmDefinitionId = alarmDefinitionId;
-    this.subAlarmMetricDefinitions = subAlarmMetricDefinitions;
+    this.subAlarms = subAlarms;
   }
 
   @Override
@@ -68,10 +70,10 @@ public class AlarmDeletedEvent implements Serializable {
         return false;
     } else if (!alarmMetrics.equals(other.alarmMetrics))
       return false;
-    if (subAlarmMetricDefinitions == null) {
-      if (other.subAlarmMetricDefinitions != null)
+    if (subAlarms == null) {
+      if (other.subAlarms != null)
         return false;
-    } else if (!subAlarmMetricDefinitions.equals(other.subAlarmMetricDefinitions))
+    } else if (!subAlarms.equals(other.subAlarms))
       return false;
     if (tenantId == null) {
       if (other.tenantId != null)
@@ -90,7 +92,7 @@ public class AlarmDeletedEvent implements Serializable {
     result = prime * result + ((alarmMetrics == null) ? 0 : alarmMetrics.hashCode());
     result =
         prime * result
-            + ((subAlarmMetricDefinitions == null) ? 0 : subAlarmMetricDefinitions.hashCode());
+            + ((subAlarms == null) ? 0 : subAlarms.hashCode());
     result = prime * result + ((tenantId == null) ? 0 : tenantId.hashCode());
     return result;
   }
@@ -98,7 +100,7 @@ public class AlarmDeletedEvent implements Serializable {
   @Override
   public String toString() {
     return "AlarmDeletedEvent [tenantId=" + tenantId + ", alarmId=" + alarmId + ", alarmMetrics="
-        + alarmMetrics + ", alarmDefinitionId=" + alarmDefinitionId
-        + ", subAlarmMetricDefinitions=" + subAlarmMetricDefinitions + "]";
+        + alarmMetrics + ", alarmDefinitionId=" + alarmDefinitionId + ", subAlarms=" + subAlarms
+        + "]";
   }
 }

@@ -32,6 +32,7 @@ public class AlarmDefinitionUpdatedEvent implements Serializable {
   public String alarmName;
   public String alarmDescription;
   public String alarmExpression;
+  public String severity;
   public List<String> matchBy;
   public boolean alarmActionsEnabled;
   /** Sub expressions which have been removed from the updated alarm expression. */
@@ -47,7 +48,8 @@ public class AlarmDefinitionUpdatedEvent implements Serializable {
 
   public AlarmDefinitionUpdatedEvent(String tenantId, String alarmDefinitionId, String alarmName,
       String alarmDescription, String alarmExpression, List<String> matchBy,
-      boolean alarmActionsEnabled, Map<String, AlarmSubExpression> oldAlarmSubExpressions,
+      boolean alarmActionsEnabled, String severity,
+      Map<String, AlarmSubExpression> oldAlarmSubExpressions,
       Map<String, AlarmSubExpression> changedSubExpressions,
       Map<String, AlarmSubExpression> unchangedSubExpressions,
       Map<String, AlarmSubExpression> newAlarmSubExpressions) {
@@ -55,6 +57,7 @@ public class AlarmDefinitionUpdatedEvent implements Serializable {
     this.alarmDefinitionId = alarmDefinitionId;
     this.alarmName = alarmName;
     this.alarmDescription = alarmDescription;
+    this.severity = severity;
     this.matchBy = matchBy;
     this.alarmExpression = alarmExpression;
     this.alarmActionsEnabled = alarmActionsEnabled;
@@ -84,6 +87,11 @@ public class AlarmDefinitionUpdatedEvent implements Serializable {
       if (other.alarmDescription != null)
         return false;
     } else if (!alarmDescription.equals(other.alarmDescription))
+      return false;
+    if (severity == null) {
+      if (other.severity != null)
+        return false;
+    } else if (!severity.equals(other.severity))
       return false;
     if (alarmExpression == null) {
       if (other.alarmExpression != null)
@@ -135,6 +143,7 @@ public class AlarmDefinitionUpdatedEvent implements Serializable {
     result = prime * result + (alarmActionsEnabled ? 1231 : 1237);
     result = prime * result + ((alarmDefinitionId == null) ? 0 : alarmDefinitionId.hashCode());
     result = prime * result + ((alarmDescription == null) ? 0 : alarmDescription.hashCode());
+    result = prime * result + ((severity == null) ? 0 : severity.hashCode());
     result = prime * result + ((alarmExpression == null) ? 0 : alarmExpression.hashCode());
     result = prime * result + ((alarmName == null) ? 0 : alarmName.hashCode());
     result =
@@ -156,6 +165,7 @@ public class AlarmDefinitionUpdatedEvent implements Serializable {
     return "AlarmDefinitionUpdatedEvent [tenantId=" + tenantId + ", alarmDefinitionId="
         + alarmDefinitionId + ", alarmName=" + alarmName + ", alarmDescription=" + alarmDescription
         + ", alarmExpression=" + alarmExpression + ", alarmActionsEnabled=" + alarmActionsEnabled
+        + ", severity=" + severity
         + ", oldAlarmSubExpressions=" + oldAlarmSubExpressions + ", changedSubExpressions="
         + changedSubExpressions + ", unchangedSubExpressions=" + unchangedSubExpressions
         + ", newAlarmSubExpressions=" + newAlarmSubExpressions + ", matchBy=" + matchBy + "]";
