@@ -143,7 +143,7 @@ class AlarmSubExpressionListener extends AlarmExpressionBaseListener {
 
   @Override
   public void exitLiteral(AlarmExpressionParser.LiteralContext ctx) {
-    threshold = Long.valueOf(ctx.getChild(0).getText());
+    threshold = Double.valueOf(ctx.getChild(0).getText());
   }
 
   @Override

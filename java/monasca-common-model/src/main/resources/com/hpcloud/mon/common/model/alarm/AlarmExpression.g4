@@ -121,7 +121,8 @@ period
     ;
 
 literal
-    : INTEGER
+    : DECIMAL
+    | INTEGER
     ;
 
 repeat
@@ -204,6 +205,10 @@ AVG
 
 INTEGER
     : DIGIT+
+    ;
+    
+DECIMAL 
+    : '-'?[0-9]+('.'[0-9]+)?
     ;
 
 TXT
