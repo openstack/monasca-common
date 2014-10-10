@@ -34,6 +34,7 @@ public class AlarmStateTransitionedEvent {
   public AlarmState newState;
   public boolean actionsEnabled;
   public String stateChangeReason;
+  public String severity;
   /** POSIX timestamp */
   public long timestamp;
 
@@ -41,8 +42,8 @@ public class AlarmStateTransitionedEvent {
 
   public AlarmStateTransitionedEvent(String tenantId, String alarmId, String alarmDefinitionId,
       List<MetricDefinition> metrics, String alarmName, String alarmDescription,
-      AlarmState oldState, AlarmState newState, boolean actionsEnabled, String stateChangeReason,
-      long timestamp) {
+      AlarmState oldState, AlarmState newState, String severity, boolean actionsEnabled,
+      String stateChangeReason, long timestamp) {
     this.tenantId = tenantId;
     this.alarmId = alarmId;
     this.alarmDefinitionId = alarmDefinitionId;
@@ -51,6 +52,7 @@ public class AlarmStateTransitionedEvent {
     this.alarmDescription = alarmDescription;
     this.oldState = oldState;
     this.newState = newState;
+    this.severity = severity;
     this.actionsEnabled = actionsEnabled;
     this.stateChangeReason = stateChangeReason;
     this.timestamp = timestamp;
@@ -87,6 +89,11 @@ public class AlarmStateTransitionedEvent {
         return false;
     } else if (!alarmName.equals(other.alarmName))
       return false;
+    if (severity == null) {
+      if (other.severity != null)
+        return false;
+    } else if (!severity.equals(other.severity))
+      return false;
     if (metrics == null) {
       if (other.metrics != null)
         return false;
@@ -118,6 +125,7 @@ public class AlarmStateTransitionedEvent {
     result = prime * result + (actionsEnabled ? 1231 : 1237);
     result = prime * result + ((alarmDefinitionId == null) ? 0 : alarmDefinitionId.hashCode());
     result = prime * result + ((alarmDescription == null) ? 0 : alarmDescription.hashCode());
+    result = prime * result + ((severity == null) ? 0 : severity.hashCode());
     result = prime * result + ((alarmId == null) ? 0 : alarmId.hashCode());
     result = prime * result + ((alarmName == null) ? 0 : alarmName.hashCode());
     result = prime * result + ((metrics == null) ? 0 : metrics.hashCode());
@@ -134,7 +142,7 @@ public class AlarmStateTransitionedEvent {
     return "AlarmStateTransitionedEvent [tenantId=" + tenantId + ", alarmId=" + alarmId
         + ", alarmDefinitionId=" + alarmDefinitionId + ", metrics=" + metrics + ", alarmName="
         + alarmName + ", alarmDescription=" + alarmDescription + ", oldState=" + oldState
-        + ", newState=" + newState + ", actionsEnabled=" + actionsEnabled + ", stateChangeReason="
+        + ", newState=" + newState + ", severity=" + severity + ", actionsEnabled=" + actionsEnabled + ", stateChangeReason="
         + stateChangeReason + ", timestamp=" + timestamp + "]";
   }
 }
