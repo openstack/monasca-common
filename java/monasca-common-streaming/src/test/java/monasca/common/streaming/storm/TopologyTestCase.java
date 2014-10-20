@@ -36,7 +36,10 @@ public class TopologyTestCase {
 
   @AfterSuite
   protected static void stopTopology() {
-    cluster.killTopology(TEST_TOPOLOGY_NAME);
-    cluster.shutdown();
+    if (cluster != null) {
+      cluster.killTopology(TEST_TOPOLOGY_NAME);
+      cluster.shutdown();
+      cluster = null;
+    }
   }
 }
