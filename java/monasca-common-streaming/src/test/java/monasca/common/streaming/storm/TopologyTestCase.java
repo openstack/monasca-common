@@ -1,7 +1,5 @@
 package monasca.common.streaming.storm;
 
-import org.testng.annotations.AfterSuite;
-import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
 import backtype.storm.Config;
@@ -16,7 +14,6 @@ public class TopologyTestCase {
   public static final String TEST_TOPOLOGY_NAME = "test-maas-alarming";
   protected static volatile LocalCluster cluster;
 
-  @BeforeSuite
   protected void startTopology() throws Exception {
     if (cluster == null) {
       synchronized (TopologyTestCase.class) {
@@ -34,7 +31,6 @@ public class TopologyTestCase {
     }
   }
 
-  @AfterSuite
   protected static void stopTopology() {
     if (cluster != null) {
       cluster.killTopology(TEST_TOPOLOGY_NAME);
