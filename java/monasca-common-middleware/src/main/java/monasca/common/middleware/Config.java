@@ -121,7 +121,7 @@ public class Config implements AuthConstants {
       long maxTokenCacheSize = getValue(MAX_TOKEN_CACHE_SIZE, 1048576);
 
       this.factory = AuthClientFactory.build(host, port, timeout,
-        clientAuth, null, null, null, null,
+        clientAuth, keyStore, keyPass, trustStore, trustPass,
         maxActive, maxIdle, evictPeriod, minIdleTime, adminToken);
 
       verifyRequiredParamsForAuthMethod();

@@ -2,6 +2,7 @@ package monasca.common.middleware;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.net.URI;
 import java.security.KeyStore;
 import java.util.concurrent.TimeUnit;
@@ -17,6 +18,8 @@ import org.apache.http.impl.conn.PoolingClientConnectionManager;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.CoreConnectionPNames;
 import org.apache.http.params.HttpParams;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A Http request pool factory. Based on Apache Commons Pool.  Singleton.
@@ -26,7 +29,9 @@ import org.apache.http.params.HttpParams;
  *
  * @author liemmn
  */
-public class HttpClientPoolFactory extends BasePoolableObjectFactory {
+public class HttpClientPoolFactory extends BasePoolableObjectFactory<Object> {
+  private static final Logger logger = LoggerFactory
+      .getLogger(HttpClientPoolFactory.class);
   private URI uri;
   private PoolingClientConnectionManager connMgr;
   private HttpPoolCleaner cleaner;
@@ -103,28 +108,36 @@ public class HttpClientPoolFactory extends BasePoolableObjectFactory {
       // keystore
       KeyStore ks = null;
       if (clientAuth) {
-        ks = KeyStore.getInstance("jks");
-        FileInputStream is1 = new FileInputStream(new File(keyStore));
-        try {
-          ks.load(is1, keyPass.toCharArray());
-        } finally {
-          is1.close();
-        }
+        ks = loadKeystore("keystore", keyStore, keyPass);
       }
       // truststore
-      KeyStore ts = KeyStore.getInstance("jks");
-      FileInputStream is2 = new FileInputStream(
-        new File(trustStore));
-      try {
-        ts.load(is2, trustPass.toCharArray());
-      } finally {
-        is2.close();
-      }
+      KeyStore ts = loadKeystore("truststore", trustStore, trustPass);
       SSLSocketFactory sslf = new SSLSocketFactory(ks, keyPass, ts);
       return sslf;
     } catch (Exception e) {
       throw new AuthConnectionException(
         "Failed to create SSLSocketFactory", e);
     }
+  }
+
+  private static KeyStore loadKeystore(String type, String keyStore, String keyPass) throws Exception {
+    final KeyStore ks = KeyStore.getInstance("jks");
+    if ((keyStore != null) && !keyStore.isEmpty()) {
+      File keystoreFile = new File(keyStore);
+      if (!keystoreFile.canRead()) {
+        throw new FileNotFoundException(String.format("%s '%s' is not readable", type, keyStore));
+      }
+      try (FileInputStream is1 = new FileInputStream(keystoreFile)) {
+        ks.load(is1, keyPass.toCharArray());
+      }
+      catch (Exception e) {
+        logger.error(String.format("Unable to open %s '%s': %s", type, keyStore, e.getMessage()));
+        throw e;
+      }
+    }
+    else {
+      ks.load(null, null);
+    }
+    return ks;
   }
 }
