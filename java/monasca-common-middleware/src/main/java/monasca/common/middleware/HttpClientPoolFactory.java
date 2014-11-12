@@ -37,13 +37,13 @@ public class HttpClientPoolFactory extends BasePoolableObjectFactory<Object> {
   private HttpPoolCleaner cleaner;
   private HttpClient client;
 
-  HttpClientPoolFactory(String host, int port, int timeout,
+  HttpClientPoolFactory(String host, int port, boolean useHttps, int timeout,
     boolean clientAuth, String keyStore, String keyPass,
     String trustStore, String trustPass, String adminToken,
     int maxActive, long timeBetweenEvictionRunsMillis,
     long minEvictableIdleTimeMillis) {
     // Setup auth URL
-    String protocol = (port == 35357) ? "https://" : "http://";
+    String protocol = useHttps ? "https://" : "http://";
     String urlStr = protocol + host + ":" + port;
     uri = URI.create(urlStr);
 
@@ -116,7 +116,7 @@ public class HttpClientPoolFactory extends BasePoolableObjectFactory<Object> {
       return sslf;
     } catch (Exception e) {
       throw new AuthConnectionException(
-        "Failed to create SSLSocketFactory", e);
+        "Failed to create SSLSocketFactory: " + e.getMessage(), e);
     }
   }
 
@@ -131,8 +131,9 @@ public class HttpClientPoolFactory extends BasePoolableObjectFactory<Object> {
         ks.load(is1, keyPass.toCharArray());
       }
       catch (Exception e) {
-        logger.error(String.format("Unable to open %s '%s': %s", type, keyStore, e.getMessage()));
-        throw e;
+        String errorMessage = String.format("Unable to open %s '%s': %s", type, keyStore, e.getMessage());
+        logger.error(errorMessage);
+        throw new Exception(errorMessage, e);
       }
     }
     else {

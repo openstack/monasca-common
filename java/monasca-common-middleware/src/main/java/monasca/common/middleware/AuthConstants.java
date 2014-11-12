@@ -57,6 +57,10 @@ public interface AuthConstants {
    */
   public static final String SERVER_PORT = "ServerPort";
   /**
+   * Use https to connect to SERVER_VIP and SERVER_PORT if true.
+   */
+  public static final String USE_HTTPS = "UseHttps";
+  /**
    * connection timeout initialization parameter
    */
   public static final String CONN_TIMEOUT = "ConnTimeout";

@@ -54,7 +54,8 @@ public class TokenCache<K, V> {
     try {
       value = cache.get(key);
     } catch (ExecutionException e) {
-      throw new ClientProtocolException(e.getMessage());
+      logger.info("Failed to get token", e);
+      throw new ClientProtocolException(e.getMessage(), e);
     }
     return value;
   }

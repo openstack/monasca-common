@@ -84,7 +84,6 @@ public class TokenAuth implements Filter, monasca.common.middleware.AuthConstant
     }
     int retries = appConfig.getRetries();
     long pauseTime = appConfig.getPauseTime();
-    AuthClientFactory factory = appConfig.getFactory();
 
     // Extract credential
     String token = ((HttpServletRequest) req).getHeader(TOKEN);
@@ -132,9 +131,21 @@ public class TokenAuth implements Filter, monasca.common.middleware.AuthConstant
           }
           return;
         } catch (UncheckedExecutionException e) {
-          TokenExceptionHandler handler = TokenExceptionHandler
-                  .valueOf("UncheckedExecutionException");
-          handler.onException(e, resp, token);
+          final TokenExceptionHandler handler;
+          final Exception toHandle;
+          if ((e.getCause() != null) && e.getCause() instanceof AdminAuthException) {
+            toHandle = (AdminAuthException)e.getCause();
+            handler = TokenExceptionHandler.valueOf("AdminAuthException");
+          }
+          else if ((e.getCause() != null) && e.getCause() instanceof AuthException) {
+            toHandle = (AuthException)e.getCause();
+            handler = TokenExceptionHandler.valueOf("AuthException");
+          }
+          else {
+            toHandle = e;
+            handler = TokenExceptionHandler.valueOf("UncheckedExecutionException");
+          }
+          handler.onException(toHandle, resp, token);
           return;
         }
 

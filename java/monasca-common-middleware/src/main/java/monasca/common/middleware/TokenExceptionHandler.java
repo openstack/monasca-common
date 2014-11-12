@@ -79,11 +79,29 @@ public enum TokenExceptionHandler {
     }
   }
   ,
+  AdminAuthException {
+    @Override
+    public void onException(Exception e, ServletResponse resp, String token) {
+      AdminAuthException ae = (AdminAuthException) e;
+      logger.error(ae.getMessage() + " " + ae);
+      // Don't want to send any information about the admin auth to clients
+      String statusText = ExceptionHandlerUtil.getStatusText(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+      try {
+        ((HttpServletResponse) resp).sendError(
+          HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+          statusText);
+      } catch (IOException ie) {
+        logger.debug("Error in writing the HTTP response "
+          + ie.getMessage() + " " + ie);
+      }
+    }
+  }
+  ,
   AuthException {
     @Override
     public void onException(Exception e, ServletResponse resp, String token) {
       AuthException ae = (AuthException) e;
-      logger.error(ae.getMessage() + " " + ae);
+      logger.info(ae.getMessage() + " " + ae);
       String statusText = ae.getMessage();
       if (statusText == null || statusText.isEmpty()) {
         statusText = ExceptionHandlerUtil.getStatusText(HttpServletResponse.SC_UNAUTHORIZED);

@@ -10,11 +10,11 @@ import org.apache.commons.pool.impl.GenericObjectPool;
 public class HttpClientFactory extends AuthClientFactory {
   private HttpClientPoolFactory clientPool;
 
-  HttpClientFactory(String host, int port, int timeout, boolean clientAuth,
+  HttpClientFactory(String host, int port, boolean useHttps, int timeout, boolean clientAuth,
     String keyStore, String keyPass, String trustStore,
     String trustPass, String adminToken, int maxActive,
     long timeBetweenEvictionRunsMillis, long minEvictableIdleTimeMillis) {
-    clientPool = new HttpClientPoolFactory(host, port, timeout, clientAuth,
+    clientPool = new HttpClientPoolFactory(host, port, useHttps, timeout, clientAuth,
       keyStore, keyPass, trustStore, trustPass, adminToken,
       maxActive, timeBetweenEvictionRunsMillis,
       minEvictableIdleTimeMillis);

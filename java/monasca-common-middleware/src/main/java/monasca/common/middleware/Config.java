@@ -105,6 +105,7 @@ public class Config implements AuthConstants {
       String trustPass = filterConfig.getInitParameter(TRUSTSTORE_PASS);
 
       String adminToken = getValue(ADMIN_TOKEN, "");
+      final boolean useHttps = getValue(USE_HTTPS, false);
       int timeout = getValue(CONN_TIMEOUT, 0);
       boolean clientAuth = getValue(CONN_SSL_CLIENT_AUTH, true);
       int maxActive = getValue(CONN_POOL_MAX_ACTIVE, 3);
@@ -120,20 +121,23 @@ public class Config implements AuthConstants {
       timeToCacheToken = getValue(TIME_TO_CACHE_TOKEN, 600);
       long maxTokenCacheSize = getValue(MAX_TOKEN_CACHE_SIZE, 1048576);
 
-      this.factory = AuthClientFactory.build(host, port, timeout,
+      this.factory = AuthClientFactory.build(host, port, useHttps, timeout,
         clientAuth, keyStore, keyPass, trustStore, trustPass,
         maxActive, maxIdle, evictPeriod, minIdleTime, adminToken);
 
       verifyRequiredParamsForAuthMethod();
       this.client = new TokenCache<>(timeToCacheToken, maxTokenCacheSize, map);
-      logger.info("Auth host (2-way SSL: " + clientAuth + "): " + host);
+      logger.info("Using https {}", useHttps);
+      if (useHttps) {
+        logger.info("Auth host (2-way SSL: " + clientAuth + "): " + host);
+      }
       logger.info("Read Servlet Initialization Parameters ");
       initialized = true;
     } catch (Throwable t) {
-      logger.error("Failed to read Servlet Initialization Parameters ",
+      logger.error("Failure initializing connection to authentication endpoint : {}",
         t.getMessage());
       throw new ServletException(
-        "Failed to read Servlet Initialization Parameters :: "
+        "Failure initializing connection to authentication endpoint  :: "
           + t.getMessage(), t);
     }
   }
@@ -241,7 +245,7 @@ public class Config implements AuthConstants {
   }
 
   private <T> T getValue(String paramName, T defaultValue) {
-    Class type = defaultValue.getClass();
+    Class<?> type = defaultValue.getClass();
 
     String initparamValue = filterConfig.getInitParameter(paramName);
     if (initparamValue != null && !initparamValue.isEmpty()) {
@@ -267,14 +271,14 @@ public class Config implements AuthConstants {
         String msg = String
           .format("admin user and password must be specified if admin auth method is %s",
             adminAuthMethod);
-        throw new AuthException(msg);
+        throw new AdminAuthException(msg);
       }
     } else if (adminAuthMethod.equalsIgnoreCase(ACCESS_KEY)) {
       if (getAdminAccessKey().isEmpty() || getAdminSecretKey().isEmpty()) {
         String msg = String
           .format("admin access and secret key must be specified if admin auth method is %s",
             adminAuthMethod);
-        throw new AuthException(msg);
+        throw new AdminAuthException(msg);
       }
     }
   }

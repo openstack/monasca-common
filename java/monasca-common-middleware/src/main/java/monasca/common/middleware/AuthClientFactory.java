@@ -9,7 +9,7 @@ import org.apache.commons.pool.impl.GenericObjectPool;
  */
 public abstract class AuthClientFactory {
   private static AuthClientFactory instance = null;
-  protected static GenericObjectPool pool;
+  protected static GenericObjectPool<AuthClient> pool;
 
   /**
    * Build a AuthClientFactory. Singleton.
@@ -46,7 +46,7 @@ public abstract class AuthClientFactory {
    * @return AuthClientFactory singleton.
    * @throws Exception
    */
-  public static synchronized AuthClientFactory build(String host, int port,
+  public static synchronized AuthClientFactory build(String host, int port, boolean useHttps,
     int timeout, boolean clientAuth, String keyStore, String keyPass,
     String trustStore, String trustPass, int maxActive, int maxIdle,
     long timeBetweenEvictionRunsMillis,
@@ -54,7 +54,7 @@ public abstract class AuthClientFactory {
     throws Exception {
     if (instance == null) {
 
-      instance = new HttpClientFactory(host, port, timeout,
+      instance = new HttpClientFactory(host, port, useHttps, timeout,
         clientAuth, keyStore, keyPass, trustStore, trustPass,
         adminToken, maxActive, timeBetweenEvictionRunsMillis,
         minEvictableIdleTimeMillis);
