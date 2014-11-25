@@ -126,7 +126,7 @@ public class Config implements AuthConstants {
         maxActive, maxIdle, evictPeriod, minIdleTime, adminToken);
 
       verifyRequiredParamsForAuthMethod();
-      this.client = new TokenCache<>(timeToCacheToken, maxTokenCacheSize, map);
+      this.client = new TokenCache<>(maxTokenCacheSize, timeToCacheToken, map);
       logger.info("Using https {}", useHttps);
       if (useHttps) {
         logger.info("Auth host (2-way SSL: " + clientAuth + "): " + host);
