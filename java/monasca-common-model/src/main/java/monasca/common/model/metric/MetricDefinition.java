@@ -23,10 +23,12 @@ import javax.annotation.Nullable;
 
 import com.google.common.base.Preconditions;
 
+import monasca.common.model.domain.common.AbstractEntity;
+
 /**
  * Metric definition.
  */
-public class MetricDefinition implements Serializable {
+public class MetricDefinition extends AbstractEntity implements Serializable  {
   private static final long serialVersionUID = -3074228641225201445L;
 
   public String name;
@@ -69,6 +71,11 @@ public class MetricDefinition implements Serializable {
     result = prime * result + ((dimensions == null) ? 0 : dimensions.hashCode());
     result = prime * result + ((name == null) ? 0 : name.hashCode());
     return result;
+  }
+
+
+  public void setId(String id) {
+    this.id = id;
   }
 
   public void setDimensions(Map<String, String> dimensions) {
