@@ -52,4 +52,11 @@ public class InfluxDbConfiguration {
     return password;
   }
 
+  @JsonProperty
+  String retentionPolicy;
+
+  public String getRetentionPolicy() {
+    return retentionPolicy;
+  }
+
 }
