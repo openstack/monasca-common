@@ -4,14 +4,12 @@ package monasca.common.middleware;
 import static monasca.common.middleware.AuthConstants.AUTH_IDENTITY_STATUS;
 
 import static monasca.common.middleware.AuthConstants.AUTH_ROLES;
-import static monasca.common.middleware.AuthConstants.AUTH_TENANT_NAME;
 
 import static monasca.common.middleware.AuthConstants.AUTH_USER_ID;
 import static monasca.common.middleware.AuthConstants.AUTH_DOMAIN_ID;
 import static monasca.common.middleware.AuthConstants.AUTH_DOMAIN_NAME;
 import static monasca.common.middleware.AuthConstants.AUTH_PROJECT_ID;
 import static monasca.common.middleware.AuthConstants.AUTH_PROJECT_NAME;
-import static monasca.common.middleware.AuthConstants.AUTH_TENANT_ID;
 import static monasca.common.middleware.AuthConstants.AUTH_USER_NAME;
 import static monasca.common.middleware.AuthConstants.IdentityStatus;
 import static monasca.common.middleware.AuthConstants.AUTH_PROJECT_DOMAIN_ID;
@@ -22,15 +20,12 @@ import static monasca.common.middleware.AuthConstants.AUTH_HP_IDM_ROLES;
 import static monasca.common.middleware.AuthConstants.AUTH_SERVICE_CATALOG;
 
 import java.io.IOException;
-import java.lang.reflect.Modifier;
 import java.util.Iterator;
 import javax.servlet.ServletRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
@@ -44,17 +39,13 @@ public class FilterUtils {
 
   private static final Config appConfig = Config.getInstance();
 
-  private static final Gson gson = new GsonBuilder()
-    .excludeFieldsWithModifiers(Modifier.PRIVATE, Modifier.FINAL)
-    .create();
-
   // Thee faithful logger
   private static final Logger logger = LoggerFactory
     .getLogger(FilterUtils.class);
 
   public static void destroyFilter() {
 
-    TokenCache<String, String> client = appConfig.getClient();
+    TokenCache client = appConfig.getClient();
 
     if (client != null)
       appConfig.setClient(null);
@@ -68,12 +59,7 @@ public class FilterUtils {
 
   public static ServletRequest wrapRequestFromHttpResponse(
     ServletRequest req, String data) {
-    if (appConfig.getAuthVersion().equalsIgnoreCase("v2.0")) {
-      wrapRequestFromHttpV2Response(req, data);
-
-    } else {
-      wrapRequestFromHttpV3Response(req, data);
-    }
+    wrapRequestFromHttpV3Response(req, data);
     return req;
   }
 
@@ -103,7 +89,7 @@ public class FilterUtils {
       JsonObject projectDomain = project.get("domain").getAsJsonObject();
       // special case where the value of id is null and the
       // projectDomain.get("id") != null
-      if (!projectDomain.get("id").equals(new JsonNull())) {
+      if (!projectDomain.get("id").equals(JsonNull.INSTANCE)) {
         req.setAttribute(AUTH_PROJECT_DOMAIN_ID, projectDomain
           .get("id").getAsString());
       }
@@ -161,71 +147,6 @@ public class FilterUtils {
     }
   }
 
-  private static void wrapRequestFromHttpV2Response(ServletRequest req,
-    String data) {
-    StringBuilder tenants = new StringBuilder();
-    StringBuilder nonTenants = new StringBuilder();
-    JsonParser jp = new JsonParser();
-    JsonObject access = jp.parse(data).getAsJsonObject().get("access")
-      .getAsJsonObject();
-    JsonObject token = access.get("token").getAsJsonObject();
-
-    // Tenant info
-    if (token.get("tenant") != null) {
-      JsonObject tenant = token.get("tenant").getAsJsonObject();
-
-      String id = tenant.get("id").getAsString();
-      String name = tenant.get("name").getAsString();
-      if (id != null)
-        req.setAttribute(AUTH_TENANT_ID, id);
-      if (name != null)
-        req.setAttribute(AUTH_TENANT_NAME, name);
-    }
-    // User info
-    if (access.get("user") != null) {
-      JsonObject user = access.get("user").getAsJsonObject();
-
-      String userId = user.get("id").getAsString();
-      String username = user.get("name").getAsString();
-      if (userId != null)
-        req.setAttribute(AUTH_USER_ID, userId);
-      if (username != null)
-        req.setAttribute(AUTH_USER_NAME, username);
-      // Roles
-      JsonArray roles = user.getAsJsonArray("roles");
-      if (roles != null) {
-        Iterator<JsonElement> it = roles.iterator();
-        while (it.hasNext()) {
-          JsonObject role = it.next().getAsJsonObject();
-          if (role.get("tenantId") != null) {
-            tenants.append(",");
-            tenants.append(role.get("name").getAsString());
-          } else {
-            nonTenants.append(",");
-            nonTenants.append(role.get("name").getAsString());
-          }
-        }
-      }
-      String tenantRoles = (tenants.length() > 0) ? tenants.substring(1)
-        : tenants.toString();
-      if (!tenantRoles.equals("")) {
-        req.setAttribute(AUTH_ROLES, tenantRoles);
-      }
-      String nonTenantRoles = (nonTenants.length() > 0) ? nonTenants
-        .substring(1) : nonTenants.toString();
-      if (!nonTenantRoles.equals("")) {
-        req.setAttribute(AUTH_HP_IDM_ROLES, nonTenantRoles);
-      }
-    }
-    // Service catalog
-    if (access.get("serviceCatalog") != null
-      && appConfig.isIncludeCatalog()) {
-      JsonArray serviceCatalog = access.get("serviceCatalog")
-        .getAsJsonArray();
-      req.setAttribute(AUTH_SERVICE_CATALOG, serviceCatalog.toString());
-    }
-  }
-
   public static ServletRequest wrapRequest(ServletRequest req, Object data) {
     if (data == null) {
       req.setAttribute(AUTH_IDENTITY_STATUS,
@@ -252,7 +173,7 @@ public class FilterUtils {
 
   public static void pause(long pauseTime) {
     try {
-      Thread.currentThread().sleep(pauseTime);
+      Thread.sleep(pauseTime);
     } catch (InterruptedException e) {
       logger.debug("Thread is interrupted while sleeping before "
         + pauseTime + " seconds. ");

@@ -1,8 +1,6 @@
 package monasca.common.middleware;
 
 
-import java.util.Map;
-
 import org.apache.http.client.ClientProtocolException;
 import org.apache.thrift.TException;
 
@@ -12,12 +10,6 @@ import org.apache.thrift.TException;
  * @author liemmn
  */
 public interface AuthClient {
-  public Object validateTokenForServiceEndpointV2(String token,
-    String serviceIds, String endpointIds, boolean includeCatalog)
-    throws TException, ClientProtocolException;
 
-  public Object validateTokenForServiceEndpointV3(String token,
-    Map<String, String> inputParams) throws TException, ClientProtocolException;
-
-
+  public String validateTokenForServiceEndpointV3(String token) throws TException, ClientProtocolException;
 }

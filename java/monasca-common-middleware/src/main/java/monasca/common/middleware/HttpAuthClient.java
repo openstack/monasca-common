@@ -13,7 +13,6 @@ import java.net.URI;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Map;
 import java.util.TimeZone;
 
 import org.apache.http.Header;
@@ -36,9 +35,6 @@ import com.google.gson.JsonPrimitive;
 public class HttpAuthClient implements AuthClient {
     private static final Logger logger = LoggerFactory.getLogger(HttpAuthClient.class);
 
-	private static final String PASSWORD = "password";
-	private static final String SERVICE_IDS_PARAM = "serviceIds";
-	private static final String ENDPOINT_IDS_PARAM = "endpointIds";
 	private static final int DELTA_TIME_IN_SEC = 30;
 	private static SimpleDateFormat expiryFormat;
 	static {
@@ -58,32 +54,17 @@ public class HttpAuthClient implements AuthClient {
   }
 
 	@Override
-	public Object validateTokenForServiceEndpointV2(String token,
-			String serviceIds, String endpointIds, boolean includeCatalog)
-			throws ClientProtocolException {
-		String newUri = uri.toString() + "/v2.0/tokens/" + token;
-		return verifyUUIDToken(token, newUri, null, serviceIds, endpointIds);
-	}
-
-	@Override
-	public Object validateTokenForServiceEndpointV3(String token,
-			Map<String, String> inputParams) throws ClientProtocolException {
+	public String validateTokenForServiceEndpointV3(String token) throws ClientProtocolException {
 		String newUri = uri.toString() + "/v3/auth/tokens/";
 		Header[] header = new Header[1];
 		header[0] = new BasicHeader(AUTH_SUBJECT_TOKEN, token);
-		String serviceIds = null;
-		String endpointIds = null;
-		if (inputParams.containsKey(SERVICE_IDS_PARAM))
-			serviceIds = inputParams.get(SERVICE_IDS_PARAM);
-		if (inputParams.containsKey(ENDPOINT_IDS_PARAM))
-			endpointIds = inputParams.get(ENDPOINT_IDS_PARAM);
-		return verifyUUIDToken(token, newUri, header, serviceIds, endpointIds);
+		return verifyUUIDToken(token, newUri, header);
 	}
 
-	private Object verifyUUIDToken(String token, String newUri,
-			Header[] header, String serviceIds, String endpointIds)
+	private String verifyUUIDToken(String token, String newUri,
+			Header[] header)
 			throws ClientProtocolException {
-		HttpResponse response = sendGet(newUri, header, serviceIds, endpointIds);
+		HttpResponse response = sendGet(newUri, header);
 
     HttpEntity entity = response.getEntity();
     int code = response.getStatusLine().getStatusCode();
@@ -146,20 +127,10 @@ public class HttpAuthClient implements AuthClient {
 		return response;
 	}
 
-	private HttpResponse sendGet(String newUri, Header[] headers,
-			String serviceIds, String endpointIds)
+	private HttpResponse sendGet(String newUri, Header[] headers)
 			throws ClientProtocolException {
 		HttpResponse response = null;
 		HttpGet get = null;
-		boolean hasServiceIds = false;
-		if (serviceIds != null && !serviceIds.isEmpty()) {
-			newUri += "?HP-IDM-serviceId=" + serviceIds;
-			hasServiceIds = true;
-		}
-		if (endpointIds != null && !endpointIds.isEmpty()) {
-			newUri += hasServiceIds ? "&HP-IDM-endpointTemplateId="
-					+ endpointIds : "?HP-IDM-endpointTemplateId=" + endpointIds;
-		}
 
 		get = new HttpGet(newUri);
 		get.setHeader("Accept", "application/json");
@@ -170,12 +141,12 @@ public class HttpAuthClient implements AuthClient {
 			}
 		}
 
-    if(!appConfig.getAdminToken().isEmpty()) {
-      get.setHeader(new BasicHeader(TOKEN, appConfig.getAdminToken()));
-    }
-    else if (!appConfig.getAdminAuthMethod().isEmpty()) {
-      get.setHeader(new BasicHeader(TOKEN, getAdminToken()));
-    }
+		if (appConfig.getAdminAuthMethod().equalsIgnoreCase(Config.TOKEN)) {
+            get.setHeader(new BasicHeader(TOKEN, appConfig.getAdminToken()));
+        }
+        else {
+          get.setHeader(new BasicHeader(TOKEN, getAdminToken()));
+        }
 
 		try {
 			response = client.execute(get);
@@ -229,56 +200,15 @@ public class HttpAuthClient implements AuthClient {
 			}
 		}
 		if (adminToken == null) {
-			if (appConfig.getAuthVersion().equalsIgnoreCase("v2.0")) {
-				StringEntity params = getUnscopedV2AdminTokenRequest();
-				String authUri = uri + "/v2.0/tokens";
-				response = sendPost(authUri, params);
-				json = parseResponse(response);
-				JsonObject access = jp.parse(json).getAsJsonObject()
-						.get("access").getAsJsonObject();
-				JsonObject token = access.get("token").getAsJsonObject();
-				adminToken = token.get("id").getAsString();
-				adminTokenExpiry = token.get("expires").getAsString();
-			} else {
-          StringEntity params = getUnscopedV3AdminTokenRequest();
-				String authUri = uri + "/v3/auth/tokens";
-				response = sendPost(authUri, params);
-				adminToken = response.getFirstHeader(AUTH_SUBJECT_TOKEN)
-						.getValue();
-				json = parseResponse(response);
-				JsonObject token = jp.parse(json).getAsJsonObject()
-						.get("token").getAsJsonObject();
-				adminTokenExpiry = token.get("expires_at").getAsString();
-
-			}
+            StringEntity params = getUnscopedV3AdminTokenRequest();
+            String authUri = uri + "/v3/auth/tokens";
+            response = sendPost(authUri, params);
+            adminToken = response.getFirstHeader(AUTH_SUBJECT_TOKEN).getValue();
+            json = parseResponse(response);
+            JsonObject token = jp.parse(json).getAsJsonObject().get("token").getAsJsonObject();
+            adminTokenExpiry = token.get("expires_at").getAsString();
 		}
 		return adminToken;
-	}
-
-	private StringEntity getUnscopedV2AdminTokenRequest() {
-		StringBuffer bfr = new StringBuffer();
-		if (appConfig.getAdminAuthMethod().equalsIgnoreCase(PASSWORD)) {
-			bfr.append("{\"auth\": {\"passwordCredentials\": {\"username\": \"");
-			bfr.append(appConfig.getAdminUser());
-			bfr.append("\",\"password\": \"");
-			bfr.append(appConfig.getAdminPassword());
-			if (appConfig.getAdminProject() != null && !appConfig.getAdminProject().isEmpty()) {
-				bfr.append("\"}, \"tenantId\": \"");
-				bfr.append(appConfig.getAdminProject());
-				bfr.append("\"}}");
-			} else {
-				bfr.append("\"}}}");
-			}
-			try {
-				return new StringEntity(bfr.toString());
-			} catch (UnsupportedEncodingException e) {
-				throw new AdminAuthException("Invalid V2 authentication request "
-						+ e);
-			}
-		} else {
-			String msg = String.format("Admin auth method %s not supported",appConfig.getAdminAuthMethod());
-			throw new AdminAuthException(msg);
-		}
 	}
 
 	private String buildAuth(final String userName, final String password) {
@@ -304,7 +234,7 @@ public class HttpAuthClient implements AuthClient {
 
 	private StringEntity getUnscopedV3AdminTokenRequest() {
 		final String body;
-		if (appConfig.getAdminAuthMethod().equalsIgnoreCase(PASSWORD)) {
+		if (appConfig.getAdminAuthMethod().equalsIgnoreCase(Config.PASSWORD)) {
 		    body = buildAuth(appConfig.getAdminUser(), appConfig.getAdminPassword());
 		} else {
 			String msg = String.format("Admin auth method %s not supported",appConfig.getAdminAuthMethod());
