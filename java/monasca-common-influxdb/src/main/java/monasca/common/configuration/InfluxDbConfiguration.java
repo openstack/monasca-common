@@ -24,6 +24,16 @@ public class InfluxDbConfiguration {
     return version;
   }
 
+  /**
+   * Used only for Influxdb V9.
+   */
+  @JsonProperty
+  int maxHttpConnections;
+
+  public int getMaxHttpConnections() {
+    return maxHttpConnections;
+  }
+
   @JsonProperty
   String name;
 
