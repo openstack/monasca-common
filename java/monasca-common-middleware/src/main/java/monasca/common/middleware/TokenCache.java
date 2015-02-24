@@ -19,40 +19,33 @@ import org.apache.thrift.TException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 
-public class TokenCache<K, V> {
+public class TokenCache {
 
-  private final LoadingCache<K, V> cache;
+  private final LoadingCache<String, String> cache;
   private final Config appConfig = Config.getInstance();
   private AuthClientFactory factory;
-  private AuthClient client;
   private static final Logger logger = LoggerFactory
     .getLogger(TokenCache.class);
 
 
-  public TokenCache(final long maxSize, final long timeToExpire, final Map<String, String> map) {
+  public TokenCache(final long maxSize, final long timeToExpire) {
     factory = appConfig.getFactory();
 
     cache = CacheBuilder.newBuilder().maximumSize(maxSize)
       .expireAfterWrite(timeToExpire, TimeUnit.SECONDS)
-      .build(new CacheLoader<K, V>() {
-        public V load(K key) throws TException, ClientProtocolException {
+      .build(new CacheLoader<String, String>() {
+        public String load(String key) throws TException, ClientProtocolException {
 
-          V value = null;
+          String value = null;
           AuthClient client = null;
 
           try {
             client = factory.getClient();
-            if (appConfig.getAuthVersion().equals("v2.0")) {
-              value = (V) client.validateTokenForServiceEndpointV2((String) key, appConfig.getServiceIds(),
-                appConfig.getEndpointIds(), appConfig.isIncludeCatalog());
-            } else {
-              value = (V) client.validateTokenForServiceEndpointV3((String) key, map);
-            }
+            value = client.validateTokenForServiceEndpointV3(key);
           } finally {
             if (client != null)
               factory.recycle(client);
@@ -62,8 +55,8 @@ public class TokenCache<K, V> {
       });
   }
 
-  public V getToken(K key) throws ClientProtocolException {
-    V value = null;
+  public String getToken(String key) throws ClientProtocolException {
+    String value = null;
     try {
       value = cache.get(key);
     } catch (ExecutionException e) {
@@ -73,7 +66,7 @@ public class TokenCache<K, V> {
     return value;
   }
 
-  public void put(K key, V value) {
+  public void put(String key, String value) {
     cache.put(key, value);
   }
 

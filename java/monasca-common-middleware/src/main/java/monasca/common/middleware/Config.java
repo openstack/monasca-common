@@ -21,8 +21,6 @@ import javax.servlet.ServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Map;
-
 public class Config implements AuthConstants {
 
   // Thee faithful logger
@@ -31,22 +29,16 @@ public class Config implements AuthConstants {
 
   private static final Config instance = new Config();
 
-  private static final String PASSWORD = "password";
-  private static final String ACCESS_KEY = "accesskey";
+  public static final String TOKEN = "token";
+  public static final String PASSWORD = "password";
 
   // Application wide init param -- ServletContext
   private ServletContext context = null;
 
-  private TokenCache<String, String> client = null;
+  private TokenCache client = null;
 
   // Auth client factory
   private AuthClientFactory factory = null;
-
-  // The service IDs that this filter serves
-  private String serviceIds;
-
-  // The optional endpoint IDs that this filter serves
-  private String endpointIds;
 
   //the time to cache token
   private long timeToCacheToken;
@@ -57,9 +49,6 @@ public class Config implements AuthConstants {
   // retries and pauseTime configuration for retry logic
   private int retries;
   private int pauseTime;
-
-  // configuration to authenticate against CS api
-  private String authVersion;
 
   // flag to include catalog in the response
   private boolean includeCatalog;
@@ -83,32 +72,17 @@ public class Config implements AuthConstants {
     return instance;
   }
 
-  public synchronized void initialize(FilterConfig config, ServletRequest req, Map<String, String> map) throws ServletException {
+  public synchronized void initialize(FilterConfig config, ServletRequest req) throws ServletException {
     this.context = config.getServletContext();
     this.filterConfig = config;
 
     try {
-      // Initialize serviceIds...
-
-      serviceIds = filterConfig.getInitParameter(SERVICE_IDS);
-      // Initialize endpointIds...
-      endpointIds = filterConfig.getInitParameter(ENDPOINT_IDS);
 
       // Initialize auth server connection parameters...
 
       String host = filterConfig.getInitParameter(SERVER_VIP);
 
       int port = Integer.parseInt(filterConfig.getInitParameter(SERVER_PORT));
-
-      // HP Keystone Server only supports authentication against
-      // V3.0 api
-      authVersion = getValue(AUTH_VERSION, "v3.0");
-
-      if ((serviceIds == null || serviceIds.isEmpty())
-        && (endpointIds == null || endpointIds.isEmpty())
-        && authVersion.equalsIgnoreCase("v2.0")) {
-        throw new Throwable("Need to specify " + SERVICE_IDS);
-      }
 
       // Initialize Certificates
 
@@ -139,7 +113,7 @@ public class Config implements AuthConstants {
         maxActive, maxIdle, evictPeriod, minIdleTime, adminToken);
 
       verifyRequiredParamsForAuthMethod();
-      this.client = new TokenCache<>(maxTokenCacheSize, timeToCacheToken, map);
+      this.client = new TokenCache(maxTokenCacheSize, timeToCacheToken);
       logger.info("Using https {}", useHttps);
       if (useHttps) {
         logger.info("Auth host (2-way SSL: " + clientAuth + "): " + host);
@@ -153,6 +127,10 @@ public class Config implements AuthConstants {
         "Failure initializing connection to authentication endpoint  :: "
           + t.getMessage(), t);
     }
+  }
+
+  private boolean isEmpty(final String value) {
+    return value == null || value.isEmpty();
   }
 
   public boolean isInitialized() {
@@ -208,29 +186,16 @@ public class Config implements AuthConstants {
     return includeCatalog;
   }
 
-
-  protected String getAuthVersion() {
-    return authVersion;
-  }
-
   protected ServletContext getConfig() {
     return context;
   }
 
-  protected TokenCache<String, String> getClient() {
+  protected TokenCache getClient() {
     return client;
   }
 
   protected AuthClientFactory getFactory() {
     return factory;
-  }
-
-  protected String getServiceIds() {
-    return serviceIds;
-  }
-
-  protected String getEndpointIds() {
-    return endpointIds;
   }
 
   protected boolean isDelayAuthDecision() {
@@ -253,15 +218,16 @@ public class Config implements AuthConstants {
     this.timeToCacheToken = timeToCachedToken;
   }
 
-  public void setClient(TokenCache<String, String> client) {
+  public void setClient(TokenCache client) {
     this.client = client;
   }
 
+  @SuppressWarnings("unchecked")
   private <T> T getValue(String paramName, T defaultValue) {
     Class<?> type = defaultValue.getClass();
 
     String initparamValue = filterConfig.getInitParameter(paramName);
-    if (initparamValue != null && !initparamValue.isEmpty()) {
+    if (!isEmpty(initparamValue)) {
       if (type.equals(Integer.class)) {
         int paramValue = Integer.parseInt(initparamValue);
         return (T) type.cast(paramValue);
@@ -279,20 +245,20 @@ public class Config implements AuthConstants {
   }
 
   private void verifyRequiredParamsForAuthMethod() {
-    if (adminAuthMethod.equalsIgnoreCase(PASSWORD)) {
-      if (getAdminUser().isEmpty() || getAdminPassword().isEmpty()) {
-        String msg = String
-          .format("admin user and password must be specified if admin auth method is %s",
-            adminAuthMethod);
-        throw new AdminAuthException(msg);
+    if (isEmpty(getAdminAuthMethod()) || getAdminAuthMethod().equalsIgnoreCase(TOKEN)) {
+      if (isEmpty(getAdminToken())) {
+        throw new AdminAuthException(String.format(
+            "adminToken must be set if adminAuthMethod is %s.", TOKEN));
       }
-    } else if (adminAuthMethod.equalsIgnoreCase(ACCESS_KEY)) {
-      if (getAdminAccessKey().isEmpty() || getAdminSecretKey().isEmpty()) {
-        String msg = String
-          .format("admin access and secret key must be specified if admin auth method is %s",
-            adminAuthMethod);
-        throw new AdminAuthException(msg);
+    } else if (getAdminAuthMethod().equalsIgnoreCase(PASSWORD)) {
+      if (isEmpty(getAdminUser()) || isEmpty(getAdminPassword())) {
+        throw new AdminAuthException(String.format(
+            "adminUser and adminPassword must be set if adminAuthMethod is %s.", PASSWORD));
       }
+    } else {
+      throw new AdminAuthException(String.format(
+          "Unrecognized value '%s' for adminAuthMethod. Valid values are %s or %s",
+          getAdminAuthMethod(), TOKEN, PASSWORD));
     }
   }
 }

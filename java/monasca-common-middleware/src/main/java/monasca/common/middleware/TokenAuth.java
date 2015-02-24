@@ -14,8 +14,6 @@
 package monasca.common.middleware;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -54,10 +52,6 @@ import org.slf4j.LoggerFactory;
 public class TokenAuth implements Filter, monasca.common.middleware.AuthConstants {
 
   private static final String TOKEN_NOTFOUND = "Bad Request: Token not found in the request";
-  private static final String SERVICE_IDS_PARAM = "serviceIds";
-  private static final String ENDPOINT_IDS_PARAM = "endpointIds";
-  private static final String SERVICE_CATALOG_PARAM = "includeCatalog";
-  private static final String API_VERSION_PARAM = "apiVersion";
 
   private final monasca.common.middleware.Config appConfig = Config.getInstance();
 
@@ -93,7 +87,7 @@ public class TokenAuth implements Filter, monasca.common.middleware.AuthConstant
     Object auth = null;
     int numberOfTries = 0;
     if (!appConfig.isInitialized()) {
-      appConfig.initialize(filterConfig, req, getInputParams());
+      appConfig.initialize(filterConfig, req);
     }
     int retries = appConfig.getRetries();
     long pauseTime = appConfig.getPauseTime();
@@ -170,19 +164,4 @@ public class TokenAuth implements Filter, monasca.common.middleware.AuthConstant
     // Forward downstream...
     chain.doFilter(req, resp);
   }
-
-  private Map<String, String> getInputParams() {
-    Map<String, String> inputParams = new HashMap<String, String>();
-    if (appConfig.getServiceIds() != null) {
-      inputParams.put(SERVICE_IDS_PARAM, appConfig.getServiceIds());
-    }
-    if (appConfig.getEndpointIds() != null) {
-      inputParams.put(ENDPOINT_IDS_PARAM, appConfig.getEndpointIds());
-    }
-    inputParams.put(SERVICE_CATALOG_PARAM, String.valueOf(appConfig.isIncludeCatalog()));
-    inputParams.put(API_VERSION_PARAM, appConfig.getAuthVersion());
-    return inputParams;
-  }
-
-
 }
