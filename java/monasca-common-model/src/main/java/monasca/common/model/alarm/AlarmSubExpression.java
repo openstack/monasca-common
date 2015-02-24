@@ -18,6 +18,7 @@ package monasca.common.model.alarm;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -112,6 +113,7 @@ public class AlarmSubExpression implements Serializable {
   /**
    * Returns the sub-alarm's expression.
    */
+  @JsonIgnore
   public String getExpression() {
     StringBuilder sb = new StringBuilder();
     sb.append(function).append('(').append(metricDefinition.toExpression());

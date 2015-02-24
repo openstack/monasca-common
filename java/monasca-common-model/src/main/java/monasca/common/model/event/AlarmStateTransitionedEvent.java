@@ -17,6 +17,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonRootName;
 import monasca.common.model.alarm.AlarmState;
+import monasca.common.model.alarm.AlarmTransitionSubAlarm;
 import monasca.common.model.metric.MetricDefinition;
 
 /**
@@ -35,6 +36,7 @@ public class AlarmStateTransitionedEvent {
   public boolean actionsEnabled;
   public String stateChangeReason;
   public String severity;
+  public List<AlarmTransitionSubAlarm> subAlarms;
   /** POSIX timestamp */
   public long timestamp;
 
@@ -43,7 +45,7 @@ public class AlarmStateTransitionedEvent {
   public AlarmStateTransitionedEvent(String tenantId, String alarmId, String alarmDefinitionId,
       List<MetricDefinition> metrics, String alarmName, String alarmDescription,
       AlarmState oldState, AlarmState newState, String severity, boolean actionsEnabled,
-      String stateChangeReason, long timestamp) {
+      String stateChangeReason, List<AlarmTransitionSubAlarm> subAlarms, long timestamp) {
     this.tenantId = tenantId;
     this.alarmId = alarmId;
     this.alarmDefinitionId = alarmDefinitionId;
@@ -55,6 +57,7 @@ public class AlarmStateTransitionedEvent {
     this.severity = severity;
     this.actionsEnabled = actionsEnabled;
     this.stateChangeReason = stateChangeReason;
+    this.subAlarms = subAlarms;
     this.timestamp = timestamp;
   }
 
@@ -93,6 +96,11 @@ public class AlarmStateTransitionedEvent {
       if (other.severity != null)
         return false;
     } else if (!severity.equals(other.severity))
+      return false;
+    if (subAlarms == null) {
+      if (other.subAlarms != null)
+        return false;
+    } else if (!subAlarms.equals(other.subAlarms))
       return false;
     if (metrics == null) {
       if (other.metrics != null)
@@ -133,6 +141,7 @@ public class AlarmStateTransitionedEvent {
     result = prime * result + ((oldState == null) ? 0 : oldState.hashCode());
     result = prime * result + ((stateChangeReason == null) ? 0 : stateChangeReason.hashCode());
     result = prime * result + ((tenantId == null) ? 0 : tenantId.hashCode());
+    result = prime * result + ((subAlarms == null) ? 0 : subAlarms.hashCode());
     result = prime * result + (int) (timestamp ^ (timestamp >>> 32));
     return result;
   }
@@ -143,6 +152,6 @@ public class AlarmStateTransitionedEvent {
         + ", alarmDefinitionId=" + alarmDefinitionId + ", metrics=" + metrics + ", alarmName="
         + alarmName + ", alarmDescription=" + alarmDescription + ", oldState=" + oldState
         + ", newState=" + newState + ", severity=" + severity + ", actionsEnabled=" + actionsEnabled + ", stateChangeReason="
-        + stateChangeReason + ", timestamp=" + timestamp + "]";
+        + stateChangeReason + ", subAlarms=" + subAlarms +  ", timestamp=" + timestamp + "]";
   }
 }
