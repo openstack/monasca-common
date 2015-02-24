@@ -146,9 +146,6 @@ public interface AuthConstants {
    */
   public static final String DELAY_AUTH_DECISION = "DelayAuthDecision";
 
-  public static final String SIGNATURE_METHOD = "HmacSHA1";
-
-
   /**
    * Version of CS to authenticate the credentials *
    */
