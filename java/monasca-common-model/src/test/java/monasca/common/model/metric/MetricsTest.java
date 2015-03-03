@@ -30,26 +30,15 @@ public class MetricsTest {
     SortedMap<String, String> dimensions = new TreeMap<String, String>();
     dimensions.put("metric_name", "cpu");
     dimensions.put("instance_id", "123");
-    Metric metric = new Metric("hpcs.compute", dimensions, 123345, 5);
-
+    SortedMap<String, String> valueMeta = new TreeMap<String, String>();
+    valueMeta.put("result", "foobar");
+    valueMeta.put("deklan", "123");
+    Metric metric = new Metric("hpcs.compute", dimensions, 123345, 5, valueMeta);
     String json = Metrics.toJson(metric);
     assertEquals(
         json,
-        "{\"name\":\"hpcs.compute\",\"dimensions\":{\"instance_id\":\"123\",\"metric_name\":\"cpu\"},\"timestamp\":123345,\"value\":5.0}");
-  }
-
-  public void shouldSerializeTimeValues() {
-    SortedMap<String, String> dimensions = new TreeMap<String, String>();
-    dimensions.put("metric_name", "cpu");
-    dimensions.put("device", "2");
-    dimensions.put("instance_id", "123");
-    Metric metric = new Metric("hpcs.compute", dimensions, 123345, new double[][] { { 123, 5 },
-        { 456, 6 } });
-
-    String json = Metrics.toJson(metric);
-    assertEquals(
-        json,
-        "{\"name\":\"hpcs.compute\",\"dimensions\":{\"device\":\"2\",\"instance_id\":\"123\",\"metric_name\":\"cpu\"},\"timestamp\":123345,\"time_values\":[[123,5.0],[456,6.0]]}");
+        "{\"name\":\"hpcs.compute\",\"dimensions\":{\"instance_id\":\"123\",\"metric_name\":\"cpu\"}," +
+        "\"timestamp\":123345,\"value\":5.0,\"value_meta\":{\"deklan\":\"123\",\"result\":\"foobar\"}}");
   }
 
   public void shouldSerializeAndDeserialize() {
@@ -57,8 +46,10 @@ public class MetricsTest {
     dimensions.put("metric_name", "cpu");
     dimensions.put("device", "2");
     dimensions.put("instance_id", "123");
-    Metric expected = new Metric("hpcs.compute", dimensions, 123345, new double[][] { { 123, 5 },
-        { 456, 6 } });
+    SortedMap<String, String> valueMeta = new TreeMap<String, String>();
+    valueMeta.put("result", "foobar");
+    valueMeta.put("deklan", "123");
+    Metric expected = new Metric("hpcs.compute", dimensions, 123345, 55.0, valueMeta);
 
     Metric metric = Metrics.fromJson(Metrics.toJson(expected).getBytes());
     assertEquals(metric, expected);
@@ -68,12 +59,15 @@ public class MetricsTest {
     SortedMap<String, String> dimensions = new TreeMap<String, String>();
     dimensions.put("metric_name", "foôbár");
     dimensions.put("instance_id", "123");
-    Metric metric = new Metric("hpcs.compute", dimensions, 123345, 5);
-
+    SortedMap<String, String> valueMeta = new TreeMap<String, String>();
+    valueMeta.put("result", "boôbár");
+    valueMeta.put("deklan", "123");
+    Metric metric = new Metric("hpcs.compute", dimensions, 123345, 5, valueMeta);
     String json = Metrics.toJson(metric);
     assertEquals(
         json,
-        "{\"name\":\"hpcs.compute\",\"dimensions\":{\"instance_id\":\"123\",\"metric_name\":\"foôbár\"},\"timestamp\":123345,\"value\":5.0}");
+        "{\"name\":\"hpcs.compute\",\"dimensions\":{\"instance_id\":\"123\",\"metric_name\":\"foôbár\"}," +
+        "\"timestamp\":123345,\"value\":5.0,\"value_meta\":{\"deklan\":\"123\",\"result\":\"boôbár\"}}");
   }
 
   public void shouldSerializeAndDeserializeUTF8() throws UnsupportedEncodingException {
@@ -81,8 +75,10 @@ public class MetricsTest {
     dimensions.put("metric_name", "foôbár");
     dimensions.put("device", "2");
     dimensions.put("instance_id", "123");
-    Metric expected = new Metric("hpcs.compute", dimensions, 123345, new double[][] { { 123, 5 },
-        { 456, 6 } });
+    SortedMap<String, String> valueMeta = new TreeMap<String, String>();
+    valueMeta.put("result", "foôbár");
+    valueMeta.put("deklan", "123");
+    Metric expected = new Metric("hpcs.compute", dimensions, 123345, 42.0, valueMeta);
 
     Metric metric;
     metric = Metrics.fromJson(Metrics.toJson(expected).getBytes("UTF-8"));
@@ -94,8 +90,10 @@ public class MetricsTest {
     dimensions.put("metric_name", "fo\u00f4b\u00e1r");
     dimensions.put("device", "2");
     dimensions.put("instance_id", "123");
-    Metric expected = new Metric("hpcs.compute", dimensions, 123345, new double[][] { { 123, 5 },
-        { 456, 6 } });
+    SortedMap<String, String> valueMeta = new TreeMap<String, String>();
+    valueMeta.put("result", "fo\u00f4b\u00e1r");
+    valueMeta.put("deklan", "123");
+    Metric expected = new Metric("hpcs.compute", dimensions, 123345, 84.0, valueMeta);
 
     Metric metric;
     metric = Metrics.fromJson(Metrics.toJson(expected).getBytes("UTF-8"));
@@ -111,10 +109,14 @@ public class MetricsTest {
     dimensions2.put("metric_name", "foôbár");
     dimensions2.put("device", "2");
     dimensions2.put("instance_id", "123");
-    Metric expected_escaped = new Metric("hpcs.compute", dimensions, 123345, new double[][] {
-        { 123, 5 }, { 456, 6 } });
-    Metric expected_nonescaped = new Metric("hpcs.compute", dimensions2, 123345, new double[][] {
-        { 123, 5 }, { 456, 6 } });
+    SortedMap<String, String> valueMeta = new TreeMap<String, String>();
+    valueMeta.put("result", "fo\u00f4b\u00e1r");
+    valueMeta.put("deklan", "123");
+    SortedMap<String, String> valueMeta2 = new TreeMap<String, String>();
+    valueMeta2.put("result", "foôbár");
+    valueMeta2.put("deklan", "123");
+    Metric expected_escaped = new Metric("hpcs.compute", dimensions, 123345, 42.0, valueMeta);
+    Metric expected_nonescaped = new Metric("hpcs.compute", dimensions2, 123345, 42.0, valueMeta2);
 
     Metric metric;
     metric = Metrics.fromJson(Metrics.toJson(expected_escaped).getBytes("UTF-8"));

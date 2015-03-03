@@ -15,13 +15,11 @@ package monasca.common.model.metric;
 
 import java.io.Serializable;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Preconditions;
 
 import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
 
-import java.util.Arrays;
 import java.util.Map;
 
 /**
@@ -34,32 +32,28 @@ public class Metric implements Serializable {
   public Map<String, String> dimensions;
   public long timestamp;
   public double value;
-  public double[][] timeValues = null;
+  public Map<String, String> valueMeta;
   private MetricDefinition definition;
 
   public Metric() {}
 
-  public Metric(@NotNull MetricDefinition definition, long timestamp, double value) {
+  public Metric(@NotNull MetricDefinition definition, long timestamp, double value,
+      @Nullable Map<String, String> valueMeta) {
     this.definition = Preconditions.checkNotNull(definition, "definition");
     this.name = definition.name;
     setDimensions(definition.dimensions);
     this.timestamp = timestamp;
-    this.value = Preconditions.checkNotNull(value, "value");
+    this.value = value;
+    this.valueMeta = valueMeta;
   }
 
-  public Metric(String name, @Nullable Map<String, String> dimensions, long timestamp, double value) {
+  public Metric(String name, @Nullable Map<String, String> dimensions, long timestamp,
+      double value, @Nullable Map<String, String> valueMeta) {
     this.name = Preconditions.checkNotNull(name, "name");
     setDimensions(dimensions);
     this.timestamp = timestamp;
     this.value = value;
-  }
-
-  public Metric(String name, @Nullable Map<String, String> dimensions, long timestamp,
-      double[][] timeValues) {
-    this.name = Preconditions.checkNotNull(name, "name");
-    setDimensions(dimensions);
-    this.timestamp = Preconditions.checkNotNull(timestamp, "timestamp");
-    this.timeValues = Preconditions.checkNotNull(timeValues, "timeValues");
+    this.valueMeta = valueMeta;
   }
 
   /**
@@ -74,8 +68,7 @@ public class Metric implements Serializable {
   @Override
   public String toString() {
     return "Metric{" + "name='" + name + '\'' + ", dimensions=" + dimensions + ", timeStamp='"
-        + timestamp + '\'' + ", value=" + value + ", timeValues=" + Arrays.toString(timeValues)
-        + '}';
+        + timestamp + '\'' + ", value=" + value + ", valueMeta=" + valueMeta + '}';
   }
 
   @Override
@@ -102,7 +95,10 @@ public class Metric implements Serializable {
         return false;
     } else if (!name.equals(other.name))
       return false;
-    if (!Arrays.deepEquals(timeValues, other.timeValues))
+    if (valueMeta == null) {
+      if (other.valueMeta != null)
+        return false;
+    } else if (!valueMeta.equals(other.valueMeta))
       return false;
     if (timestamp != other.timestamp)
       return false;
@@ -118,7 +114,7 @@ public class Metric implements Serializable {
     result = prime * result + ((definition == null) ? 0 : definition.hashCode());
     result = prime * result + ((dimensions == null) ? 0 : dimensions.hashCode());
     result = prime * result + ((name == null) ? 0 : name.hashCode());
-    result = prime * result + Arrays.hashCode(timeValues);
+    result = prime * result + ((valueMeta == null) ? 0 : valueMeta.hashCode());
     result = prime * result + (int) (timestamp ^ (timestamp >>> 32));
     long temp;
     temp = Double.doubleToLongBits(value);
@@ -158,13 +154,11 @@ public class Metric implements Serializable {
     this.value = value;
   }
 
-  @JsonProperty("time_values")
-  public double[][] getTimeValues() {
-    return timeValues;
+  public Map<String, String> getValueMeta() {
+    return valueMeta;
   }
 
-  @JsonProperty("time_values")
-  public void setTimeValues(double[][] timeValues) {
-    this.timeValues = timeValues;
+  public void setValueMeta(Map<String, String> valueMeta) {
+    this.valueMeta = valueMeta;
   }
 }

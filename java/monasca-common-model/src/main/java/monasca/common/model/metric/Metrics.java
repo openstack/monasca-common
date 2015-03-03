@@ -17,7 +17,6 @@
 package monasca.common.model.metric;
 
 import java.io.IOException;
-import java.util.Map;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 
@@ -55,23 +54,15 @@ public final class Metrics {
       jgen.writeStartObject();
 
       jgen.writeStringField("name", value.name);
-      if (value.dimensions != null && !value.dimensions.isEmpty())
+      if (value.dimensions != null && !value.dimensions.isEmpty()) {
         jgen.writeObjectField("dimensions", value.dimensions);
+      }
       jgen.writeNumberField("timestamp", value.timestamp);
 
-      if (value.timeValues == null)
-        jgen.writeNumberField("value", value.value);
-      else {
-        jgen.writeArrayFieldStart("time_values");
-        for (double[] timeValue : value.timeValues) {
-          jgen.writeStartArray();
-          jgen.writeNumber((long) timeValue[0]); // Write timestamp as a long
-          jgen.writeNumber(timeValue[1]);
-          jgen.writeEndArray();
-        }
-        jgen.writeEndArray();
+      jgen.writeNumberField("value", value.value);
+      if (value.valueMeta != null && !value.valueMeta.isEmpty()) {
+        jgen.writeObjectField("value_meta", value.valueMeta);
       }
-
       jgen.writeEndObject();
     }
   }
@@ -103,13 +94,5 @@ public final class Metrics {
     } catch (JsonProcessingException e) {
       return null;
     }
-  }
-
-  /**
-   * Returns a metric for the {@code metric} and {@code dimensions}.
-   */
-  public static Metric of(Metric metric, Map<String, String> dimensions) {
-    return metric.timeValues == null ? new Metric(metric.name, dimensions, metric.timestamp,
-        metric.value) : new Metric(metric.name, dimensions, metric.timestamp, metric.timeValues);
   }
 }
