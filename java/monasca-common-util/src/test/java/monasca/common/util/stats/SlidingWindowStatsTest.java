@@ -35,7 +35,7 @@ public class SlidingWindowStatsTest {
     assertEquals(window.indexOf(6), 6);
 
     // Window 8, 9, 10, 4, 5, 6, 7
-    window.slideViewTo(8);
+    window.slideViewTo(8, 1);
     assertEquals(window.indexOf(0), 3);
     assertEquals(window.indexOf(1), 4);
     assertEquals(window.indexOf(2), 5);
@@ -43,7 +43,7 @@ public class SlidingWindowStatsTest {
     assertEquals(window.indexOf(6), 2);
 
     // Window 8, 9, 10, 11, 12, 6, 7
-    window.slideViewTo(10);
+    window.slideViewTo(10, 1);
     assertEquals(window.indexOf(0), 5);
     assertEquals(window.indexOf(1), 6);
     assertEquals(window.indexOf(2), 0);
@@ -51,7 +51,7 @@ public class SlidingWindowStatsTest {
     assertEquals(window.indexOf(6), 4);
 
     // Window 15, 9, 10, 11, 12, 13, 14
-    window.slideViewTo(13);
+    window.slideViewTo(13, 1);
     assertEquals(window.indexOf(0), 1);
     assertEquals(window.indexOf(1), 2);
     assertEquals(window.indexOf(2), 3);
@@ -64,13 +64,13 @@ public class SlidingWindowStatsTest {
         TimeResolution.ABSOLUTE, 1, 5, 2, 10);
 
     assertArraysEqual(window.getTimestamps(), new long[] { 6, 7, 8, 9, 10 });
-    window.slideViewTo(14);
+    window.slideViewTo(14, 1);
     assertArraysEqual(window.getTimestamps(), new long[] { 10, 11, 12, 13, 14 });
 
     window = new SlidingWindowStats(Statistics.Average.class, TimeResolution.ABSOLUTE, 3, 3, 2, 6);
 
     assertArraysEqual(window.getTimestamps(), new long[] { 0, 3, 6 });
-    window.slideViewTo(14);
+    window.slideViewTo(14, 1);
     assertArraysEqual(window.getTimestamps(), new long[] { 9, 12, 15 });
   }
 
@@ -78,23 +78,23 @@ public class SlidingWindowStatsTest {
     SlidingWindowStats window = new SlidingWindowStats(Statistics.Average.class,
         TimeResolution.ABSOLUTE, 3, 3, 2, 6);
 
-    window.slideViewTo(2);
-    window.slideViewTo(7);
+    window.slideViewTo(2, 1);
+    window.slideViewTo(8, 1);
     assertEquals(window.getTimestamps(), new long[] { 3, 6, 9 });
 
-    window.slideViewTo(9);
+    window.slideViewTo(10, 1);
     assertArraysEqual(window.getTimestamps(), new long[] { 3, 6, 9 });
-    window.slideViewTo(12);
+    window.slideViewTo(12, 1);
     assertArraysEqual(window.getTimestamps(), new long[] { 6, 9, 12 });
 
-    window.slideViewTo(14);
+    window.slideViewTo(14, 1);
     assertArraysEqual(window.getTimestamps(), new long[] { 9, 12, 15 });
 
-    window.slideViewTo(18);
+    window.slideViewTo(18, 1);
     assertArraysEqual(window.getTimestamps(), new long[] { 12, 15, 18 });
 
     // Attempt to slide backwards - Noop
-    window.slideViewTo(10);
+    window.slideViewTo(10, 1);
     assertArraysEqual(window.getTimestamps(), new long[] { 12, 15, 18 });
   }
 
@@ -106,7 +106,7 @@ public class SlidingWindowStatsTest {
 
     assertEquals(window.getWindowValues(), new double[] { 999, 999, 999, 999, 999 });
 
-    window.slideViewTo(12);
+    window.slideViewTo(12, 1);
     assertEquals(window.getWindowValues(), new double[] { 999, 999, 999, 999, Double.NaN });
 
     window.addValue(888, 17);
@@ -121,13 +121,13 @@ public class SlidingWindowStatsTest {
 
     assertEquals(window.getViewValues(), new double[] { 999, 999, 999 });
 
-    window.slideViewTo(15);
+    window.slideViewTo(15, 1);
     assertEquals(window.getViewValues(), new double[] { 999, 999, 999 });
 
     window.addValue(777, 15);
     window.addValue(888, 18);
     assertEquals(window.getViewValues(), new double[] { 999, 999, 999 });
-    window.slideViewTo(21);
+    window.slideViewTo(21, 1);
     assertEquals(window.getViewValues(), new double[] { 999, 777, 888 });
   }
 
@@ -146,7 +146,7 @@ public class SlidingWindowStatsTest {
     assertEquals(window.indexOfTime(20), 4);
     assertEquals(window.indexOfTime(21), -1);
 
-    window.slideViewTo(19);
+    window.slideViewTo(20, 1);
 
     // Slots like 21 24 12 15 18
     assertEquals(window.indexOfTime(11), -1);
@@ -158,7 +158,7 @@ public class SlidingWindowStatsTest {
     assertEquals(window.indexOfTime(26), 1);
     assertEquals(window.indexOfTime(28), -1);
 
-    window.slideViewTo(22);
+    window.slideViewTo(23, 1);
 
     // Slots like 21 24 27 15 18
     assertEquals(window.indexOfTime(14), -1);
@@ -183,7 +183,7 @@ public class SlidingWindowStatsTest {
     assertEquals(window.getValue(15), 4.0);
 
     // Slide logical window to 10 15 20
-    window.slideViewTo(25);
+    window.slideViewTo(25, 1);
     window.addValue(5, 24);
 
     assertEquals(window.getValue(10), 3.0);
@@ -202,7 +202,7 @@ public class SlidingWindowStatsTest {
     assertEquals(window.lengthToIndex(0), 1);
 
     // Window 8, 2, 3, 4, 5, 6, 7
-    window.slideViewTo(7);
+    window.slideViewTo(7, 0);
     assertEquals(window.lengthToIndex(6), 6);
     assertEquals(window.lengthToIndex(4), 4);
     assertEquals(window.lengthToIndex(2), 2);
@@ -210,7 +210,7 @@ public class SlidingWindowStatsTest {
     assertEquals(window.lengthToIndex(0), 7);
 
     // Window 8, 9, 10, 4, 5, 6, 7
-    window.slideViewTo(9);
+    window.slideViewTo(9, 1);
     assertEquals(window.lengthToIndex(6), 4);
     assertEquals(window.lengthToIndex(4), 2);
     assertEquals(window.lengthToIndex(2), 7);
@@ -218,7 +218,7 @@ public class SlidingWindowStatsTest {
     assertEquals(window.lengthToIndex(0), 5);
 
     // Window 8, 9, 10, 11, 12, 13, 7
-    window.slideViewTo(12);
+    window.slideViewTo(12, 1);
     assertEquals(window.lengthToIndex(6), 1);
     assertEquals(window.lengthToIndex(4), 6);
     assertEquals(window.lengthToIndex(2), 4);
@@ -240,14 +240,14 @@ public class SlidingWindowStatsTest {
     assertEquals(window.getValuesUpTo(9), new double[] { 2 });
 
     // Window is 30 10 15 20 25
-    window.slideViewTo(22);
+    window.slideViewTo(22, 1);
     window.addValue(5, 22);
     assertEquals(window.getValuesUpTo(22), new double[] { 3, 4, 5 });
     assertEquals(window.getValuesUpTo(15), new double[] { 3, 4 });
     assertEquals(window.getValuesUpTo(12), new double[] { 3 });
 
     // Window is 30 35 15 20 25
-    window.slideViewTo(27);
+    window.slideViewTo(27, 1);
     window.addValue(6, 26);
     assertEquals(window.getValuesUpTo(27), new double[] { 4, 5, 6 });
     assertEquals(window.getValuesUpTo(24), new double[] { 4, 5 });

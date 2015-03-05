@@ -191,14 +191,29 @@ public class SlidingWindowStats {
   }
 
   /**
-   * Slides window's view to the slot for the {@code timestamp}, erasing values for any slots along
-   * the way.
+   * See if this Window sh
+   * the way. Window should only be slid if {@code timestamp} is at least {@code minDelay} newer than the
+   * current window end time. 
    * 
    * @param timestamp slide view to
+   * @param minDelay window end time must be older than this value
    */
-  public void slideViewTo(long timestamp) {
-    if (timestamp <= viewEndTimestamp)
+  public boolean shouldEvaluate(long timestamp, long minDelay) {
+    return timestamp > (viewEndTimestamp + minDelay);
+  }
+
+  /**
+   * Slides window's view to the slot for the {@code timestamp}, erasing values for any slots along
+   * the way. Window should only be slid if {@code timestamp} is at least {@code minDelay} newer than the
+   * current window end time. 
+   * 
+   * @param timestamp slide view to
+   * @param minDelay window end time must be older than this value
+   */
+  public void slideViewTo(long timestamp, long minDelay) {
+    if (timestamp <= (viewEndTimestamp + minDelay)) {
       return;
+    }
     long timeDiff = timestamp - slotEndTimestamp;
     int slotsToAdvance = (int) (timeDiff / slotWidth);
     slotsToAdvance += timeDiff % slotWidth == 0 ? 0 : 1;
