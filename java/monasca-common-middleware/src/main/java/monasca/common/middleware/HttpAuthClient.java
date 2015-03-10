@@ -46,235 +46,264 @@ import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
 
 public class HttpAuthClient implements AuthClient {
-    private static final Logger logger = LoggerFactory.getLogger(HttpAuthClient.class);
 
-	private static final int DELTA_TIME_IN_SEC = 30;
-	private static SimpleDateFormat expiryFormat;
-	static {
-		expiryFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-		expiryFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
-	}
-	private final Config appConfig = Config.getInstance();
+  private static final Logger logger = LoggerFactory.getLogger(HttpAuthClient.class);
 
-	private HttpClient client;
-	private String adminToken;
-	private String adminTokenExpiry;
-	private URI uri;
+  private static final int DELTA_TIME_IN_SEC = 30;
+  private static SimpleDateFormat expiryFormat;
 
-	public HttpAuthClient(HttpClient client, URI uri) {
-		this.client = client;
+  static {
+    expiryFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+    expiryFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+  }
+
+  private final Config appConfig = Config.getInstance();
+
+  private HttpClient client;
+  private String adminToken;
+  private String adminTokenExpiry;
+  private URI uri;
+
+  public HttpAuthClient(HttpClient client, URI uri) {
+    this.client = client;
     this.uri = uri;
   }
 
-	@Override
-	public String validateTokenForServiceEndpointV3(String token) throws ClientProtocolException {
-		String newUri = uri.toString() + "/v3/auth/tokens/";
-		Header[] header = new Header[1];
-		header[0] = new BasicHeader(AUTH_SUBJECT_TOKEN, token);
-		return verifyUUIDToken(token, newUri, header);
-	}
+  @Override
+  public String validateTokenForServiceEndpointV3(String token) throws ClientProtocolException {
+    String newUri = uri.toString() + "/v3/auth/tokens/";
+    Header[] header = new Header[1];
+    header[0] = new BasicHeader(AUTH_SUBJECT_TOKEN, token);
+    return verifyUUIDToken(token, newUri, header);
+  }
 
-	private String verifyUUIDToken(String token, String newUri,
-			Header[] header)
-			throws ClientProtocolException {
-		HttpResponse response = sendGet(newUri, header);
+  private String verifyUUIDToken(String token, String newUri,
+                                 Header[] header)
+      throws ClientProtocolException {
+    HttpResponse response = sendGet(newUri, header);
 
     HttpEntity entity = response.getEntity();
     int code = response.getStatusLine().getStatusCode();
 
-      InputStream instream = null;
-      try {
-        if (code == 404) {
-          instream = entity.getContent();
-          instream.close();
-          throw new AuthException("Authorization failed for user token: " + token);
-        }
-
-        if (code != 200) {
-          adminToken = null;
-          instream = entity.getContent();
-          instream.close();
-          String reasonPhrase = response.getStatusLine().getReasonPhrase();
-
-          throw new AuthException("Failed to validate via HTTP " + code
-            + " " + reasonPhrase);
-        }
-      } catch(IOException e) {
-        throw new ClientProtocolException(
-          "IO Exception: problem closing stream ", e);
+    InputStream instream = null;
+    try {
+      if (code == 404) {
+        instream = entity.getContent();
+        instream.close();
+        throw new AuthException("Authorization failed for user token: " + token);
       }
 
+      if (code != 200) {
+        adminToken = null;
+        instream = entity.getContent();
+        instream.close();
+        String reasonPhrase = response.getStatusLine().getReasonPhrase();
 
-		return parseResponse(response);
-	}
+        throw new AuthException("Failed to validate via HTTP " + code
+                                + " " + reasonPhrase);
+      }
+    } catch (IOException e) {
+      throw new ClientProtocolException(
+          "IO Exception: problem closing stream ", e);
+    }
 
-	private HttpResponse sendPost(String uri, StringEntity body)
-			throws ClientProtocolException {
-		HttpResponse response = null;
-		HttpPost post = new HttpPost(uri);
-		post.setHeader("Accept", "application/json");
-		post.setHeader("Content-Type", "application/json");
-		try {
-			post.setEntity(body);
-			response = client.execute(post);
+    return parseResponse(response);
+  }
+
+  private HttpResponse sendPost(String uri, StringEntity body)
+      throws ClientProtocolException {
+    HttpResponse response = null;
+    HttpPost post = new HttpPost(uri);
+    post.setHeader("Accept", "application/json");
+    post.setHeader("Content-Type", "application/json");
+    try {
+      post.setEntity(body);
+      response = client.execute(post);
       int code = response.getStatusLine().getStatusCode();
-			if (!(code == 201 || code == 200 || code == 203)) {
-				adminToken = null;
-				throw new AdminAuthException(
-						"Failed to authenticate admin credentials " + code
-								+ response.getStatusLine().getReasonPhrase());
-			}
-		} catch (IOException e) {
-		    final String message;
-		    if ((e.getMessage() == null) && (e.getCause() != null)) {
-		        message = e.getCause().getMessage();
-		    }
-		    else {
-		        message = e.getMessage();
-		    }
-		    logger.error("Failure authenticating adminUser: {}", message);
-			post.abort();
-            throw new AdminAuthException(
-                "Failure authenticating adminUser :" + message, e);
-		}
-		return response;
-	}
+      if (!(code == 201 || code == 200 || code == 203)) {
+        adminToken = null;
+        throw new AdminAuthException(
+            "Failed to authenticate admin credentials " + code
+            + response.getStatusLine().getReasonPhrase());
+      }
+    } catch (IOException e) {
+      final String message;
+      if ((e.getMessage() == null) && (e.getCause() != null)) {
+        message = e.getCause().getMessage();
+      } else {
+        message = e.getMessage();
+      }
+      logger.error("Failure authenticating adminUser: {}", message);
+      post.abort();
+      throw new AdminAuthException(
+          "Failure authenticating adminUser :" + message, e);
+    }
+    return response;
+  }
 
-	private HttpResponse sendGet(String newUri, Header[] headers)
-			throws ClientProtocolException {
-		HttpResponse response = null;
-		HttpGet get = null;
+  private HttpResponse sendGet(String newUri, Header[] headers)
+      throws ClientProtocolException {
+    HttpResponse response = null;
+    HttpGet get = null;
 
-		get = new HttpGet(newUri);
-		get.setHeader("Accept", "application/json");
-		get.setHeader("Content-Type", "application/json");
-		if (headers != null) {
-			for (Header header : headers) {
-				get.setHeader(header);
-			}
-		}
+    get = new HttpGet(newUri);
+    get.setHeader("Accept", "application/json");
+    get.setHeader("Content-Type", "application/json");
+    if (headers != null) {
+      for (Header header : headers) {
+        get.setHeader(header);
+      }
+    }
 
-		if (appConfig.getAdminAuthMethod().equalsIgnoreCase(Config.TOKEN)) {
-            get.setHeader(new BasicHeader(TOKEN, appConfig.getAdminToken()));
-        }
-        else {
-          get.setHeader(new BasicHeader(TOKEN, getAdminToken()));
-        }
+    if (appConfig.getAdminAuthMethod().equalsIgnoreCase(Config.TOKEN)) {
+      get.setHeader(new BasicHeader(TOKEN, appConfig.getAdminToken()));
+    } else {
+      get.setHeader(new BasicHeader(TOKEN, getAdminToken()));
+    }
 
-		try {
-			response = client.execute(get);
+    try {
+      response = client.execute(get);
 
-		}catch(ConnectException c) {
+    } catch (ConnectException c) {
       get.abort();
       throw new ServiceUnavailableException(c.getMessage());
-    }
-    catch (IOException e) {
-			get.abort();
+    } catch (IOException e) {
+      get.abort();
 
       throw new ClientProtocolException(
-					"IO Exception during GET request ", e);
-		}
+          "IO Exception during GET request ", e);
+    }
     return response;
-	}
+  }
 
-	private String parseResponse(HttpResponse response) {
-		StringBuffer json = new StringBuffer();
+  private String parseResponse(HttpResponse response) {
+    StringBuffer json = new StringBuffer();
     HttpEntity entity = response.getEntity();
-		if (entity != null) {
+    if (entity != null) {
       InputStream instream;
-			try {
+      try {
         instream = entity.getContent();
 
-				BufferedReader reader = new BufferedReader(
-						new InputStreamReader(instream));
-				String line = reader.readLine();
-				while (line != null) {
-					json.append(line);
-					line = reader.readLine();
-				}
+        BufferedReader reader = new BufferedReader(
+            new InputStreamReader(instream));
+        String line = reader.readLine();
+        while (line != null) {
+          json.append(line);
+          line = reader.readLine();
+        }
         instream.close();
         reader.close();
-			} catch (Exception e) {
-				throw new AuthException("Failed to parse Http Response ", e);
-			}
-		}
+      } catch (Exception e) {
+        throw new AuthException("Failed to parse Http Response ", e);
+      }
+    }
 
     return json.toString();
-	}
+  }
 
-	private String getAdminToken() throws ClientProtocolException {
-		HttpResponse response;
-		String json;
-		JsonParser jp = new JsonParser();
+  private String getAdminToken() throws ClientProtocolException {
+    HttpResponse response;
+    String json;
+    JsonParser jp = new JsonParser();
 
-		if (adminTokenExpiry != null) {
-			if (isExpired(adminTokenExpiry)) {
-				adminToken = null;
-			}
-		}
-		if (adminToken == null) {
-            StringEntity params = getUnscopedV3AdminTokenRequest();
-            String authUri = uri + "/v3/auth/tokens";
-            response = sendPost(authUri, params);
-            adminToken = response.getFirstHeader(AUTH_SUBJECT_TOKEN).getValue();
-            json = parseResponse(response);
-            JsonObject token = jp.parse(json).getAsJsonObject().get("token").getAsJsonObject();
-            adminTokenExpiry = token.get("expires_at").getAsString();
-		}
-		return adminToken;
-	}
+    if (adminTokenExpiry != null) {
+      if (isExpired(adminTokenExpiry)) {
+        adminToken = null;
+      }
+    }
+    if (adminToken == null) {
+      StringEntity params = getUnscopedV3AdminTokenRequest();
+      String authUri = uri + "/v3/auth/tokens";
+      response = sendPost(authUri, params);
+      adminToken = response.getFirstHeader(AUTH_SUBJECT_TOKEN).getValue();
+      json = parseResponse(response);
+      JsonObject token = jp.parse(json).getAsJsonObject().get("token").getAsJsonObject();
+      adminTokenExpiry = token.get("expires_at").getAsString();
+    }
+    return adminToken;
+  }
 
-	private String buildAuth(final String userName, final String password) {
-	  final JsonObject domain = new JsonObject();
-	  domain.addProperty("id", "default");
-      final JsonObject user = new JsonObject();
-      user.addProperty("name", userName);
-      user.addProperty("password", password);
-      user.add("domain", domain);
-      final JsonArray methods = new JsonArray();
-      final JsonObject passwordHolder = new JsonObject();
-      passwordHolder.add("user", user);
-      methods.add(new JsonPrimitive("password"));
-      final JsonObject identity = new JsonObject();
-      identity.add("methods", methods);
-      identity.add("password", passwordHolder);
-      final JsonObject auth = new JsonObject();
-      auth.add("identity", identity);
-      final JsonObject outer = new JsonObject();
-      outer.add("auth", auth);
-	  return outer.toString();
-	}
+  private String buildAuth(final String userName, final String password,
+                           final String projectId, final String projectName) {
+    final JsonObject domain = new JsonObject();
+    domain.addProperty("id", "default");
 
-	private StringEntity getUnscopedV3AdminTokenRequest() {
-		final String body;
-		if (appConfig.getAdminAuthMethod().equalsIgnoreCase(Config.PASSWORD)) {
-		    body = buildAuth(appConfig.getAdminUser(), appConfig.getAdminPassword());
-		} else {
-			String msg = String.format("Admin auth method %s not supported",appConfig.getAdminAuthMethod());
-			throw new AdminAuthException(msg);
-		}
-		try {
-			return new StringEntity(body);
-		} catch (UnsupportedEncodingException e) {
-			throw new AdminAuthException("Invalid V3 authentication request " + e);
-		}
-	}
+    final JsonObject user = new JsonObject();
+    user.addProperty("name", userName);
+    user.addProperty("password", password);
+    user.add("domain", domain);
 
-	private boolean isExpired(String expires) {
-		Date tokenExpiryDate = null;
-		try {
-		    // The date looks like: 2014-11-13T02:34:59.953729Z
-		    // SimpleDateFormat can't handle the microseconds so take them off
-		    final String tmp = expires.replaceAll("\\.[\\d]+Z", "Z");
-			tokenExpiryDate = expiryFormat.parse(tmp);
-		} catch (ParseException e) {
-		    logger.warn("Failure parsing Admin Token expiration date: {}", e.getMessage());
-			return true;
-		}
-		Date current = new Date();
-		return tokenExpiryDate.getTime() < (current.getTime() + DELTA_TIME_IN_SEC * 1000);
-	}
+    final JsonObject passwordHolder = new JsonObject();
+    passwordHolder.add("user", user);
 
-	public void reset() {	}
+    final JsonArray methods = new JsonArray();
+    methods.add(new JsonPrimitive("password"));
+
+    final JsonObject identity = new JsonObject();
+    identity.add("methods", methods);
+    identity.add("password", passwordHolder);
+
+    boolean scopeDefined = false;
+    final JsonObject project = new JsonObject();
+    // If project id is available, it is preferred
+    if (!projectId.isEmpty()) {
+      project.addProperty("id", projectId);
+      scopeDefined = true;
+
+    } else if (!projectName.isEmpty()) {
+      project.add("domain", domain);
+      project.addProperty("name", projectName);
+      scopeDefined = true;
+    }
+
+    final JsonObject auth = new JsonObject();
+    auth.add("identity", identity);
+    if (scopeDefined) {
+      final JsonObject scope = new JsonObject();
+      scope.add("project", project);
+      auth.add("scope", scope);
+    }
+
+    final JsonObject outer = new JsonObject();
+    outer.add("auth", auth);
+
+    return outer.toString();
+  }
+
+  private StringEntity getUnscopedV3AdminTokenRequest() {
+    final String body;
+    if (appConfig.getAdminAuthMethod().equalsIgnoreCase(Config.PASSWORD)) {
+      body = buildAuth(appConfig.getAdminUser(), appConfig.getAdminPassword(),
+                       appConfig.getAdminProjectId(), appConfig.getAdminProjectName());
+    } else {
+      String
+          msg =
+          String.format("Admin auth method %s not supported", appConfig.getAdminAuthMethod());
+      throw new AdminAuthException(msg);
+    }
+    try {
+      return new StringEntity(body);
+    } catch (UnsupportedEncodingException e) {
+      throw new AdminAuthException("Invalid V3 authentication request " + e);
+    }
+  }
+
+  private boolean isExpired(String expires) {
+    Date tokenExpiryDate = null;
+    try {
+      // The date looks like: 2014-11-13T02:34:59.953729Z
+      // SimpleDateFormat can't handle the microseconds so take them off
+      final String tmp = expires.replaceAll("\\.[\\d]+Z", "Z");
+      tokenExpiryDate = expiryFormat.parse(tmp);
+    } catch (ParseException e) {
+      logger.warn("Failure parsing Admin Token expiration date: {}", e.getMessage());
+      return true;
+    }
+    Date current = new Date();
+    return tokenExpiryDate.getTime() < (current.getTime() + DELTA_TIME_IN_SEC * 1000);
+  }
+
+  public void reset() {
+  }
 
 }

@@ -244,5 +244,6 @@ public interface AuthConstants {
   public static final String ADMIN_ACCESS_KEY = "AdminAccessKey";
   public static final String ADMIN_SECRET_KEY = "AdminSecretKey";
   public static final String ADMIN_PROJECT_ID = "AdminProjectId";
+  public static final String ADMIN_PROJECT_NAME = "AdminProjectName";
 
 }
