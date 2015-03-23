@@ -1,0 +1,4 @@
+site_name:
+    monasca-common
+repo_url:
+    'https://github.com/stackforge/monasca-common'
