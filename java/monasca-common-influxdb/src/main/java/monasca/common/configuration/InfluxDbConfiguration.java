@@ -34,6 +34,16 @@ public class InfluxDbConfiguration {
     return maxHttpConnections;
   }
 
+  /**
+   * Used only for Influxdb V9.
+   */
+  @JsonProperty
+  boolean gzip;
+
+  public boolean getGzip() {
+    return gzip;
+  }
+
   @JsonProperty
   String name;
 
