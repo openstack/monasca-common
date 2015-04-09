@@ -21,11 +21,11 @@ start
     : expression EOF
     ;
 
-expression 
-    : compoundIdentifier relational_operator literal # relationalExprFwd
-    | function relational_operator literal ('times' repeat)? # relationalExprFuncFwd
-    | literal relational_operator compoundIdentifier # relationalExprBwd
+expression
+    : function relational_operator literal ('times' repeat)? # relationalExprFuncFwd
     | literal relational_operator function ('times' repeat)? # relationalExprFuncBwd
+    | compoundIdentifier relational_operator literal # relationalExprFwd
+    | literal relational_operator compoundIdentifier # relationalExprBwd
     | expression and expression # andExpr
     | expression or expression # orExpr
     | '(' expression ')' # parenExpr
@@ -132,7 +132,7 @@ repeat
 txt
     : TXT
     | keyword
-    | INTEGER 
+    | INTEGER
     | STRING
     ;
 LT
@@ -208,11 +208,11 @@ INTEGER
     ;
     
 DECIMAL 
-    : '-'?[0-9]+('.'[0-9]+)?
+    : '-'?DIGIT+('.'DIGIT+)?
     ;
 
 TXT
-  : [//a-zA-Z_$/\\0-9]~('\''|';' | '}' | '{' | '=' | ','| '&' | ')' | '(' |' '| '"' )+
+  : ~('}' | '{' | '=' | ',' | ')' | '(' | ' ')*
   ;
 
 STRING
