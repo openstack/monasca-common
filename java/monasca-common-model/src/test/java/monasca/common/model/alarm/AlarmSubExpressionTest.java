@@ -118,8 +118,8 @@ public class AlarmSubExpressionTest {
   }
 
   public void shouldParseExpressionKeywordNamespace() {
-    AlarmSubExpression expr = AlarmSubExpression.of("avg(avg{metric_name=cpu, instance_id=5}, 1) > 5 times 3");
-    assertEquals(expr, new AlarmSubExpression(AggregateFunction.AVG, new MetricDefinition("avg",
+    AlarmSubExpression expr = AlarmSubExpression.of("avg(count{metric_name=cpu, instance_id=5}, 1) > 5 times 3");
+    assertEquals(expr, new AlarmSubExpression(AggregateFunction.AVG, new MetricDefinition("count",
         ImmutableMap.<String, String>builder()
             .put("instance_id", "5")
             .put("metric_name", "cpu")
@@ -127,12 +127,12 @@ public class AlarmSubExpressionTest {
   }
 
   public void shouldParseExpressionKeywordMetricType() {
-    AlarmSubExpression expr = AlarmSubExpression.of("avg(hpcs.compute{metric_name=avg, instance_id=5}, 1) > 5 times 3");
+    AlarmSubExpression expr = AlarmSubExpression.of("avg(hpcs.compute{metric_name=count, instance_id=5}, 1) > 5 times 3");
     assertEquals(expr,
         new AlarmSubExpression(AggregateFunction.AVG, new MetricDefinition("hpcs.compute",
             ImmutableMap.<String, String>builder()
                 .put("instance_id", "5")
-                .put("metric_name", "avg")
+                .put("metric_name", "count")
                 .build()), AlarmOperator.GT, 5, 1, 3));
   }
 

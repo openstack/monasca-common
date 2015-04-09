@@ -174,10 +174,10 @@ public class AlarmExpressionTest {
                 .build()));
 
         assertFalse(expr.evaluate(ImmutableMap.<AlarmSubExpression, Boolean>builder()
-                .put(alarm1, false)
-                .put(alarm2, true)
-                .put(alarm3, false)
-                .build()));
+                                      .put(alarm1, false)
+                                      .put(alarm2, true)
+                                      .put(alarm3, false)
+                                      .build()));
     }
 
     public void shouldDefaultPeriodAndPeriods() {
@@ -193,13 +193,17 @@ public class AlarmExpressionTest {
         AlarmExpression expr = new AlarmExpression(
                 "avg(hpcs.compute{instance_id=5,metric_name=cpu,device=2}, 1) > 5 times 3 and avg(hpcs.compute{flavor_id=3,metric_name=mem}, 2) < 4 times 3");
         expr.evaluate(ImmutableMap.<AlarmSubExpression, Boolean>builder()
-                .put(
-                        new AlarmSubExpression(AggregateFunction.AVG, new MetricDefinition("hpcs.compute",
-                                ImmutableMap.<String, String>builder()
-                                        .put("flavor_id", "3")
-                                        .put("metric_name", "mem")
-                                        .build()), AlarmOperator.LT, 4, 2, 3), true)
-                .build());
+                          .put(
+                              new AlarmSubExpression(AggregateFunction.AVG,
+                                                     new MetricDefinition("hpcs.compute",
+                                                                          ImmutableMap
+                                                                              .<String, String>builder()
+                                                                              .put("flavor_id", "3")
+                                                                              .put("metric_name",
+                                                                                   "mem")
+                                                                              .build()),
+                                                     AlarmOperator.LT, 4, 2, 3), true)
+                          .build());
     }
 
     public void shouldGetAlarmExpressionTree() {
@@ -229,5 +233,25 @@ public class AlarmExpressionTest {
         AlarmExpression expr3 = new AlarmExpression(
                 "avg(hpcs.compute{instance_id=5,metric_name=cpu,device=a}, 1) lt 5 times 444 and avg(hpcs.compute{flavor_id=3,metric_name=mem}, 2) < 4 times 3");
         assertNotEquals(expr1, expr3);
+    }
+
+    public void shouldParseDimensionsWithUnicode() {
+      AlarmExpression expr1 = new AlarmExpression(
+          "公{此=该,metric_name=mem} > 4"
+      );
+      AlarmSubExpression alarm1 = expr1.getSubExpressions().get(0);
+      MetricDefinition expected1 = new MetricDefinition("公",
+                                                        ImmutableMap.<String, String>builder()
+                                                            .put("此", "该")
+                                                            .put("metric_name", "mem")
+                                                            .build());
+      assertEquals(alarm1.getMetricDefinition(), expected1);
+    }
+
+    @Test(expectedExceptions = IllegalArgumentException.class)
+    public void shouldFailWithRestrictedChars() {
+      AlarmExpression expr1 = new AlarmExpression(
+          "metric{\u00A0\u007Dthing=\u00AEstuff,metric_name=mem} > 4"
+      );
     }
 }
