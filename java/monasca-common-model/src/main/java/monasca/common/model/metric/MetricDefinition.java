@@ -43,6 +43,14 @@ public class MetricDefinition extends AbstractEntity implements Serializable  {
   }
 
   @Override
+  public String toString() {
+    return "MetricDefinition{" +
+           "name='" + name + '\'' +
+           ", dimensions=" + dimensions +
+           '}';
+  }
+
+  @Override
   public boolean equals(Object obj) {
     if (this == obj)
       return true;
@@ -91,14 +99,5 @@ public class MetricDefinition extends AbstractEntity implements Serializable  {
     if (dimensions != null && !dimensions.isEmpty())
       b.append(dimensions);
     return b.toString();
-  }
-
-  @Override
-  public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append("MetricDefinition [").append(name);
-    if (dimensions != null && !dimensions.isEmpty())
-      sb.append(dimensions);
-    return sb.append(']').toString();
   }
 }

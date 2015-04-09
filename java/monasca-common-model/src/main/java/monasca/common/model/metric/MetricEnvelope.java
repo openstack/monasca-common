@@ -42,4 +42,13 @@ public class MetricEnvelope {
     Preconditions.checkNotNull(meta, "meta");
     this.meta = meta;
   }
+
+  @Override
+  public String toString() {
+    return "MetricEnvelope{" +
+           "metric=" + metric +
+           ", meta=" + meta +
+           ", creationTime=" + creationTime +
+           '}';
+  }
 }
