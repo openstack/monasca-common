@@ -235,6 +235,7 @@ public class AlarmExpressionTest {
         assertNotEquals(expr1, expr3);
     }
 
+    @Test(expectedExceptions = IllegalArgumentException.class)
     public void shouldParseDimensionsWithUnicode() {
       AlarmExpression expr1 = new AlarmExpression(
           "公{此=该,metric_name=mem} > 4"
