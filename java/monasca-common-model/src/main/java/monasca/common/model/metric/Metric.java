@@ -67,8 +67,14 @@ public class Metric implements Serializable {
 
   @Override
   public String toString() {
-    return "Metric{" + "name='" + name + '\'' + ", dimensions=" + dimensions + ", timeStamp='"
-        + timestamp + '\'' + ", value=" + value + ", valueMeta=" + valueMeta + '}';
+    return "Metric{" +
+           "name='" + name + '\'' +
+           ", dimensions=" + dimensions +
+           ", timestamp=" + timestamp +
+           ", value=" + value +
+           ", valueMeta=" + valueMeta +
+           ", definition=" + definition +
+           '}';
   }
 
   @Override
