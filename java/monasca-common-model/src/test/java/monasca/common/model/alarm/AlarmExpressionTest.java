@@ -17,6 +17,7 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotEquals;
 import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.fail;
 
 import java.util.List;
 
@@ -27,6 +28,8 @@ import monasca.common.model.metric.MetricDefinition;
 
 @Test
 public class AlarmExpressionTest {
+  private final String restrictedChars = "(){}&|<>='\",";
+
     public void shouldParseExpression() {
         AlarmExpression expr = new AlarmExpression(
                 "avg(hpcs.compute{instance_id=5,metric_name=cpu,device=1}, 1) > 5 times 3 and avg(hpcs.compute{flavor_id=3,metric_name=mem}, 2) < 4 times 3");
@@ -235,8 +238,7 @@ public class AlarmExpressionTest {
         assertNotEquals(expr1, expr3);
     }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
-    public void shouldParseDimensionsWithUnicode() {
+    public void shouldParseNamesWithUnicode() {
       AlarmExpression expr1 = new AlarmExpression(
           "公{此=该,metric_name=mem} > 4"
       );
@@ -249,10 +251,47 @@ public class AlarmExpressionTest {
       assertEquals(alarm1.getMetricDefinition(), expected1);
     }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
     public void shouldFailWithRestrictedChars() {
-      AlarmExpression expr1 = new AlarmExpression(
-          "metric{\u00A0\u007Dthing=\u00AEstuff,metric_name=mem} > 4"
-      );
+      String[] expressions = {"%cmetric{foo=bar,metric_name=mem} > 4",
+                              "me%ctric{foo=bar,metric_name=mem} > 4",
+                              "metric%c{foo=bar,metric_name=mem} > 4",
+                              "metric{%cfoo=bar,metric_name=mem} > 4",
+                              "metric{f%coo=bar,metric_name=mem} > 4",
+                              "metric{foo%c=bar,metric_name=mem} > 4",
+                              "metric{foo=%cbar,metric_name=mem} > 4",
+                              "metric{foo=b%car,metric_name=mem} > 4",
+                              "metric{foo=bar%c,metric_name=mem} > 4"};
+      for (int i = 0; i < expressions.length; i++) {
+        for (int j = 0; j < restrictedChars.length(); j++) {
+          String
+              exprStr =
+              String.format(expressions[i], restrictedChars.charAt(j));
+          try {
+            AlarmExpression expr = new AlarmExpression(exprStr);
+            fail(String.format("Successfully parsed invalid expression: %s", exprStr));
+          } catch (Exception ex) {
+            //System.out.println(ex);
+          }
+        }
+      }
+    }
+
+    public void shouldParseSpacings() {
+      AlarmExpression expr = new AlarmExpression("avg ( metric { foo = bar , metric_name = mem } ) > 4"
+                                                 + " or avg(metric{foo=bar,metric_name=mem})>4"
+                                                 + " or avg( metric{ foo= bar, metric_name= mem} )> 4"
+                                                 + " or avg (metric {foo =bar ,metric_name =mem }) >4");
+      List<AlarmSubExpression> subExpressions = expr.getSubExpressions();
+      for(int i = 1; i < subExpressions.size(); i++){
+        assertEquals(subExpressions.get(0),subExpressions.get(i));
+      }
+    }
+
+    public void shouldParseComplexExpression() {
+      AlarmExpression expr = new AlarmExpression("max(-_.千幸福的笑脸{घोड़ा=馬,"
+                                                 + "dn2=dv2,千幸福的笑脸घ=千幸福的笑脸घ}) gte 100 "
+                                                 + "times 3 && "
+                                                 + "(min(ເຮືອນ{dn3=dv3,家=дом}) < 10 or sum(biz{dn5=dv5}) >9 and "
+                                                 + "count(fizzle) lt 0 or count(baz) > 1)");
     }
 }

@@ -208,21 +208,15 @@ INTEGER
     ;
     
 DECIMAL 
-    : '-'?[0-9]+('.'[0-9]+)?
+    : '-'?DIGIT+('.'DIGIT+)?
     ;
 
 TXT
-  : [//a-zA-Z_$/\\0-9]~('\''|';' | '}' | '{' | '=' | ','| '&' | ')' | '(' |' '| '"' )+
+  : ~('\'' | '}' | '{' | '&' | '|' | '>' | '<' | '=' | ',' | ')' | '(' | ' ' | '"' )+
   ;
 
 STRING
   : '"' .*? '"'
-  ; 
-
-fragment
-LETTER
-  : '\u0041'..'\u005a'       // A-Z
-  | '\u0061'..'\u007a'       // a-z
   ;
 
 fragment
@@ -230,19 +224,8 @@ DIGIT
   : '\u0030'..'\u0039'       // 0-9
   ;
 
-fragment
-UNDERSCORE
- 	: '\u005f'               // _
- 	;
-
-fragment
-DASH
-	: '-'
-	;
-	
-fragment
-PERIOD
-	: '.'
-	;
-
 WS : [ \t\r\n]+ -> skip ;
+
+FALL_THROUGH
+  : . {if(true) {throw new IllegalArgumentException("IllegalCharacter: " + getText());}}
+  ;
