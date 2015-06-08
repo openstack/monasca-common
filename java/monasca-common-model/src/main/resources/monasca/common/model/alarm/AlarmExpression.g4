@@ -24,8 +24,6 @@ start
 expression 
     : compoundIdentifier relational_operator literal # relationalExprFwd
     | function relational_operator literal ('times' repeat)? # relationalExprFuncFwd
-    | literal relational_operator compoundIdentifier # relationalExprBwd
-    | literal relational_operator function ('times' repeat)? # relationalExprFuncBwd
     | expression and expression # andExpr
     | expression or expression # orExpr
     | '(' expression ')' # parenExpr

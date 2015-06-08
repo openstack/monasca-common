@@ -71,23 +71,6 @@ class AlarmSubExpressionListener extends AlarmExpressionBaseListener {
   }
 
   @Override
-  public void exitRelationalExprBwd(AlarmExpressionParser.RelationalExprBwdContext ctx) {
-    operator = AlarmOperator.reverseOperator(operator);
-    // This is *right now* basically the same as a min or max function, convert it
-    if (operator == AlarmOperator.GT || operator == AlarmOperator.GTE)
-      function = AggregateFunction.MAX;
-    else
-      function = AggregateFunction.MIN;
-    saveSubExpression();
-  }
-
-  @Override
-  public void exitRelationalExprFuncBwd(AlarmExpressionParser.RelationalExprFuncBwdContext ctx) {
-    operator = AlarmOperator.reverseOperator(operator);
-    saveSubExpression();
-  }
-
-  @Override
   public void enterFunctionType(AlarmExpressionParser.FunctionTypeContext ctx) {
     function = AggregateFunction.valueOf(ctx.getChild(0).getText().toUpperCase());
   }
