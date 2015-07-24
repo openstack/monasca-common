@@ -17,12 +17,24 @@
 package monasca.common.model.alarm;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public enum AlarmState {
   UNDETERMINED, OK, ALARM;
 
+  public static AlarmState fromString(String text) {
+    if (text != null) {
+      for (AlarmState alarmState : AlarmState.values()) {
+        if (text.equalsIgnoreCase(alarmState.toString())) {
+          return alarmState;
+        }
+      }
+    }
+    return null;
+  }
+
   @JsonCreator
-  public static AlarmState fromJson(String text) {
-    return valueOf(text.toUpperCase());
+  public static AlarmState fromJson(@JsonProperty("state") String text) {
+    return AlarmState.valueOf(text.toUpperCase());
   }
 }
