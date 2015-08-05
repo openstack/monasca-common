@@ -24,11 +24,12 @@ import java.util.List;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMap;
+
 import monasca.common.model.metric.MetricDefinition;
 
 @Test
 public class AlarmExpressionTest {
-  private final String restrictedChars = "(){}&|<>='\",";
+  private final String restrictedChars = "(){}&|<>=\",";
 
     public void shouldParseExpression() {
         AlarmExpression expr = new AlarmExpression(
@@ -249,6 +250,26 @@ public class AlarmExpressionTest {
                                                             .put("metric_name", "mem")
                                                             .build());
       assertEquals(alarm1.getMetricDefinition(), expected1);
+    }
+
+    public void shouldParseDimensionsWithSpaces() {
+      AlarmExpression[] expr_list = {
+          new AlarmExpression("test_metric{this_is_a_test=this is a test} > 10"),
+          new AlarmExpression("test_metric{this is also a test = this_is_also_a_test} > 10")
+      };
+      MetricDefinition[] expected_list = {
+          new MetricDefinition("test_metric", ImmutableMap.<String,String>builder()
+              .put("this_is_a_test", "this is a test")
+              .build()),
+          new MetricDefinition("test_metric", ImmutableMap.<String,String>builder()
+              .put("this is also a test", "this_is_also_a_test")
+              .build())
+      };
+
+      for(int i = 0; i < expr_list.length; i++) {
+        AlarmSubExpression expr = expr_list[i].getSubExpressions().get(0);
+        assertEquals(expr.getMetricDefinition(), expected_list[i]);
+      }
     }
 
     public void shouldFailWithRestrictedChars() {
