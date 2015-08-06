@@ -1,0 +1,46 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>monasca-common</groupId>
+        <artifactId>monasca-common</artifactId>
+        <version>${computedVersion}</version>
+    </parent>
+    <artifactId>monasca-common-hibernate</artifactId>
+    <packaging>jar</packaging>
+
+    <properties>
+        <hibernate-core.version>4.3.10.Final</hibernate-core.version>
+        <usertype.core.version>3.2.0.GA</usertype.core.version>
+        <joda-time.version>2.8.1</joda-time.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>monasca-common</groupId>
+            <artifactId>monasca-common-model</artifactId>
+            <version>${project.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>joda-time</groupId>
+                    <artifactId>joda-time</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-core</artifactId>
+            <version>${hibernate-core.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jadira.usertype</groupId>
+            <artifactId>usertype.core</artifactId>
+            <version>${usertype.core.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+            <version>${joda-time.version}</version>
+        </dependency>
+    </dependencies>
+</project>

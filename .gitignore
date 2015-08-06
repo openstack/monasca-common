@@ -9,3 +9,4 @@ test-output/
 test-config.yml
 *.swp
 *.iml
+bin/

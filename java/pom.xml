@@ -37,6 +37,7 @@
     <module>monasca-common-util</module>
     <module>monasca-common-middleware</module>
     <module>monasca-common-influxdb</module>
+    <module>monasca-common-hibernate</module>
   </modules>
 
   <profiles>
