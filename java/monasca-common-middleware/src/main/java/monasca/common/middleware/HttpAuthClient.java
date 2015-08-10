@@ -50,6 +50,7 @@ public class HttpAuthClient implements AuthClient {
   private static final Logger logger = LoggerFactory.getLogger(HttpAuthClient.class);
 
   private static final int DELTA_TIME_IN_SEC = 30;
+  private static final String APPLICATION_JSON = "application/json";
   private static SimpleDateFormat expiryFormat;
 
   static {
@@ -72,53 +73,67 @@ public class HttpAuthClient implements AuthClient {
   @Override
   public String validateTokenForServiceEndpointV3(String token) throws ClientProtocolException {
     String newUri = uri.toString() + "/v3/auth/tokens/";
-    Header[] header = new Header[1];
-    header[0] = new BasicHeader(AUTH_SUBJECT_TOKEN, token);
+    Header[] header = new Header[]{new BasicHeader(AUTH_SUBJECT_TOKEN, token)};
     return verifyUUIDToken(token, newUri, header);
   }
 
   private String verifyUUIDToken(String token, String newUri,
-                                 Header[] header)
+                                 Header[] headers)
       throws ClientProtocolException {
-    HttpResponse response = sendGet(newUri, header);
 
-    HttpEntity entity = response.getEntity();
-    int code = response.getStatusLine().getStatusCode();
+    HttpGet httpGet = new HttpGet(newUri);
 
-    InputStream instream = null;
     try {
-      if (code == 404) {
-        instream = entity.getContent();
-        instream.close();
-        throw new AuthException("Authorization failed for user token: " + token);
+
+      httpGet.setHeader("Accept", APPLICATION_JSON);
+      httpGet.setHeader("Content-Type", APPLICATION_JSON);
+
+      if (headers != null) {
+        for (Header header : headers) {
+          httpGet.setHeader(header);
+        }
       }
 
-      if (code != 200) {
-        adminToken = null;
-        instream = entity.getContent();
-        instream.close();
-        String reasonPhrase = response.getStatusLine().getReasonPhrase();
+      HttpResponse response = sendGet(httpGet);
 
-        throw new AuthException("Failed to validate via HTTP " + code
-                                + " " + reasonPhrase);
+      HttpEntity entity = response.getEntity();
+      int code = response.getStatusLine().getStatusCode();
+
+      InputStream instream;
+      try {
+        if (code == 404) {
+          instream = entity.getContent();
+          instream.close();
+          throw new AuthException("Authorization failed for user token: " + token);
+        }
+
+        if (code != 200) {
+          adminToken = null;
+          instream = entity.getContent();
+          instream.close();
+          String reasonPhrase = response.getStatusLine().getReasonPhrase();
+
+          throw new AuthException("Failed to validate via HTTP " + code + " " + reasonPhrase);
+        }
+      } catch (IOException e) {
+        throw new ClientProtocolException("IO Exception: problem closing stream ", e);
       }
-    } catch (IOException e) {
-      throw new ClientProtocolException(
-          "IO Exception: problem closing stream ", e);
+
+      return parseResponse(response);
+
+    } finally {
+
+      httpGet.releaseConnection();
+
     }
-
-    return parseResponse(response);
   }
 
-  private HttpResponse sendPost(String uri, StringEntity body)
+  private HttpResponse sendPost(HttpPost httpPost)
       throws ClientProtocolException {
-    HttpResponse response = null;
-    HttpPost post = new HttpPost(uri);
-    post.setHeader("Accept", "application/json");
-    post.setHeader("Content-Type", "application/json");
+    HttpResponse response;
+
     try {
-      post.setEntity(body);
-      response = client.execute(post);
+      response = client.execute(httpPost);
       int code = response.getStatusLine().getStatusCode();
       if (!(code == 201 || code == 200 || code == 203)) {
         adminToken = null;
@@ -134,41 +149,32 @@ public class HttpAuthClient implements AuthClient {
         message = e.getMessage();
       }
       logger.error("Failure authenticating adminUser: {}", message);
-      post.abort();
+      httpPost.abort();
       throw new AdminAuthException(
           "Failure authenticating adminUser :" + message, e);
     }
     return response;
   }
 
-  private HttpResponse sendGet(String newUri, Header[] headers)
+  private HttpResponse sendGet(HttpGet httpGet)
       throws ClientProtocolException {
-    HttpResponse response = null;
-    HttpGet get = null;
-
-    get = new HttpGet(newUri);
-    get.setHeader("Accept", "application/json");
-    get.setHeader("Content-Type", "application/json");
-    if (headers != null) {
-      for (Header header : headers) {
-        get.setHeader(header);
-      }
-    }
+    HttpResponse response;
 
     if (appConfig.getAdminAuthMethod().equalsIgnoreCase(Config.TOKEN)) {
-      get.setHeader(new BasicHeader(TOKEN, appConfig.getAdminToken()));
+      httpGet.setHeader(new BasicHeader(TOKEN, appConfig.getAdminToken()));
     } else {
-      get.setHeader(new BasicHeader(TOKEN, getAdminToken()));
+      httpGet.setHeader(new BasicHeader(TOKEN, getAdminToken()));
     }
 
     try {
-      response = client.execute(get);
+
+      response = client.execute(httpGet);
 
     } catch (ConnectException c) {
-      get.abort();
+      httpGet.abort();
       throw new ServiceUnavailableException(c.getMessage());
     } catch (IOException e) {
-      get.abort();
+      httpGet.abort();
 
       throw new ClientProtocolException(
           "IO Exception during GET request ", e);
@@ -202,23 +208,37 @@ public class HttpAuthClient implements AuthClient {
   }
 
   private String getAdminToken() throws ClientProtocolException {
-    HttpResponse response;
-    String json;
-    JsonParser jp = new JsonParser();
 
     if (adminTokenExpiry != null) {
       if (isExpired(adminTokenExpiry)) {
         adminToken = null;
       }
     }
+
     if (adminToken == null) {
-      StringEntity params = getUnscopedV3AdminTokenRequest();
+
       String authUri = uri + "/v3/auth/tokens";
-      response = sendPost(authUri, params);
-      adminToken = response.getFirstHeader(AUTH_SUBJECT_TOKEN).getValue();
-      json = parseResponse(response);
-      JsonObject token = jp.parse(json).getAsJsonObject().get("token").getAsJsonObject();
-      adminTokenExpiry = token.get("expires_at").getAsString();
+      HttpPost httpPost = new HttpPost(authUri);
+
+      try {
+
+        StringEntity params = getUnscopedV3AdminTokenRequest();
+        httpPost.setHeader("Accept", APPLICATION_JSON);
+        httpPost.setHeader("Content-Type", APPLICATION_JSON);
+        httpPost.setEntity(params);
+        HttpResponse response = sendPost(httpPost);
+        adminToken = response.getFirstHeader(AUTH_SUBJECT_TOKEN).getValue();
+        String json = parseResponse(response);
+        JsonObject
+            token =
+            new JsonParser().parse(json).getAsJsonObject().get("token").getAsJsonObject();
+        adminTokenExpiry = token.get("expires_at").getAsString();
+
+      } finally {
+
+        httpPost.releaseConnection();
+
+      }
     }
     return adminToken;
   }
@@ -289,7 +309,7 @@ public class HttpAuthClient implements AuthClient {
   }
 
   private boolean isExpired(String expires) {
-    Date tokenExpiryDate = null;
+    Date tokenExpiryDate;
     try {
       // The date looks like: 2014-11-13T02:34:59.953729Z
       // SimpleDateFormat can't handle the microseconds so take them off
