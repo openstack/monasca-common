@@ -161,7 +161,14 @@ public class AlarmSubExpressionTest {
         AlarmSubExpression.of("avg(hpcs.compute{metric_name=cpu, device=1}, 45) > 5 times 4")
             .getExpression(), "avg(hpcs.compute{device=1, metric_name=cpu}, 45) > 5.0 times 4");
   }
-  
+
+  public void toStringAndBack() {
+    AlarmExpression expr = new AlarmExpression("elasticsearch.store.size>21474836480");
+    AlarmSubExpression subExpr1 = expr.getSubExpressions().get(0);
+    AlarmSubExpression subExpr2 = AlarmSubExpression.of(subExpr1.getExpression());
+    assertEquals(subExpr2, subExpr1);
+  }
+
   public void shouldAllowDecimalThresholds() {
     assertEquals(AlarmSubExpression.of("avg(hpcs.compute) > 2.375").getThreshold(), 2.375);
   }
