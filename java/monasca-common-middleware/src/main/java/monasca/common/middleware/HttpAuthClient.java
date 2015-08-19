@@ -244,14 +244,19 @@ public class HttpAuthClient implements AuthClient {
   }
 
   private String buildAuth(final String userName, final String password,
-                           final String projectId, final String projectName) {
-    final JsonObject domain = new JsonObject();
-    domain.addProperty("id", "default");
+                           final String projectId, final String projectName,
+                           final String userDomainName, final String projectDomainName) {
 
+    final JsonObject UserDomain = new JsonObject();
+    if (!userDomainName.isEmpty()) {
+      UserDomain.addProperty("name", userDomainName);
+    } else {
+      UserDomain.addProperty("id", "default");
+    }
     final JsonObject user = new JsonObject();
     user.addProperty("name", userName);
     user.addProperty("password", password);
-    user.add("domain", domain);
+    user.add("domain", UserDomain);
 
     final JsonObject passwordHolder = new JsonObject();
     passwordHolder.add("user", user);
@@ -271,7 +276,13 @@ public class HttpAuthClient implements AuthClient {
       scopeDefined = true;
 
     } else if (!projectName.isEmpty()) {
-      project.add("domain", domain);
+      final JsonObject ProjectDomain = new JsonObject();
+      if (!projectDomainName.isEmpty()) {
+        ProjectDomain.addProperty("name", projectDomainName);
+      } else {
+        ProjectDomain.addProperty("id", "default");
+      }
+      project.add("domain", ProjectDomain);
       project.addProperty("name", projectName);
       scopeDefined = true;
     }
@@ -294,7 +305,8 @@ public class HttpAuthClient implements AuthClient {
     final String body;
     if (appConfig.getAdminAuthMethod().equalsIgnoreCase(Config.PASSWORD)) {
       body = buildAuth(appConfig.getAdminUser(), appConfig.getAdminPassword(),
-                       appConfig.getAdminProjectId(), appConfig.getAdminProjectName());
+                       appConfig.getAdminProjectId(), appConfig.getAdminProjectName(),
+                       appConfig.getAdminUserDomainName(), appConfig.getAdminProjectDomainName());
     } else {
       String
           msg =
