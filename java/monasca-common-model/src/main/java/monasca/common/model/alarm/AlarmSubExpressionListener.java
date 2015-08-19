@@ -82,8 +82,26 @@ class AlarmSubExpressionListener extends AlarmExpressionBaseListener {
 
   @Override
   public void enterDimension(AlarmExpressionParser.DimensionContext ctx) {
-    String dimensionName = ctx.getChild(0).getText();
-    if (dimensions.put(dimensionName, ctx.getChild(2).getText()) != null)
+    StringBuilder dimensionName = new StringBuilder();
+    dimensionName.append(ctx.getChild(0).getText());
+    int i = 1;
+    while (!ctx.getChild(i).getText().equals("=")) {
+      dimensionName.append(' ');
+      dimensionName.append(ctx.getChild(i).getText());
+      i++;
+    }
+    // move past the '=' token
+    i++;
+
+    StringBuilder dimensionValue = new StringBuilder();
+    dimensionValue.append(ctx.getChild(i).getText());
+    i++;
+    while (i < ctx.getChildCount()) {
+      dimensionValue.append(' ');
+      dimensionValue.append(ctx.getChild(i).getText());
+      i++;
+    }
+    if (dimensions.put(dimensionName.toString(), dimensionValue.toString()) != null)
       throw new IllegalArgumentException("More than one value was given for dimension "
           + dimensionName);
   }
