@@ -17,6 +17,7 @@
 package monasca.common.model.alarm;
 
 import java.io.Serializable;
+import java.text.DecimalFormat;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.antlr.v4.runtime.ANTLRInputStream;
@@ -43,6 +44,9 @@ public class AlarmSubExpression implements Serializable {
   private double threshold;
   private int period;
   private int periods;
+  // Use a DecimalFormatter for threshold because the standard double format starts using scientific notation when
+  // threshold is very large and that scientific notation can't be parsed when recreating the SubExpression
+  private static final DecimalFormat formatter = new DecimalFormat("0.0##############");
 
   public AlarmSubExpression(AggregateFunction function, MetricDefinition metricDefinition,
       AlarmOperator operator, double threshold, int period, int periods) {
@@ -119,7 +123,7 @@ public class AlarmSubExpression implements Serializable {
     sb.append(function).append('(').append(metricDefinition.toExpression());
     if (period != 60)
       sb.append(", ").append(period);
-    sb.append(") ").append(operator).append(' ').append(threshold);
+    sb.append(") ").append(operator).append(' ').append(formatter.format(threshold));
     if (periods != 1)
       sb.append(" times ").append(periods);
     return sb.toString();
