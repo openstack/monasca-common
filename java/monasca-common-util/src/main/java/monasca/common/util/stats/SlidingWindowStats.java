@@ -216,7 +216,7 @@ public class SlidingWindowStats {
     }
     long timeDiff = timestamp - slotEndTimestamp;
     int slotsToAdvance = (int) (timeDiff / slotWidth);
-    slotsToAdvance += timeDiff % slotWidth == 0 ? 0 : 1;
+    slotsToAdvance += (timeDiff % slotWidth) > minDelay ? 1 : 0;
 
     for (int i = 0; i < slotsToAdvance; i++) {
       windowBeginIndex = indexAfter(windowBeginIndex);

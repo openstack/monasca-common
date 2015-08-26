@@ -15,6 +15,8 @@ package monasca.common.util.stats;
 
 import static monasca.common.testing.Assert.assertArraysEqual;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.fail;
 
 import org.testng.annotations.Test;
@@ -96,6 +98,38 @@ public class SlidingWindowStatsTest {
     // Attempt to slide backwards - Noop
     window.slideViewTo(10, 1);
     assertArraysEqual(window.getTimestamps(), new long[] { 12, 15, 18 });
+  }
+
+  public void testSlides() {
+    SlidingWindowStats window = new SlidingWindowStats(Statistics.Average.class,
+        TimeResolution.ABSOLUTE, 60, 1, 2, 0);
+
+    assertTrue(window.addValue(1.0, 20));
+    window.slideViewTo(20, 30);
+    assertTrue(window.addValue(1.0, 0));
+
+    window.slideViewTo(100, 30);
+    assertFalse(window.addValue(1.0, 0));
+    assertTrue(window.addValue(1.0, 61));
+
+    window.slideViewTo(121, 30);
+    assertTrue(window.addValue(1.0, 61));
+    assertTrue(window.addValue(1.0, 121));
+
+    window.slideViewTo(180, 30);
+    assertFalse(window.addValue(1.0, 61));
+    assertTrue(window.addValue(1.0, 121));
+    assertTrue(window.addValue(1.0, 181));
+
+    window.slideViewTo(241, 30);
+    assertFalse(window.addValue(1.0, 121));
+    assertTrue(window.addValue(1.0, 181));
+    assertTrue(window.addValue(1.0, 241));
+
+    window.slideViewTo(360, 30);
+    assertFalse(window.addValue(1.0, 241));
+    assertTrue(window.addValue(1.0, 300));
+    assertTrue(window.addValue(1.0, 361));
   }
 
   public void shouldAddValueAndGetWindowValues() {
