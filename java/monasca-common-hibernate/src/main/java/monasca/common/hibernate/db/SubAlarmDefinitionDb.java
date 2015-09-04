@@ -24,10 +24,11 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
-import monasca.common.model.alarm.AlarmOperator;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.joda.time.DateTime;
+
+import monasca.common.model.alarm.AlarmOperator;
 
 @Entity
 @Table(name = "sub_alarm_definition")

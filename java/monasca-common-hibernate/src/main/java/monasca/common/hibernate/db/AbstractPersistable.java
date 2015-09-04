@@ -27,6 +27,17 @@ import org.hibernate.annotations.DynamicUpdate;
 
 import monasca.common.hibernate.core.Persistable;
 
+/**
+ * <b>Abstract</b> implementation for {@link Persistable}.
+ *
+ * Defines primary key of a specific entity.
+ * Primary key may take any arbitrary type that
+ * is required by specific case.
+ *
+ * @param <T> primary key type
+ *
+ * @see AbstractAuditablePersistable
+ */
 @DynamicInsert
 @DynamicUpdate
 @MappedSuperclass

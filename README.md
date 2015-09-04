@@ -30,7 +30,7 @@ A change has been submitted to StackForge to switch to bare-trusty for this buil
 * [monasca-common-streaming](https://github.com/stackforge/monasca-common/tree/master/java/monasca-common-streaming) - Streaming related utilities.
 * [monasca-common-testing](https://github.com/stackforge/monasca-common/tree/master/java/monasca-common-testing) - A set of testing related dependencies.
 * [monasca-common-util](https://github.com/stackforge/monasca-common/tree/master/java/monasca-common-util) - Various utilities such as for serialization, dependency injection, date and time, invocation retries, concurrency, etc.
-
+* [monasca-common-hibernate](https://github.com/stackforge/monasca-common/tree/master/java/monasca-common-hibernate) - Hibernate based model of Monasca SQL schema
 
 python monasca-common
 ======================

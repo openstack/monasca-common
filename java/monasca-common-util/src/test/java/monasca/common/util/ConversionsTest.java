@@ -14,11 +14,14 @@
 package monasca.common.util;
 
 import static org.testng.Assert.assertEquals;
-
-import org.testng.annotations.Test;
-
+import static org.testng.Assert.assertNotEquals;
 
 import java.math.BigDecimal;
+
+import com.beust.jcommander.internal.Lists;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.testng.annotations.Test;
 
 @Test
 public class ConversionsTest {
@@ -48,5 +51,64 @@ public class ConversionsTest {
   @Test(expectedExceptions = IllegalArgumentException.class)
   public void testObject() {
     Conversions.variantToInteger(new Object());
+  }
+
+  public void testDateTimeShouldNotEqualDifferentTZExplicit() {
+    final DateTime now = DateTime.now(DateTimeZone.UTC);
+    assertNotEquals(now, Conversions.variantToDateTime(now, DateTimeZone.forOffsetHours(2)));
+  }
+
+  public void testDateTimeShouldNotEqualDifferentTZImplicit() {
+    final DateTime now = DateTime.now();
+    assertNotEquals(now, Conversions.variantToDateTime(now));
+  }
+
+  public void testDateTimeShouldEqualSameTZImplicit() {
+    final DateTime now = DateTime.now(DateTimeZone.UTC);
+    assertEquals(now, Conversions.variantToDateTime(now));
+  }
+
+  public void testDateTimeShouldEqualSameTZExplicit() {
+    final DateTime now = DateTime.now(DateTimeZone.UTC);
+    assertEquals(now, Conversions.variantToDateTime(now, DateTimeZone.UTC));
+  }
+
+  public void testEnumFromString() {
+    assertEquals(MockEnum.THIS, Conversions.variantToEnum("THIS", MockEnum.class));
+  }
+
+  public void testEnumFromStringLowerCased() {
+    assertEquals(MockEnum.THIS, Conversions.variantToEnum("this", MockEnum.class));
+  }
+
+  public void testEnumFromStringWithSpaces() {
+    assertEquals(MockEnum.THIS, Conversions.variantToEnum("   THIS          ", MockEnum.class));
+  }
+
+  public void testEnumFromNumber() {
+    assertEquals(MockEnum.IS, Conversions.variantToEnum(1, MockEnum.class));
+  }
+
+  public void testEnumFromNumberDouble() {
+    assertEquals(MockEnum.IS, Conversions.variantToEnum(1.0, MockEnum.class));
+  }
+
+  public void testEnumFromEnum() {
+    assertEquals(MockEnum.TEST, Conversions.variantToEnum(MockEnum.TEST, MockEnum.class));
+  }
+
+  @Test(expectedExceptions = IllegalArgumentException.class)
+  public void testEnumShouldFailUnsupportedType(){
+    Conversions.variantToEnum(Lists.newArrayList(),MockEnum.class);
+  }
+
+  @Test(expectedExceptions = IllegalArgumentException.class)
+  public void testEnumShouldFailInvalidEnumIndex(){
+    final int invalidIndex = MockEnum.class.getEnumConstants().length + 1;
+    Conversions.variantToEnum(invalidIndex, MockEnum.class);
+  }
+
+  private enum MockEnum {
+    THIS,IS,TEST
   }
 }

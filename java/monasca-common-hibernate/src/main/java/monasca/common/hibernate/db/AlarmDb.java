@@ -15,6 +15,7 @@
 package monasca.common.hibernate.db;
 
 import java.util.Collection;
+import java.util.Date;
 
 import javax.annotation.Nullable;
 import javax.persistence.CascadeType;
@@ -35,8 +36,6 @@ import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Sets;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
 import monasca.common.model.alarm.AlarmState;
@@ -76,14 +75,7 @@ public class AlarmDb
   private String link;
 
   @Column(name = "state_updated_at")
-  @Type(
-      type = DATE_TIME_TYPE,
-      parameters = {
-          @Parameter(name = "databaseZone", value = DB_ZONE),
-          @Parameter(name = "javaZone", value = JAVA_ZONE)
-      }
-  )
-  private DateTime stateUpdatedAt;
+  private Date stateUpdatedAt;
 
   @OneToMany(mappedBy = "alarmMetricId.alarm", fetch = FetchType.LAZY, cascade = {
       CascadeType.PERSIST,
@@ -119,7 +111,7 @@ public class AlarmDb
     this.link = link;
     this.state = state;
     this.lifecycleState = lifecycleState;
-    this.stateUpdatedAt = stateUpdatedAt;
+    this.setStateUpdatedAt(stateUpdatedAt);
   }
 
   public AlarmState getState() {
@@ -150,11 +142,11 @@ public class AlarmDb
   }
 
   public DateTime getStateUpdatedAt() {
-    return stateUpdatedAt;
+    return nullSafeGetDate(this.stateUpdatedAt);
   }
 
   public AlarmDb setStateUpdatedAt(DateTime stateUpdatedAt) {
-    this.stateUpdatedAt = stateUpdatedAt;
+    this.stateUpdatedAt = nullSafeSetDate(stateUpdatedAt);
     return this;
   }
 

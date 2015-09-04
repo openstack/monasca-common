@@ -16,6 +16,7 @@ package monasca.common.hibernate.db;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 
 import javax.annotation.Nullable;
 import javax.persistence.Basic;
@@ -36,7 +37,6 @@ import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.hibernate.annotations.BatchSize;
-import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
@@ -95,14 +95,7 @@ public class AlarmDefinitionDb
   private boolean actionsEnabled = DEFAULT_ACTIONS_ENABLED;
 
   @Column(name = "deleted_at")
-  @Type(
-      type = DATE_TIME_TYPE,
-      parameters = {
-          @Parameter(name = "databaseZone", value = DB_ZONE),
-          @Parameter(name = "javaZone", value = JAVA_ZONE)
-      }
-  )
-  private DateTime deletedAt;
+  private Date deletedAt;
 
   @BatchSize(size = 50)
   @OneToMany(mappedBy = "alarmDefinition", fetch = FetchType.LAZY)
@@ -132,7 +125,7 @@ public class AlarmDefinitionDb
     this.severity = severity;
     this.matchBy = matchBy;
     this.actionsEnabled = actionsEnabled;
-    this.deletedAt = deletedAt;
+    this.setDeletedAt(deletedAt);
   }
 
   public AlarmDefinitionDb(String id,
@@ -145,7 +138,7 @@ public class AlarmDefinitionDb
   }
 
   public AlarmDefinitionDb setDeletedAt(final DateTime deletedAt) {
-    this.deletedAt = deletedAt;
+    this.deletedAt = nullSafeSetDate(deletedAt);
     return this;
   }
 
@@ -220,7 +213,7 @@ public class AlarmDefinitionDb
   }
 
   public DateTime getDeletedAt() {
-    return deletedAt;
+    return nullSafeGetDate(this.deletedAt);
   }
 
   public boolean hasAlarm(final AlarmDb alarm) {

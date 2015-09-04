@@ -16,7 +16,17 @@
  */
 package monasca.common.util;
 
+import java.util.Arrays;
+
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+
 public final class Conversions {
+  private static final String[] SUPPORTED_VARIANT_TO_ENUM_TYPES = new String[]{
+      String.class.getSimpleName(),
+      Number.class.getSimpleName(),
+      Enum.class.getSimpleName()
+  };
 
   /**
    * Converts a Java Object of type Number to an Integer
@@ -32,4 +42,91 @@ public final class Conversions {
                                                        variant.getClass(), variant));
     }
   }
+
+  /**
+   * Converts a Java Object to DateTime instance
+   *
+   * @param variant object of type supported in {@link org.joda.time.convert.ConverterManager}
+   *
+   * @return DateTime in {@link DateTimeZone#UTC}
+   *
+   * @throws IllegalArgumentException
+   * @see #variantToDateTime(Object, DateTimeZone)
+   * @see DateTime
+   * @see DateTimeZone#UTC
+   */
+  public static DateTime variantToDateTime(final Object variant) {
+    return variantToDateTime(variant, DateTimeZone.UTC);
+  }
+
+
+  /**
+   * Converts a Java Object to DateTime instance using given {@code timeZone}
+   *
+   * @param variant  object of type supported in {@link org.joda.time.convert.ConverterManager}
+   * @param timeZone timeZone to be used
+   *
+   * @return DateTime in {@code timeZone}
+   *
+   * @throws IllegalArgumentException
+   * @see #variantToDateTime(Object)
+   * @see DateTime
+   * @see DateTimeZone
+   */
+  public static DateTime variantToDateTime(final Object variant, final DateTimeZone timeZone) {
+    if (variant instanceof DateTime) {
+      return ((DateTime) variant).toDateTime(timeZone);
+    }
+    return new DateTime(variant, timeZone);
+  }
+
+  /**
+   * Converts variant to {@code enumClazz} instance.
+   *
+   * Supported variants are:
+   * <ol>
+   * <li>{@link String}, trimmed and upper-cased</li>
+   * <li>{@link Number}, taken from {@link Class#getEnumConstants}</li>
+   * <li>{@link Enum}, simple cast</li>
+   * </ol>
+   *
+   * @param variant   object of type supported by this method, see above
+   * @param enumClazz desired {@link Enum}
+   * @param <T>       enumType of {@code enumClazz}
+   *
+   * @return valid enum class instance
+   *
+   * @throws IllegalArgumentException
+   */
+  @SuppressWarnings("unchecked")
+  public static <T extends Enum<T>> T variantToEnum(final Object variant, final Class<T> enumClazz) {
+    if (variant == null) {
+      return null;
+    }
+
+    if (variant instanceof String) {
+      return Enum.valueOf(enumClazz, ((String) variant).trim().toUpperCase());
+    } else if (variant instanceof Number) {
+      final Integer index = variantToInteger(variant);
+      final T[] enumConstants = enumClazz.getEnumConstants();
+      if (index < 0 || index >= enumConstants.length) {
+        throw new IllegalArgumentException(
+            String.format("Variant of type \"%s\", and value \"%s\" is out of range [, %d]",
+                variant.getClass(),
+                variant,
+                enumConstants.length
+            )
+        );
+      }
+
+      return enumConstants[index];
+    } else if (variant instanceof Enum) {
+      return (T) variant;
+    }
+
+    throw new IllegalArgumentException(String.format("\"%s\", and value \"%s\" is not one of %s",
+        variant.getClass(), variant, Arrays.toString(SUPPORTED_VARIANT_TO_ENUM_TYPES)));
+
+  }
+
 }
