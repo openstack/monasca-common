@@ -39,3 +39,7 @@ To install the python monasca-common modules, git clone the source and run the
 following command::
 
     sudo python setup.py install
+
+To run the python monasca-common tests use::
+
+    nosetests monasca_common/tests
