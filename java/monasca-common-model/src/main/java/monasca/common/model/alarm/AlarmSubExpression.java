@@ -18,14 +18,18 @@ package monasca.common.model.alarm;
 
 import java.io.Serializable;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.Locale;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+
 import monasca.common.model.alarm.AlarmExpressionLexer;
 import monasca.common.model.alarm.AlarmExpressionParser;
 import monasca.common.model.metric.MetricDefinition;
@@ -46,7 +50,12 @@ public class AlarmSubExpression implements Serializable {
   private int periods;
   // Use a DecimalFormatter for threshold because the standard double format starts using scientific notation when
   // threshold is very large and that scientific notation can't be parsed when recreating the SubExpression
-  private static final DecimalFormat formatter = new DecimalFormat("0.0##############");
+  private static final DecimalFormat formatter;
+  static {
+    formatter = new DecimalFormat("0.0##############");
+    // Prevents situation when decimal separator for default locale is different then dot.
+    formatter.setDecimalFormatSymbols(DecimalFormatSymbols.getInstance(Locale.US));
+  }
 
   public AlarmSubExpression(AggregateFunction function, MetricDefinition metricDefinition,
       AlarmOperator operator, double threshold, int period, int periods) {
