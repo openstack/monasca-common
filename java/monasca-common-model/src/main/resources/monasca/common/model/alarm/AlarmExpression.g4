@@ -112,7 +112,7 @@ keyword
     | SUM
     | CNT
     | AVG
-	;
+    ;
 
 period
     : INTEGER
@@ -134,52 +134,52 @@ txt
     | STRING
     ;
 LT
-	: [lL][tT]
-	;
+    : [lL][tT]
+    ;
 
 LT_S
-	: '<'
-	;
+    : '<'
+    ;
 
 LTE
-	: [lL][tT][eE]
-	;
+    : [lL][tT][eE]
+    ;
 
 LTE_S
-	: '<='
-	;
+    : '<='
+    ;
 
 GT
-	: [gG][tT]
-	;
+    : [gG][tT]
+    ;
 
 GT_S
-	: '>'
-	;
+    : '>'
+    ;
 
 GTE
-	: [gG][tT][eE]
-	;
-	
+    : [gG][tT][eE]
+    ;
+    
 GTE_S
-	: '>='
-	;
-	
+    : '>='
+    ;
+    
 AND
-	: [aA][nN][dD] 
-	;
-	
+    : [aA][nN][dD] 
+    ;
+    
 AND_S
-	: '&&'
-	;
-	
+    : '&&'
+    ;
+    
 OR
-	: [oO][rR]
-	;
+    : [oO][rR]
+    ;
 
 OR_S
-	: '||'
-	;
+    : '||'
+    ;
 
 MIN
     : [mM][iI][nN]
