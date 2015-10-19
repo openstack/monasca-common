@@ -5,7 +5,7 @@
   <groupId>monasca-common</groupId>
   <artifactId>monasca-common</artifactId>
   <version>${computedVersion}</version>
-  <url>http://github.com/stackforge/monasca-common</url>
+  <url>http://github.com/openstack/monasca-common</url>
   <packaging>pom</packaging>
 
   <prerequisites>
@@ -23,8 +23,8 @@
   </properties>
 
   <scm>
-    <connection>scm:git:git@github.com:stackforge/monasca-common</connection>
-    <developerConnection>scm:git:git@github.com:stackforge/monasca-common</developerConnection>
+    <connection>scm:git:git@github.com:openstack/monasca-common</connection>
+    <developerConnection>scm:git:git@github.com:openstack/monasca-common</developerConnection>
   </scm>
 
   <modules>
