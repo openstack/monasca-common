@@ -36,7 +36,7 @@ class KafkaProducer(object):
             req_acks=kafka.producer.KeyedProducer.ACK_AFTER_LOCAL_WRITE,
             ack_timeout=2000)
 
-    def publish(self, topic, messages):
+    def publish(self, topic, messages, key=None):
         """Takes messages and puts them on the supplied kafka topic
         """
 
@@ -52,7 +52,8 @@ class KafkaProducer(object):
             messages = [messages]
 
         try:
-            key = time.time() * 1000
+            if key is None:
+                key = time.time() * 1000
             partition = self._producer._next_partition(topic, key)
             self._producer.send_messages(topic, partition, *messages)
         except Exception:
