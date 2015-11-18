@@ -245,10 +245,13 @@ public class HttpAuthClient implements AuthClient {
 
   private String buildAuth(final String userName, final String password,
                            final String projectId, final String projectName,
-                           final String userDomainName, final String projectDomainName) {
+                           final String userDomainId, final String userDomainName,
+                           final String projectDomainId, final String projectDomainName) {
 
     final JsonObject UserDomain = new JsonObject();
-    if (!userDomainName.isEmpty()) {
+    if (!userDomainId.isEmpty()) {
+      UserDomain.addProperty("id", userDomainId);
+    } else if (!userDomainName.isEmpty()) {
       UserDomain.addProperty("name", userDomainName);
     } else {
       UserDomain.addProperty("id", "default");
@@ -277,7 +280,9 @@ public class HttpAuthClient implements AuthClient {
 
     } else if (!projectName.isEmpty()) {
       final JsonObject ProjectDomain = new JsonObject();
-      if (!projectDomainName.isEmpty()) {
+      if (!projectDomainId.isEmpty()) {
+        ProjectDomain.addProperty("id", projectDomainId);
+      } else if (!projectDomainName.isEmpty()) {
         ProjectDomain.addProperty("name", projectDomainName);
       } else {
         ProjectDomain.addProperty("id", "default");
@@ -306,7 +311,8 @@ public class HttpAuthClient implements AuthClient {
     if (appConfig.getAdminAuthMethod().equalsIgnoreCase(Config.PASSWORD)) {
       body = buildAuth(appConfig.getAdminUser(), appConfig.getAdminPassword(),
                        appConfig.getAdminProjectId(), appConfig.getAdminProjectName(),
-                       appConfig.getAdminUserDomainName(), appConfig.getAdminProjectDomainName());
+                       appConfig.getAdminUserDomainId(), appConfig.getAdminUserDomainName(),
+                       appConfig.getAdminProjectDomainId(), appConfig.getAdminProjectDomainName());
     } else {
       String
           msg =

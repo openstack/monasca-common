@@ -59,7 +59,9 @@ public class Config implements AuthConstants {
   // configuration for admin default project
   private String adminProjectId;
   private String adminProjectName;
+  private String adminUserDomainId;
   private String adminUserDomainName;
+  private String adminProjectDomainId;
   private String adminProjectDomainName;
 
   // flag to indicate if the filter is already intialized with required parameters
@@ -109,7 +111,9 @@ public class Config implements AuthConstants {
       adminAuthMethod = getValue(ADMIN_AUTH_METHOD, "");
       adminProjectId = getValue(ADMIN_PROJECT_ID, "");
       adminProjectName = getValue(ADMIN_PROJECT_NAME, "");
+      adminUserDomainId = getValue(ADMIN_USER_DOMAIN_ID, "");
       adminUserDomainName = getValue(ADMIN_USER_DOMAIN_NAME, "");
+      adminProjectDomainId = getValue(ADMIN_PROJECT_DOMAIN_ID, "");
       adminProjectDomainName = getValue(ADMIN_PROJECT_DOMAIN_NAME, "");
       timeToCacheToken = getValue(TIME_TO_CACHE_TOKEN, 600);
       long maxTokenCacheSize = getValue(MAX_TOKEN_CACHE_SIZE, 1048576);
@@ -151,8 +155,16 @@ public class Config implements AuthConstants {
     return adminProjectName;
   }
 
+  protected String getAdminUserDomainId(){
+    return adminUserDomainId;
+  }
+
   protected String getAdminUserDomainName(){
     return adminUserDomainName;
+  }
+
+  protected String getAdminProjectDomainId(){
+    return adminProjectDomainId;
   }
 
   protected String getAdminProjectDomainName(){
