@@ -13,8 +13,8 @@
 # under the License.
 import logging
 
-import MySQLdb as mdb
 from oslo_config import cfg
+import pymysql as mdb
 
 from monasca_common.repositories import exceptions
 
