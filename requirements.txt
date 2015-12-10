@@ -5,3 +5,4 @@ kafka-python>=0.9.1,<0.9.3
 PyMySQL>=0.6.7
 oslo.config<2.5.0
 pbr>=0.11,<2.0
+ujson>=1.34
