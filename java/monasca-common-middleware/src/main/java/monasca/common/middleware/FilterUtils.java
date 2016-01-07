@@ -186,7 +186,7 @@ public class FilterUtils {
 
   public static void pause(long pauseTime) {
     try {
-      Thread.sleep(pauseTime);
+      Thread.sleep(pauseTime * 1000);
     } catch (InterruptedException e) {
       logger.debug("Thread is interrupted while sleeping before "
         + pauseTime + " seconds. ");
