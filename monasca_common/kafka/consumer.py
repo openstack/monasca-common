@@ -40,7 +40,7 @@ keep in mind when dealing with batched data.
     called.  This is a good time to process whatever has been batched.
     2. If the traffic across the kafka topic is low enough it will take a long
     time to build a batch of data.  A commit_callback is available that will
-    fire when the commit_timeout duration has elapsed since the last commit.
+    fire when the commit_timeout duration has elapsed since the last commit.
 """
 
 
