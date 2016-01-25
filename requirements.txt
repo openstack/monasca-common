@@ -1,8 +1,8 @@
 iso8601
-six>=1.7.0
+six
 kazoo>=2.0
-kafka-python>=0.9.1,<0.9.3
+kafka-python>=0.9.1
 PyMySQL>=0.6.7
-oslo.config<2.5.0
-pbr>=0.11,<2.0
+oslo.config
+pbr
 ujson>=1.34
