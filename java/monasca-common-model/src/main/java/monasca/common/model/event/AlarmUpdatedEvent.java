@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Hewlett-Packard Development Company, L.P.
+ * Copyright (c) 2014,2016 Hewlett Packard Enterprise Development Company, L.P.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
@@ -37,12 +37,14 @@ public class AlarmUpdatedEvent implements Serializable {
   public Map<String, AlarmSubExpression> subAlarms;
   public AlarmState alarmState;
   public AlarmState oldAlarmState;
+  public String link;
+  public String lifecycleState;
 
   public AlarmUpdatedEvent() {}
 
   public AlarmUpdatedEvent(String alarmId, String alarmDefinitionId, String tenantId,
       List<MetricDefinition> alarmMetrics, Map<String, AlarmSubExpression> subAlarmMetricDefinitions,
-      AlarmState alarmState, AlarmState oldAlarmState) {
+      AlarmState alarmState, AlarmState oldAlarmState, String link, String lifecycleState) {
     this.alarmId = alarmId;
     this.alarmDefinitionId = alarmDefinitionId;
     this.tenantId = tenantId;
@@ -50,6 +52,8 @@ public class AlarmUpdatedEvent implements Serializable {
     this.subAlarms = subAlarmMetricDefinitions;
     this.alarmState = alarmState;
     this.oldAlarmState = oldAlarmState;
+    this.link = link;
+    this.lifecycleState = lifecycleState;
   }
 
   @Override
@@ -90,6 +94,16 @@ public class AlarmUpdatedEvent implements Serializable {
       return false;
     if (oldAlarmState != other.oldAlarmState)
       return false;
+    if (link == null) {
+      if (other.link != null)
+        return false;
+    } else if (!link.equals(other.link))
+      return false;
+    if (lifecycleState == null) {
+      if (other.lifecycleState != null)
+        return false;
+    } else if (!lifecycleState.equals(other.lifecycleState))
+      return false;
     return true;
   }
 
@@ -106,6 +120,8 @@ public class AlarmUpdatedEvent implements Serializable {
             + ((subAlarms == null) ? 0 : subAlarms.hashCode());
     result = prime * result + ((alarmState == null) ? 0 : alarmState.hashCode());
     result = prime * result + ((oldAlarmState == null) ? 0 : oldAlarmState.hashCode());
+    result = prime * result + ((link == null) ? 0 : link.hashCode());
+    result = prime * result + ((lifecycleState == null) ? 0 : lifecycleState.hashCode());
     return result;
   }
 
@@ -113,6 +129,7 @@ public class AlarmUpdatedEvent implements Serializable {
   public String toString() {
     return "AlarmUpdatedEvent [alarmId=" + alarmId + ", alarmDefinitionId=" + alarmDefinitionId
         + ", tenantId=" + tenantId + ", alarmMetrics=" + alarmMetrics + ", alarmState="
-        + alarmState + ", oldAlarmState=" + oldAlarmState + ", subAlarms=" + subAlarms + "]";
+        + alarmState + ", oldAlarmState=" + oldAlarmState + ", subAlarms=" + subAlarms
+        + ", link=" + link + ", lifeCycleState=" + lifecycleState + "]";
   }
 }

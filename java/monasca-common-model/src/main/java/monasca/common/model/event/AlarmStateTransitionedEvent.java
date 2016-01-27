@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Hewlett-Packard Development Company, L.P.
+ * Copyright (c) 2014,2016 Hewlett Packard Enterprise Development Company, L.P.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
@@ -36,6 +36,8 @@ public class AlarmStateTransitionedEvent {
   public boolean actionsEnabled;
   public String stateChangeReason;
   public String severity;
+  public String link;
+  public String lifecycleState;
   public List<AlarmTransitionSubAlarm> subAlarms;
   /** POSIX timestamp */
   public long timestamp;
@@ -44,8 +46,9 @@ public class AlarmStateTransitionedEvent {
 
   public AlarmStateTransitionedEvent(String tenantId, String alarmId, String alarmDefinitionId,
       List<MetricDefinition> metrics, String alarmName, String alarmDescription,
-      AlarmState oldState, AlarmState newState, String severity, boolean actionsEnabled,
-      String stateChangeReason, List<AlarmTransitionSubAlarm> subAlarms, long timestamp) {
+      AlarmState oldState, AlarmState newState, String severity, String link, String lifecycleState,
+      boolean actionsEnabled, String stateChangeReason, List<AlarmTransitionSubAlarm> subAlarms,
+      long timestamp) {
     this.tenantId = tenantId;
     this.alarmId = alarmId;
     this.alarmDefinitionId = alarmDefinitionId;
@@ -55,6 +58,8 @@ public class AlarmStateTransitionedEvent {
     this.oldState = oldState;
     this.newState = newState;
     this.severity = severity;
+    this.link = link;
+    this.lifecycleState = lifecycleState;
     this.actionsEnabled = actionsEnabled;
     this.stateChangeReason = stateChangeReason;
     this.subAlarms = subAlarms;
@@ -97,6 +102,16 @@ public class AlarmStateTransitionedEvent {
         return false;
     } else if (!severity.equals(other.severity))
       return false;
+    if (link == null) {
+      if (other.link != null)
+        return false;
+    } else if (!link.equals(other.link))
+      return false;
+    if (lifecycleState == null) {
+      if (other.lifecycleState != null)
+        return false;
+    } else if (!lifecycleState.equals(other.lifecycleState))
+      return false;
     if (subAlarms == null) {
       if (other.subAlarms != null)
         return false;
@@ -134,6 +149,8 @@ public class AlarmStateTransitionedEvent {
     result = prime * result + ((alarmDefinitionId == null) ? 0 : alarmDefinitionId.hashCode());
     result = prime * result + ((alarmDescription == null) ? 0 : alarmDescription.hashCode());
     result = prime * result + ((severity == null) ? 0 : severity.hashCode());
+    result = prime * result + ((link == null) ? 0 : link.hashCode());
+    result = prime * result + ((lifecycleState == null) ? 0 : lifecycleState.hashCode());
     result = prime * result + ((alarmId == null) ? 0 : alarmId.hashCode());
     result = prime * result + ((alarmName == null) ? 0 : alarmName.hashCode());
     result = prime * result + ((metrics == null) ? 0 : metrics.hashCode());
@@ -151,7 +168,8 @@ public class AlarmStateTransitionedEvent {
     return "AlarmStateTransitionedEvent [tenantId=" + tenantId + ", alarmId=" + alarmId
         + ", alarmDefinitionId=" + alarmDefinitionId + ", metrics=" + metrics + ", alarmName="
         + alarmName + ", alarmDescription=" + alarmDescription + ", oldState=" + oldState
-        + ", newState=" + newState + ", severity=" + severity + ", actionsEnabled=" + actionsEnabled + ", stateChangeReason="
+        + ", newState=" + newState + ", severity=" + severity + ", link=" + link
+        + ", lifecycleState=" + lifecycleState + ", actionsEnabled=" + actionsEnabled + ", stateChangeReason="
         + stateChangeReason + ", subAlarms=" + subAlarms +  ", timestamp=" + timestamp + "]";
   }
 }
