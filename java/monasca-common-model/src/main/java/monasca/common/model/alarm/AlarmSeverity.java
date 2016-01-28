@@ -16,6 +16,25 @@
  */
 package monasca.common.model.alarm;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public enum AlarmSeverity {
-  LOW, MEDIUM, HIGH, CRITICAL
+  LOW, MEDIUM, HIGH, CRITICAL;
+
+  public static AlarmSeverity fromString(String text) {
+    if (text != null) {
+      for (AlarmSeverity alarmSeverity : AlarmSeverity.values()) {
+        if (text.equalsIgnoreCase(alarmSeverity.toString())) {
+          return alarmSeverity;
+        }
+      }
+    }
+    return null;
+  }
+
+  @JsonCreator
+  public static AlarmSeverity fromJson(@JsonProperty("severity") String text) {
+    return AlarmSeverity.valueOf(text.toUpperCase());
+  }
 }
