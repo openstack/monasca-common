@@ -17,8 +17,10 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotEquals;
 
 import java.math.BigDecimal;
+import java.util.TimeZone;
 
 import com.beust.jcommander.internal.Lists;
+
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.testng.annotations.Test;
@@ -59,8 +61,12 @@ public class ConversionsTest {
   }
 
   public void testDateTimeShouldNotEqualDifferentTZImplicit() {
-    final DateTime now = DateTime.now();
-    assertNotEquals(now, Conversions.variantToDateTime(now));
+    // This test fails if the timezone of the JVM is UTC so skip
+    // it in that case
+    if (TimeZone.getDefault() != TimeZone.getTimeZone("UTC")) {
+      final DateTime now = DateTime.now();
+      assertNotEquals(now, Conversions.variantToDateTime(now));
+    }
   }
 
   public void testDateTimeShouldEqualSameTZImplicit() {
