@@ -220,4 +220,4 @@ class KafkaConsumer(object):
 
     def commit(self):
         self._last_commit = datetime.datetime.now()
-        self._consumer.commit()
+        self._consumer.commit(partitions=self._partitions)
