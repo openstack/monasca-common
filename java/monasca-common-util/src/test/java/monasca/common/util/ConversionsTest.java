@@ -62,8 +62,8 @@ public class ConversionsTest {
 
   public void testDateTimeShouldNotEqualDifferentTZImplicit() {
     // This test fails if the timezone of the JVM is UTC so skip
-    // it in that case
-    if (TimeZone.getDefault() != TimeZone.getTimeZone("UTC")) {
+    // it in that case 
+    if (!TimeZone.getDefault().equals(TimeZone.getTimeZone("UTC"))) {
       final DateTime now = DateTime.now();
       assertNotEquals(now, Conversions.variantToDateTime(now));
     }
