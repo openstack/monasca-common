@@ -51,12 +51,8 @@ public class HttpAuthClient implements AuthClient {
 
   private static final int DELTA_TIME_IN_SEC = 30;
   private static final String APPLICATION_JSON = "application/json";
-  private static SimpleDateFormat expiryFormat;
-
-  static {
-    expiryFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-    expiryFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
-  }
+  // SimpleDateFormat is not thread safe, so use ThreadLocal
+  private static ThreadLocal<SimpleDateFormat> expiryFormat = new ThreadLocal<>();
 
   private final Config appConfig = Config.getInstance();
 
@@ -328,11 +324,15 @@ public class HttpAuthClient implements AuthClient {
 
   private boolean isExpired(String expires) {
     Date tokenExpiryDate;
+    if (expiryFormat.get() == null) {
+      expiryFormat.set(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'"));
+      expiryFormat.get().setTimeZone(TimeZone.getTimeZone("UTC"));
+    }
     try {
       // The date looks like: 2014-11-13T02:34:59.953729Z
       // SimpleDateFormat can't handle the microseconds so take them off
       final String tmp = expires.replaceAll("\\.[\\d]+Z", "Z");
-      tokenExpiryDate = expiryFormat.parse(tmp);
+      tokenExpiryDate = expiryFormat.get().parse(tmp);
     } catch (ParseException e) {
       logger.warn("Failure parsing Admin Token expiration date: {}", e.getMessage());
       return true;
