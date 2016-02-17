@@ -1,7 +1,7 @@
 iso8601
 six
 kazoo>=2.0
-kafka-python>=0.9.1
+kafka-python>=0.9.1,<1.0
 PyMySQL>=0.6.7
 oslo.config
 pbr
