@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 FUJITSU LIMITED
+ * Copyright 2015-2016 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
@@ -29,6 +29,7 @@ import org.hibernate.annotations.OnDeleteAction;
 import org.joda.time.DateTime;
 
 import monasca.common.model.alarm.AlarmOperator;
+import monasca.common.model.alarm.AlarmSubExpression;
 
 @Entity
 @Table(name = "sub_alarm_definition")
@@ -81,6 +82,9 @@ public class SubAlarmDefinitionDb
   @Column(name = "periods", length = 11, nullable = false)
   private Integer periods;
 
+  @Column(name = "is_deterministic", length = 1, nullable = false)
+  private boolean deterministic = AlarmSubExpression.DEFAULT_DETERMINISTIC;
+
   public SubAlarmDefinitionDb() {
     super();
   }
@@ -95,6 +99,21 @@ public class SubAlarmDefinitionDb
                               Integer periods,
                               DateTime created_at,
                               DateTime updated_at) {
+    this(id, alarmDefinition, function, metricName, operator, threshold, period, periods, created_at,
+         updated_at, AlarmSubExpression.DEFAULT_DETERMINISTIC);
+  }
+
+  public SubAlarmDefinitionDb(String id,
+                              AlarmDefinitionDb alarmDefinition,
+                              String function,
+                              String metricName,
+                              String operator,
+                              Double threshold,
+                              Integer period,
+                              Integer periods,
+                              DateTime created_at,
+                              DateTime updated_at,
+                              boolean deterministic) {
     super(id, created_at, updated_at);
     this.alarmDefinition = alarmDefinition;
     this.function = function;
@@ -103,6 +122,7 @@ public class SubAlarmDefinitionDb
     this.threshold = threshold;
     this.period = period;
     this.periods = periods;
+    this.deterministic = deterministic;
   }
 
   public SubAlarmDefinitionDb setPeriods(final Integer periods) {
@@ -170,6 +190,15 @@ public class SubAlarmDefinitionDb
 
   public Integer getPeriods() {
     return this.periods;
+  }
+
+  public boolean isDeterministic() {
+    return this.deterministic;
+  }
+
+  public SubAlarmDefinitionDb setDeterministic(final boolean isDeterministic) {
+    this.deterministic = isDeterministic;
+    return this;
   }
 
   public interface Queries {

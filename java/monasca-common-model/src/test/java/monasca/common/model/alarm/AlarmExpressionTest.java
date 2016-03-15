@@ -1,11 +1,12 @@
 /*
  * Copyright (c) 2014 Hewlett-Packard Development Company, L.P.
- * 
+ * Copyright 2016 FUJITSU LIMITED
+ *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software distributed under the License
  * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the License for the specific language governing permissions and limitations under
@@ -19,11 +20,14 @@ import static org.testng.Assert.assertNotEquals;
 import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
-import org.testng.annotations.Test;
-
+import com.beust.jcommander.internal.Maps;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
+import org.testng.annotations.Test;
 
 import monasca.common.model.metric.MetricDefinition;
 
@@ -315,4 +319,60 @@ public class AlarmExpressionTest {
                                                  + "(min(ເຮືອນ{dn3=dv3,家=дом}) < 10 or sum(biz{dn5=dv5}) >9 and "
                                                  + "count(fizzle) lt 0 or count(baz) > 1)");
     }
+
+  public void shouldParseDeterministicExpression() {
+    final Map<String, String> dimensions = Maps.newHashMap();
+    final ArrayList<AlarmExpression> expressions = Lists.newArrayList(
+        new AlarmExpression("count(log.error{},deterministic,20) > 5")
+    );
+    final MetricDefinition metricDefinition = new MetricDefinition("log.error", dimensions);
+
+    final AlarmSubExpression logErrorExpr = new AlarmSubExpression(
+        AggregateFunction.COUNT,
+        metricDefinition,
+        AlarmOperator.GT,
+        5,
+        20,
+        1,
+        true // each expression is deterministic
+    );
+
+    for (final AlarmExpression expr : expressions) {
+      final List<AlarmSubExpression> subExpressions = expr.getSubExpressions();
+
+      assertTrue(expr.isDeterministic());  // each expression is deterministic
+      assertEquals(1, subExpressions.size());
+      assertEquals(subExpressions.get(0), logErrorExpr);
+    }
+  }
+
+  @Test(expectedExceptions = IllegalArgumentException.class)
+  public void shouldNotParseInvalidExpressionWrongRightOperand() {
+    AlarmExpression.of("count(log.error{},deterministic=foo,20) > 5");
+  }
+
+  @Test(expectedExceptions = IllegalArgumentException.class)
+  public void shouldNotParseInvalidExpressionMalformedDeterministicKeyword() {
+    AlarmExpression.of("count(log.error{},determ=true,20) > 5");
+  }
+
+  public void shouldBeDeterministicIfAllSubExpressionAreDeterministic() {
+    final String expression1 = "count(log.error{hostname=1,component=A},deterministic,20) > 5";
+    final String expression2 = "count(log.error{hostname=1,component=B},deterministic,20) > 10";
+    final String expression3 = "count(log.error{hostname=1,component=C},deterministic,20) > 15";
+
+    final String expression = String.format("%s OR %s OR %s", expression1, expression2, expression3);
+
+    assertTrue(new AlarmExpression(expression).isDeterministic());
+  }
+
+  public void shouldBeNonDeterministicIfAtLeastOneExpressionIsNonDeterministic() {
+    final String expression1 = "count(log.error{hostname=1,component=A},deterministic,20) > 5";
+    final String expression2 = "count(log.error{hostname=1,component=B},deterministic,20) > 10";
+    final String expression3 = "count(log.error{}) > 15";
+
+    final String expression = String.format("%s OR %s OR %s", expression1, expression2, expression3);
+
+    assertFalse(new AlarmExpression(expression).isDeterministic());
+  }
 }
