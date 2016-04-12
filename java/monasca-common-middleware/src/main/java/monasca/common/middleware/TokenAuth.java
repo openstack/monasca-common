@@ -97,7 +97,7 @@ public class TokenAuth implements Filter, monasca.common.middleware.AuthConstant
 
     if (token == null) {
       if (!appConfig.isDelayAuthDecision()) {
-        logger.error(HttpServletResponse.SC_UNAUTHORIZED
+        logger.debug(HttpServletResponse.SC_UNAUTHORIZED
                 + " No token found.");
         ((HttpServletResponse) resp).sendError(
                 HttpServletResponse.SC_UNAUTHORIZED, TOKEN_NOTFOUND);

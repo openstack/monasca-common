@@ -100,7 +100,11 @@ public class HttpAuthClient implements AuthClient {
         if (code == 404) {
           instream = entity.getContent();
           instream.close();
-          throw new AuthException("Authorization failed for user token: " + token);
+          //
+          // Don't log the whole token, just the first ten characters
+          //
+          throw new AuthException("Authorization failed for user token beginning with: "
+             + token.substring(0, 10));
         }
 
         if (code != 200) {
