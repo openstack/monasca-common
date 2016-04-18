@@ -101,10 +101,10 @@ public class HttpAuthClient implements AuthClient {
           instream = entity.getContent();
           instream.close();
           //
-          // Don't log the whole token, just the first ten characters
+          // Don't log the whole token, just the last ten characters
           //
-          throw new AuthException("Authorization failed for user token beginning with: "
-             + token.substring(0, 10));
+          throw new AuthException("Authorization failed for user token ending with: "
+             + token.substring(token.length() - 10));
         }
 
         if (code != 200) {
