@@ -1,5 +1,6 @@
 /*
  * Copyright 2015 FUJITSU LIMITED
+ * (C) Copyright 2016 Hewlett Packard Enterprise Development Company LP
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
@@ -58,8 +59,27 @@ public class NotificationMethodDb
   @Column(name = "address", length = 512, nullable = false)
   private String address;
 
+  @Column(name = "period", nullable = false)
+  private Integer period;
+
   public NotificationMethodDb() {
     super();
+  }
+
+  public NotificationMethodDb(String id,
+                              String tenantId,
+                              String name,
+                              AlarmNotificationMethodType type,
+                              String address,
+                              Integer period,
+                              DateTime created_at,
+                              DateTime updated_at) {
+    super(id, created_at, updated_at);
+    this.tenantId = tenantId;
+    this.name = name;
+    this.type = type;
+    this.address = address;
+    this.period = period;
   }
 
   public NotificationMethodDb(String id,
@@ -74,6 +94,7 @@ public class NotificationMethodDb
     this.name = name;
     this.type = type;
     this.address = address;
+    this.period = 0;
   }
 
   public NotificationMethodDb setAddress(final String address) {
@@ -96,6 +117,11 @@ public class NotificationMethodDb
     return this;
   }
 
+  public NotificationMethodDb setPeriod(final Integer period) {
+    this.period = period;
+    return this;
+  }
+
   public String getTenantId() {
     return this.tenantId;
   }
@@ -110,6 +136,10 @@ public class NotificationMethodDb
 
   public String getAddress() {
     return this.address;
+  }
+
+  public Integer getPeriod() {
+    return this.period;
   }
 
   public interface Queries {
