@@ -53,7 +53,7 @@ def as_json(data, **kwargs):
 
     data = json.dumps(data, **kwargs)
 
-    return data.encode(ENCODING)
+    return data
 
 
 @_try_catch
