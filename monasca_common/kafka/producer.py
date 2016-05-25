@@ -13,20 +13,23 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import kafka.client
-import kafka.producer
 import logging
 import time
+
+import kafka.client
+import kafka.producer
 
 log = logging.getLogger(__name__)
 
 
 class KafkaProducer(object):
     """Adds messages to a kafka topic
+
     """
 
     def __init__(self, url):
         """Init
+
              url - kafka connection details
         """
         self._kafka = kafka.client.KafkaClient(url)
@@ -38,6 +41,7 @@ class KafkaProducer(object):
 
     def publish(self, topic, messages, key=None):
         """Takes messages and puts them on the supplied kafka topic
+
         """
 
         if not isinstance(messages, list):
