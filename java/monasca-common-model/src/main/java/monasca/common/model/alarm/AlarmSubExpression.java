@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2014 Hewlett-Packard Development Company, L.P.
+ * Copyright 2016 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,17 +22,13 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Locale;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-
-import monasca.common.model.alarm.AlarmExpressionLexer;
-import monasca.common.model.alarm.AlarmExpressionParser;
 import monasca.common.model.metric.MetricDefinition;
 
 /**
@@ -41,6 +38,7 @@ public class AlarmSubExpression implements Serializable {
   private static final long serialVersionUID = -7458129503846747592L;
   public static final int DEFAULT_PERIOD = 60;
   public static final int DEFAULT_PERIODS = 1;
+  public static final boolean DEFAULT_DETERMINISTIC = false;
 
   private AggregateFunction function;
   private MetricDefinition metricDefinition;
@@ -48,6 +46,8 @@ public class AlarmSubExpression implements Serializable {
   private double threshold;
   private int period;
   private int periods;
+  private boolean deterministic = DEFAULT_DETERMINISTIC;
+
   // Use a DecimalFormatter for threshold because the standard double format starts using scientific notation when
   // threshold is very large and that scientific notation can't be parsed when recreating the SubExpression
   private static final DecimalFormat formatter;
@@ -57,14 +57,29 @@ public class AlarmSubExpression implements Serializable {
     formatter.setDecimalFormatSymbols(DecimalFormatSymbols.getInstance(Locale.US));
   }
 
-  public AlarmSubExpression(AggregateFunction function, MetricDefinition metricDefinition,
-      AlarmOperator operator, double threshold, int period, int periods) {
+  public AlarmSubExpression(AggregateFunction function,
+                            MetricDefinition metricDefinition,
+                            AlarmOperator operator,
+                            double threshold,
+                            int period,
+                            int periods) {
+    this(function, metricDefinition, operator, threshold, period, periods, DEFAULT_DETERMINISTIC);
+  }
+
+  public AlarmSubExpression(AggregateFunction function,
+                            MetricDefinition metricDefinition,
+                            AlarmOperator operator,
+                            double threshold,
+                            int period,
+                            int periods,
+                            boolean deterministic) {
     this.function = function;
     this.metricDefinition = metricDefinition;
     this.operator = operator;
     this.threshold = threshold;
     this.period = period;
     this.periods = periods;
+    this.deterministic = deterministic;
   }
 
   AlarmSubExpression() {
@@ -111,6 +126,8 @@ public class AlarmSubExpression implements Serializable {
       return false;
     if (periods != other.periods)
       return false;
+    if (deterministic != other.deterministic)
+      return false;
     if (Double.doubleToLongBits(threshold) != Double.doubleToLongBits(other.threshold))
       return false;
     return true;
@@ -130,8 +147,12 @@ public class AlarmSubExpression implements Serializable {
   public String getExpression() {
     StringBuilder sb = new StringBuilder();
     sb.append(function).append('(').append(metricDefinition.toExpression());
-    if (period != 60)
+    if (this.isDeterministic()) {
+      sb.append(", deterministic"); // present only non-default value
+    }
+    if (period != 60) {
       sb.append(", ").append(period);
+    }
     sb.append(") ").append(operator).append(' ').append(formatter.format(threshold));
     if (periods != 1)
       sb.append(" times ").append(periods);
@@ -162,6 +183,10 @@ public class AlarmSubExpression implements Serializable {
     return threshold;
   }
 
+  public boolean isDeterministic() {
+    return this.deterministic;
+  }
+
   @Override
   public int hashCode() {
     final int prime = 31;
@@ -171,6 +196,7 @@ public class AlarmSubExpression implements Serializable {
     result = prime * result + ((operator == null) ? 0 : operator.hashCode());
     result = prime * result + period;
     result = prime * result + periods;
+    result = prime * result + Boolean.valueOf(this.deterministic).hashCode();
     long temp;
     temp = Double.doubleToLongBits(threshold);
     result = prime * result + (int) (temp ^ (temp >>> 32));
@@ -199,6 +225,10 @@ public class AlarmSubExpression implements Serializable {
 
   public void setThreshold(double threshold) {
     this.threshold = threshold;
+  }
+
+  public void setDeterministic(final boolean deterministic) {
+    this.deterministic = deterministic;
   }
 
   @Override
