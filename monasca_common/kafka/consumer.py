@@ -54,6 +54,7 @@ class KafkaConsumer(object):
                  commit_callback=None,
                  commit_timeout=30):
         """Init
+
              kafka_url            - Kafka location
              zookeeper_url        - Zookeeper location
              zookeeper_path       - Zookeeper path used for partition
@@ -151,7 +152,9 @@ class KafkaConsumer(object):
         return not self._set_partitioner.acquired
 
     def _partition(self):
-        """Consume messages from kafka using the Kazoo SetPartitioner to
+        """Consume messages from kafka
+
+           Consume messages from kafka using the Kazoo SetPartitioner to
            allow multiple consumer processes to negotiate access to the kafka
            partitions
         """
