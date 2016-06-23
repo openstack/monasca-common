@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Hewlett-Packard Development Company, L.P.
+ * (C) Copyright 2015-2016 Hewlett Packard Enterprise Development Company LP.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -129,4 +129,17 @@ public final class Conversions {
 
   }
 
+  /**
+   * Converts a Java Object to Boolean
+   *
+   * @param variant object of type Boolean or Number
+   *
+   * @return Boolean TRUE if Boolean and TRUE or Number and value is 1
+   */
+  public static Boolean variantToBoolean(final Object input) {
+    if (input instanceof Boolean) {
+      return (Boolean) input;
+    }
+    return "1".equals(input.toString());
+  }
 }

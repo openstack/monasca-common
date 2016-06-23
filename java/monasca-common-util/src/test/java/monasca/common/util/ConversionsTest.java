@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Hewlett-Packard Development Company, L.P.
+ * (C) Copyright 2015-2016 Hewlett Packard Enterprise Development Company LP.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
@@ -14,7 +14,9 @@
 package monasca.common.util;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotEquals;
+import static org.testng.Assert.assertTrue;
 
 import java.math.BigDecimal;
 import java.util.TimeZone;
@@ -116,5 +118,19 @@ public class ConversionsTest {
 
   private enum MockEnum {
     THIS,IS,TEST
+  }
+
+  public void testVariantToBoolean() {
+    assertTrue(Conversions.variantToBoolean(new Long(1)));
+    assertFalse(Conversions.variantToBoolean(new Long(0)));
+
+    assertTrue(Conversions.variantToBoolean(new Integer(1)));
+    assertFalse(Conversions.variantToBoolean(new Integer(0)));
+
+    assertTrue(Conversions.variantToBoolean(new Short((short)1)));
+    assertFalse(Conversions.variantToBoolean(new Short((short)0)));
+
+    assertTrue(Conversions.variantToBoolean(Boolean.TRUE));
+    assertFalse(Conversions.variantToBoolean(Boolean.FALSE));
   }
 }
