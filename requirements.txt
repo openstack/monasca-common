@@ -1,8 +1,11 @@
-iso8601
-six
-kazoo>=2.0
-kafka-python>=0.9.5,<1.0
-PyMySQL>=0.6.7
-oslo.config
-pbr
-ujson>=1.34
+# The order of packages is significant, because pip processes them in the order
+# of appearance. Changing the order has an impact on the overall integration
+# process, which may cause wedges in the gate later.
+iso8601>=0.1.11 # MIT
+six>=1.9.0 # MIT
+kazoo>=2.2 # Apache-2.0
+kafka-python<1.0.0,>=0.9.5 # Apache-2.0
+PyMySQL>=0.6.2 # MIT License
+oslo.config>=3.10.0 # Apache-2.0
+pbr>=1.6 # Apache-2.0
+ujson>=1.35 # BSD
