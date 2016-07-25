@@ -24,6 +24,12 @@
             <artifactId>hibernate-core</artifactId>
             <version>${hibernate-core.version}</version>
         </dependency>
+        <dependency>
+            <groupId>monasca-common</groupId>
+            <artifactId>monasca-common-testing</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
 </project>

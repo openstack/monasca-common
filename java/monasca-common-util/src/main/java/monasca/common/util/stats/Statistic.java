@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Hewlett-Packard Development Company, L.P.
+ * (C) Copyright 2014, 2016 Hewlett Packard Enterprise Development LP
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ package monasca.common.util.stats;
  */
 public interface Statistic {
   /** Adds the {@code value} to the statistic. */
-  void addValue(double value);
+  void addValue(double value, double timestamp);
 
   /** Returns true if the statistic has been initialized with a value, else false. */
   boolean isInitialized();

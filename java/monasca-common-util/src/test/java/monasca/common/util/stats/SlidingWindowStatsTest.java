@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Hewlett-Packard Development Company, L.P.
+ * (C) Copyright 2014-2016 Hewlett Packard Enterprise Development LP
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
@@ -104,46 +104,46 @@ public class SlidingWindowStatsTest {
     SlidingWindowStats window = new SlidingWindowStats(Statistics.Average.class,
         TimeResolution.ABSOLUTE, 60, 1, 2, 0);
 
-    assertTrue(window.addValue(1.0, 20));
+    assertTrue(window.addValue(1.0, 20, false));
     window.slideViewTo(20, 30);
-    assertTrue(window.addValue(1.0, 0));
+    assertTrue(window.addValue(1.0, 0, false));
 
     window.slideViewTo(100, 30);
-    assertFalse(window.addValue(1.0, 0));
-    assertTrue(window.addValue(1.0, 61));
+    assertFalse(window.addValue(1.0, 0, false));
+    assertTrue(window.addValue(1.0, 61, false));
 
     window.slideViewTo(121, 30);
-    assertTrue(window.addValue(1.0, 61));
-    assertTrue(window.addValue(1.0, 121));
+    assertTrue(window.addValue(1.0, 61, false));
+    assertTrue(window.addValue(1.0, 121, false));
 
     window.slideViewTo(180, 30);
-    assertFalse(window.addValue(1.0, 61));
-    assertTrue(window.addValue(1.0, 121));
-    assertTrue(window.addValue(1.0, 181));
+    assertFalse(window.addValue(1.0, 61, false));
+    assertTrue(window.addValue(1.0, 121, false));
+    assertTrue(window.addValue(1.0, 181, false));
 
     window.slideViewTo(241, 30);
-    assertFalse(window.addValue(1.0, 121));
-    assertTrue(window.addValue(1.0, 181));
-    assertTrue(window.addValue(1.0, 241));
+    assertFalse(window.addValue(1.0, 121, false));
+    assertTrue(window.addValue(1.0, 181, false));
+    assertTrue(window.addValue(1.0, 241, false));
 
     window.slideViewTo(360, 30);
-    assertFalse(window.addValue(1.0, 241));
-    assertTrue(window.addValue(1.0, 300));
-    assertTrue(window.addValue(1.0, 361));
+    assertFalse(window.addValue(1.0, 241, false));
+    assertTrue(window.addValue(1.0, 300, false));
+    assertTrue(window.addValue(1.0, 361, false));
   }
 
   public void shouldAddValueAndGetWindowValues() {
     SlidingWindowStats window = new SlidingWindowStats(Statistics.Average.class,
         TimeResolution.ABSOLUTE, 3, 3, 2, 9);
     for (int i = 0; i < 5; i++)
-      window.addValue(999, i * 3);
+      window.addValue(999, i * 3, false);
 
     assertEquals(window.getWindowValues(), new double[] { 999, 999, 999, 999, 999 });
 
     window.slideViewTo(12, 1);
     assertEquals(window.getWindowValues(), new double[] { 999, 999, 999, 999, Double.NaN });
 
-    window.addValue(888, 17);
+    window.addValue(888, 17, false);
     assertEquals(window.getWindowValues(), new double[] { 999, 999, 999, 999, 888 });
   }
 
@@ -151,18 +151,40 @@ public class SlidingWindowStatsTest {
     SlidingWindowStats window = new SlidingWindowStats(Statistics.Average.class,
         TimeResolution.ABSOLUTE, 3, 3, 2, 9);
     for (int i = 0; i < 5; i++)
-      window.addValue(999, i * 3);
+      window.addValue(999, i * 3, false);
 
     assertEquals(window.getViewValues(), new double[] { 999, 999, 999 });
 
     window.slideViewTo(15, 1);
     assertEquals(window.getViewValues(), new double[] { 999, 999, 999 });
 
-    window.addValue(777, 15);
-    window.addValue(888, 18);
+    window.addValue(777, 15, false);
+    window.addValue(888, 18, false);
     assertEquals(window.getViewValues(), new double[] { 999, 999, 999 });
     window.slideViewTo(21, 1);
     assertEquals(window.getViewValues(), new double[] { 999, 777, 888 });
+  }
+
+  public void shouldAddOutOfWindowValueWithForce() {
+    SlidingWindowStats window = new SlidingWindowStats(Statistics.Last.class,
+        TimeResolution.ABSOLUTE, 3, 1, 2, 9);
+    window.addValue(999, 3, true);
+    assertEquals(window.getViewValues(), new double[] { 999 });
+  }
+
+  public void shouldNotAddOutOfWindowValueWithoutForce() {
+    SlidingWindowStats window = new SlidingWindowStats(Statistics.Average.class,
+        TimeResolution.ABSOLUTE, 3, 1, 2, 9);
+    window.addValue(999, 3, false);
+    assertEquals(window.getViewValues(), new double[] { Double.NaN });
+  }
+
+  public void shouldIgnoreOutOfOrderValue() {
+    SlidingWindowStats window = new SlidingWindowStats(Statistics.Last.class,
+        TimeResolution.ABSOLUTE, 3, 1, 2, 9);
+    window.addValue(999, 3, true);
+    window.addValue(998, 2, true);
+    assertEquals(window.getViewValues(), new double[] { 999 });
   }
 
   public void testIndexOfTime() {
@@ -208,9 +230,9 @@ public class SlidingWindowStatsTest {
     SlidingWindowStats window = new SlidingWindowStats(Statistics.Sum.class,
         TimeResolution.ABSOLUTE, 5, 3, 2, 20);
     // Logical window is 5 10 15
-    window.addValue(2, 5);
-    window.addValue(3, 10);
-    window.addValue(4, 15);
+    window.addValue(2, 5, false);
+    window.addValue(3, 10, false);
+    window.addValue(4, 15, false);
 
     assertEquals(window.getValue(5), 2.0);
     assertEquals(window.getValue(10), 3.0);
@@ -218,7 +240,7 @@ public class SlidingWindowStatsTest {
 
     // Slide logical window to 10 15 20
     window.slideViewTo(25, 1);
-    window.addValue(5, 24);
+    window.addValue(5, 24, false);
 
     assertEquals(window.getValue(10), 3.0);
     assertEquals(window.getValue(15), 4.0);
@@ -264,9 +286,9 @@ public class SlidingWindowStatsTest {
     SlidingWindowStats window = new SlidingWindowStats(Statistics.Sum.class,
         TimeResolution.ABSOLUTE, 5, 3, 2, 20);
     // Window is 5 10 15 20 25
-    window.addValue(2, 5);
-    window.addValue(3, 10);
-    window.addValue(4, 15);
+    window.addValue(2, 5, false);
+    window.addValue(3, 10, false);
+    window.addValue(4, 15, false);
 
     assertEquals(window.getValuesUpTo(20), new double[] { 2, 3, 4, Double.NaN });
     assertEquals(window.getValuesUpTo(18), new double[] { 2, 3, 4 });
@@ -275,14 +297,14 @@ public class SlidingWindowStatsTest {
 
     // Window is 30 10 15 20 25
     window.slideViewTo(22, 1);
-    window.addValue(5, 22);
+    window.addValue(5, 22, false);
     assertEquals(window.getValuesUpTo(22), new double[] { 3, 4, 5 });
     assertEquals(window.getValuesUpTo(15), new double[] { 3, 4 });
     assertEquals(window.getValuesUpTo(12), new double[] { 3 });
 
     // Window is 30 35 15 20 25
     window.slideViewTo(27, 1);
-    window.addValue(6, 26);
+    window.addValue(6, 26, false);
     assertEquals(window.getValuesUpTo(27), new double[] { 4, 5, 6 });
     assertEquals(window.getValuesUpTo(24), new double[] { 4, 5 });
     assertEquals(window.getValuesUpTo(18), new double[] { 4 });

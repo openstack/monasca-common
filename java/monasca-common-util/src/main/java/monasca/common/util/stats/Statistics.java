@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Hewlett-Packard Development Company, L.P.
+ * (C) Copyright 2014, 2016 Hewlett Packard Enterprise Development LP
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -50,8 +50,8 @@ public final class Statistics {
     protected int count;
 
     @Override
-    public void addValue(double value) {
-      super.addValue(value);
+    public void addValue(double value, double timestamp) {
+      super.addValue(value, timestamp);
       this.count++;
     }
 
@@ -69,7 +69,7 @@ public final class Statistics {
 
   public static class Count extends AbstractStatistic {
     @Override
-    public void addValue(double value) {
+    public void addValue(double value, double timestamp) {
       initialized = true;
       this.value++;
     }
@@ -77,7 +77,7 @@ public final class Statistics {
 
   public static class Max extends AbstractStatistic {
     @Override
-    public void addValue(double value) {
+    public void addValue(double value, double timestamp) {
       if (!initialized) {
         initialized = true;
         this.value = value;
@@ -88,7 +88,7 @@ public final class Statistics {
 
   public static class Min extends AbstractStatistic {
     @Override
-    public void addValue(double value) {
+    public void addValue(double value, double timestamp) {
       if (!initialized) {
         initialized = true;
         this.value = value;
@@ -99,9 +99,23 @@ public final class Statistics {
 
   public static class Sum extends AbstractStatistic {
     @Override
-    public void addValue(double value) {
+    public void addValue(double value, double timestamp) {
       initialized = true;
       this.value += value;
+    }
+  }
+
+  public static class Last extends AbstractStatistic {
+    protected double lastTimestamp;
+
+    @Override
+    public void addValue(double value, double timestamp) {
+      initialized = true;
+      // Ensure older measurements don't change value
+      if (timestamp > this.lastTimestamp) {
+        this.value = value;
+        this.lastTimestamp = timestamp;
+      }
     }
   }
 

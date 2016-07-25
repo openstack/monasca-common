@@ -1,5 +1,6 @@
 /*
  * Copyright 2015 FUJITSU LIMITED
+ * (C) Copyright 2016 Hewlett Packard Enterprise Development LP
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
@@ -14,10 +15,14 @@
  */
 package monasca.common.hibernate.db;
 
+import monasca.common.model.alarm.AlarmState;
+
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
@@ -67,30 +72,54 @@ public class SubAlarmDb
   @Column(name = "expression", nullable = false, length = 16777215)
   private String expression = DEFAULT_EXPRESSION;
 
+  @Column(name = "state")
+  @Enumerated(EnumType.STRING)
+  private AlarmState state;
+
   public SubAlarmDb() {
     super();
   }
 
+  /** This constructor will be deleted once the API tests have changed to no longer use it */
   public SubAlarmDb(String id,
                     AlarmDb alarm,
                     String expression,
                     DateTime created_at,
                     DateTime updated_at) {
-    this(id, alarm, null, expression, created_at, updated_at);
-    this.alarm = alarm;
-    this.expression = expression;
+    this(id, alarm, null, expression, AlarmState.OK, created_at, updated_at);
   }
 
+  public SubAlarmDb(String id,
+                    AlarmDb alarm,
+                    String expression,
+                    AlarmState state,
+                    DateTime created_at,
+                    DateTime updated_at) {
+    this(id, alarm, null, expression, state, created_at, updated_at);
+  }
+
+  /** This constructor will be deleted once the API tests have changed to no longer use it */
   public SubAlarmDb(String id,
                     AlarmDb alarm,
                     SubAlarmDefinitionDb subExpression,
                     String expression,
                     DateTime created_at,
                     DateTime updated_at) {
+    this(id, alarm, subExpression, expression, AlarmState.OK, created_at, updated_at);
+  }
+
+  public SubAlarmDb(String id,
+                    AlarmDb alarm,
+                    SubAlarmDefinitionDb subExpression,
+                    String expression,
+                    AlarmState state,
+                    DateTime created_at,
+                    DateTime updated_at) {
     super(id, created_at, updated_at);
     this.alarm = alarm;
     this.subExpression = subExpression;
     this.expression = expression;
+    this.state = state;
   }
 
   public SubAlarmDb setExpression(final String expression) {
@@ -123,6 +152,15 @@ public class SubAlarmDb
 
   public String getExpression() {
     return this.expression;
+  }
+
+  public AlarmState getState() {
+    return state;
+  }
+
+  public SubAlarmDb setState(AlarmState state) {
+    this.state = state;
+    return this;
   }
 
   public interface Queries {

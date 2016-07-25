@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Hewlett-Packard Development Company, L.P.
+ * (C) Copyright 2014-2016 Hewlett Packard Enterprise Development LP
  * Copyright 2016 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,7 +22,7 @@ start
     : expression EOF
     ;
 
-expression 
+expression
     : compoundIdentifier relational_operator literal # relationalExprFwd
     | function relational_operator literal ('times' repeat)? # relationalExprFuncFwd
     | expression and expression # andExpr
@@ -78,6 +78,7 @@ functionType
     | SUM
     | CNT
     | AVG
+    | LAST
     ;
 
 primary
@@ -113,6 +114,7 @@ keyword
     | SUM
     | CNT
     | AVG
+    | LAST
     ;
 
 period
@@ -135,7 +137,7 @@ repeat
 txt
     : TXT
     | keyword
-    | INTEGER 
+    | INTEGER
     | STRING
     ;
 
@@ -166,19 +168,19 @@ GT_S
 GTE
     : [gG][tT][eE]
     ;
-    
+
 GTE_S
     : '>='
     ;
-    
+
 AND
-    : [aA][nN][dD] 
+    : [aA][nN][dD]
     ;
-    
+
 AND_S
     : '&&'
     ;
-    
+
 OR
     : [oO][rR]
     ;
@@ -207,11 +209,15 @@ AVG
     : [aA][vV][gG]
     ;
 
+LAST
+    : [lL][aA][sS][tT]
+    ;
+
 INTEGER
     : DIGIT+
     ;
-    
-DECIMAL 
+
+DECIMAL
     : '-'?DIGIT+('.'DIGIT+)?
     ;
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Hewlett-Packard Development Company, L.P.
+ * (C) Copyright 2014-2016 Hewlett Packard Enterprise Development LP
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -97,20 +97,36 @@ public class SlidingWindowStats {
 
   /**
    * Adds the {@code value} to the statistics for the slot associated with the {@code timestamp} and
-   * returns true, else returns false if the {@code timestamp} is outside of the window.
+   * returns true, else returns false if the {@code timestamp} is outside of the window and
+   * {@code force} is false. If {@code force} is true, always add value
    * 
    * @param value to add
    * @param timestamp to add value for
+   * @param force if true, add value to first window even if timestamp is outside of all windows
    * @return true if the value was added else false if it the {@code timestamp} was outside the
-   *         window
+   *         window and force was false
+   */
+  public boolean addValue(double value, long timestamp, boolean force) {
+    int index = indexOfTime(timescale.adjust(timestamp));
+    if (index == -1) {
+      if (force) {
+        index = 0;
+      } else {
+        return false;
+      }
+    }
+    slots[index].stat.addValue(value, timestamp);
+    return true;
+  }
+
+  /**
+   * This will be deleted when all uses have changed to use the above method
+   * @param value
+   * @param timestamp
+   * @return
    */
   public boolean addValue(double value, long timestamp) {
-    timestamp = timescale.adjust(timestamp);
-    int index = indexOfTime(timestamp);
-    if (index == -1)
-      return false;
-    slots[index].stat.addValue(value);
-    return true;
+    return addValue(value, timestamp, false);
   }
 
   /** Returns the number of slots in the window. */
