@@ -1,6 +1,6 @@
 /*
  * Copyright 2015 FUJITSU LIMITED
- * (C) Copyright 2016 Hewlett Packard Enterprise Development Company LP
+ * (C) Copyright 2016 Hewlett Packard Enterprise Development LP
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
@@ -53,8 +53,7 @@ public class NotificationMethodDb
   private String name;
 
   @Column(name = "type", nullable = false)
-  @Enumerated(EnumType.STRING)
-  private AlarmNotificationMethodType type;
+  private String type;
 
   @Column(name = "address", length = 512, nullable = false)
   private String address;
@@ -69,7 +68,7 @@ public class NotificationMethodDb
   public NotificationMethodDb(String id,
                               String tenantId,
                               String name,
-                              AlarmNotificationMethodType type,
+                              String type,
                               String address,
                               Integer period,
                               DateTime created_at,
@@ -85,7 +84,7 @@ public class NotificationMethodDb
   public NotificationMethodDb(String id,
                               String tenantId,
                               String name,
-                              AlarmNotificationMethodType type,
+                              String type,
                               String address,
                               DateTime created_at,
                               DateTime updated_at) {
@@ -102,7 +101,7 @@ public class NotificationMethodDb
     return this;
   }
 
-  public NotificationMethodDb setType(final AlarmNotificationMethodType type) {
+  public NotificationMethodDb setType(final String type) {
     this.type = type;
     return this;
   }
@@ -130,7 +129,7 @@ public class NotificationMethodDb
     return this.name;
   }
 
-  public AlarmNotificationMethodType getType() {
+  public String getType() {
     return this.type;
   }
 

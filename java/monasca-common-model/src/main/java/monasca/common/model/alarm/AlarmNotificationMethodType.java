@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Hewlett-Packard Development Company, L.P.
+ * (C) Copyright 2014,2016 Hewlett Packard Enterprise Development LP
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,14 @@
  */
 package monasca.common.model.alarm;
 
-public enum AlarmNotificationMethodType {
-  EMAIL, WEBHOOK, PAGERDUTY;
+public class AlarmNotificationMethodType {
+
+  public static final String EMAIL = "EMAIL";
+  public static final String WEBHOOK = "WEBHOOK";
+  public static final String PAGERDUTY = "PAGERDUTY";
+  
+  public static String valueOf(String alarmType)
+  {
+	return alarmType.toUpperCase();
+  }
 }
