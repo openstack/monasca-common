@@ -98,20 +98,21 @@ public class SlidingWindowStats {
   /**
    * Adds the {@code value} to the statistics for the slot associated with the {@code timestamp} and
    * returns true, else returns false if the {@code timestamp} is outside of the window and
-   * {@code force} is false. If {@code force} is true, always add value
+   * {@code force} is false. If {@code force} is true, always add value to the first window
    * 
    * @param value to add
    * @param timestamp to add value for
-   * @param force if true, add value to first window even if timestamp is outside of all windows
+   * @param force if true, add value to first window
    * @return true if the value was added else false if it the {@code timestamp} was outside the
    *         window and force was false
    */
   public boolean addValue(double value, long timestamp, boolean force) {
-    int index = indexOfTime(timescale.adjust(timestamp));
-    if (index == -1) {
-      if (force) {
-        index = 0;
-      } else {
+    final int index;
+    if (force) {
+      index = 0;
+    } else {
+      index = indexOfTime(timescale.adjust(timestamp));
+      if (index == -1) {
         return false;
       }
     }
