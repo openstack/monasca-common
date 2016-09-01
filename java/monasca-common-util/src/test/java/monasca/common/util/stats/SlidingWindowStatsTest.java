@@ -170,12 +170,16 @@ public class SlidingWindowStatsTest {
         TimeResolution.ABSOLUTE, 3, 1, 2, 9);
     window.addValue(999, 3, true);
     assertEquals(window.getViewValues(), new double[] { 999 });
+    window.addValue(899, 10, true);
+    assertEquals(window.getViewValues(), new double[] { 899 });
   }
 
   public void shouldNotAddOutOfWindowValueWithoutForce() {
     SlidingWindowStats window = new SlidingWindowStats(Statistics.Average.class,
         TimeResolution.ABSOLUTE, 3, 1, 2, 9);
     window.addValue(999, 3, false);
+    assertEquals(window.getViewValues(), new double[] { Double.NaN });
+    window.addValue(899, 10, false);
     assertEquals(window.getViewValues(), new double[] { Double.NaN });
   }
 
