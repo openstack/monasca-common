@@ -13,8 +13,8 @@
 import mock
 import unittest
 
-from monasca_common.kafka.consumer import KafkaConsumer
-from monasca_common.kafka.producer import KafkaProducer
+from monasca_common.kafka import consumer
+from monasca_common.kafka import producer
 
 
 FAKE_KAFKA_URL = "kafka_url"
@@ -33,7 +33,7 @@ class TestKafkaProducer(unittest.TestCase):
         self.mock_kafka_producer = self.kafka_producer_patcher.start()
         self.producer = self.mock_kafka_producer.KeyedProducer.return_value
         self.client = self.mock_kafka_client.KafkaClient.return_value
-        self.monasca_kafka_producer = KafkaProducer(FAKE_KAFKA_URL)
+        self.monasca_kafka_producer = producer.KafkaProducer(FAKE_KAFKA_URL)
 
     def tearDown(self):
         self.kafka_producer_patcher.stop()
@@ -100,7 +100,7 @@ class TestKafkaConsumer(unittest.TestCase):
         self.client = self.mock_kafka_client.KafkaClient.return_value
         self.consumer = self.mock_kafka_consumer.SimpleConsumer.return_value
 
-        self.monasca_kafka_consumer = KafkaConsumer(
+        self.monasca_kafka_consumer = consumer.KafkaConsumer(
             FAKE_KAFKA_URL, FAKE_ZOOKEEPER_URL, FAKE_ZOOKEEPER_PATH,
             FAKE_KAFKA_CONSUMER_GROUP, FAKE_KAFKA_TOPIC)
 
