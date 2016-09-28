@@ -4,10 +4,9 @@
 
 ### Build Instructions
 Download and do mvn install.
-```
-cd java
-mvn clean install
-```
+
+    $ cd java
+    $ mvn clean install
 
 There is a pom.xml in the base directory but that should only be used for the StackForge build. The issue is that currently StackForge's bare-precise system only has Maven 2 on it and at least one of the modules of monasca-common requires Maven 3.
 
@@ -38,8 +37,8 @@ python monasca-common
 To install the python monasca-common modules, git clone the source and run the
 following command::
 
-    sudo python setup.py install
+    $ sudo python setup.py install
 
 To run the python monasca-common tests use::
 
-    nosetests monasca_common/tests
+    $ nosetests monasca_common/tests
