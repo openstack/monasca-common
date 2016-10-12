@@ -14,6 +14,7 @@
 # limitations under the License.
 
 import monasca_common.validation.metrics as metric_validator
+from six.moves import range
 import unittest
 
 # a few valid characters to test
@@ -359,7 +360,7 @@ class TestMetricValidation(unittest.TestCase):
              "timestamp": 1405630174123,
              "value": 2.0}
         ]
-        for i in xrange(len(metrics)):
+        for i in range(len(metrics)):
             metric_validator.validate_name(metrics[i]['name'])
             metric_validator.validate_value(metrics[i]['value'])
             metric_validator.validate_timestamp(metrics[i]['timestamp'])
