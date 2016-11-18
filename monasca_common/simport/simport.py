@@ -13,13 +13,9 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-import logging
 import os
 import os.path
 import sys
-
-
-LOG = logging.getLogger(__name__)
 
 
 class MissingModule(Exception):
