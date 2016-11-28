@@ -138,6 +138,7 @@ txt
     : TXT
     | keyword
     | INTEGER
+    | DECIMAL
     | STRING
     ;
 
