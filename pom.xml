@@ -4,7 +4,7 @@
 
   <groupId>monasca</groupId>
   <artifactId>monasca-common</artifactId>
-  <version>1.1.0</version>
+  <version>1.2.0</version>
   <url>http://github.com/openstack/monasca-common</url>
   <packaging>pom</packaging>
 
