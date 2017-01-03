@@ -1,4 +1,4 @@
-# (C) Copyright 2016 Hewlett Packard Enterprise Development LP
+# (C) Copyright 2016-2017 Hewlett Packard Enterprise Development LP
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,6 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import math
 import re
 import ujson
 
@@ -145,6 +146,9 @@ def validate_value(value):
     if not isinstance(value, (int, long, float)):
         msg = "invalid value type: {0} is not a number type for metric".\
             format(value)
+        raise InvalidValue(msg)
+    if math.isnan(value) or math.isinf(value):
+        msg = "invalid value: {0} is not a valid value for metric".format(value)
         raise InvalidValue(msg)
 
 

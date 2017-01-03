@@ -1,4 +1,4 @@
-# (C) Copyright 2016 Hewlett Packard Enterprise Development LP
+# (C) Copyright 2016-2017 Hewlett Packard Enterprise Development LP
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -209,7 +209,7 @@ class TestMetricValidation(unittest.TestCase):
             "invalid characters in dimension key",
             metric_validator.validate, metric)
 
-    def test_invalid_value(self):
+    def test_invalid_value_type(self):
         metric = {"name": "test_metric_name",
                   "dimensions": {"key1": "value1",
                                  "key2": "value2"},
@@ -219,6 +219,20 @@ class TestMetricValidation(unittest.TestCase):
             metric_validator.InvalidValue,
             "invalid value type",
             metric_validator.validate, metric)
+
+    def test_invalid_value(self):
+        metric = {"name": "test_metric_name",
+                  "dimensions": {"key1": "value1",
+                                 "key2": "value2"},
+                  "timestamp": 1405630174123,
+                  "value": None}
+
+        for value in ('nan', 'inf', '-inf'):
+            metric['value'] = float(value)
+            self.assertRaisesRegexp(
+                metric_validator.InvalidValue,
+                value,
+                metric_validator.validate, metric)
 
     def test_valid_name_chars(self):
         for c in valid_name_chars:
