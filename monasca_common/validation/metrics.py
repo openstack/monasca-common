@@ -76,6 +76,8 @@ def validate_metric(metric):
 
 
 def validate_value_meta(value_meta):
+    if value_meta is None:
+        return
     if len(value_meta) > VALUE_META_MAX_NUMBER:
         msg = "Too many valueMeta entries {0}, limit is {1}: valueMeta {2}".\
             format(len(value_meta), VALUE_META_MAX_NUMBER, value_meta)
