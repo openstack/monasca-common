@@ -1,0 +1,9 @@
+#################################################
+# note(trebskit) Following tests fails under PY3
+# reason for exclusion is written above test name
+#################################################
+
+# TypeError: catching classes that do not inherit from BaseException is not allowed
+# not possible under PY3
+monasca_common.tests.test_kafka.TestKafkaConsumer.test_kafka_consumer_process_messages
+

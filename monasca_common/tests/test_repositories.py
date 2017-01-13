@@ -10,22 +10,24 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-import unittest
-
 import mock
+
+from oslotest import base
 
 import monasca_common.repositories.exceptions as exceptions
 from monasca_common.repositories.mysql import mysql_repository
 
 
-class TestMySQLRepository(unittest.TestCase):
+class TestMySQLRepository(base.BaseTestCase):
 
     def setUp(self):
+        super(TestMySQLRepository, self).setUp()
         self.cfg_patcher = mock.patch('oslo_config.cfg.CONF')
 
         self.mock_cfg = self.cfg_patcher.start()
 
     def tearDown(self):
+        super(TestMySQLRepository, self).tearDown()
         self.cfg_patcher.stop()
 
     def test_init(self):
