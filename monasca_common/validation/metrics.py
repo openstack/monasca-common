@@ -1,4 +1,4 @@
-# (C) Copyright 2016 Hewlett Packard Enterprise Development LP
+# (C) Copyright 2016-2017 Hewlett Packard Enterprise Development LP
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,7 +13,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import math
 import re
+
+import six
 import ujson
 
 # This is used to ensure that metrics with a timestamp older than
@@ -31,6 +34,13 @@ INVALID_CHARS = "<>={}(),\"\\\\;&"
 RESTRICTED_DIMENSION_CHARS = re.compile('[' + INVALID_CHARS + ']')
 RESTRICTED_NAME_CHARS = re.compile('[' + INVALID_CHARS + ' ' + ']')
 
+NUMERIC_VALUES = [int, float]
+if six.PY2:
+    # according to PEP537 long was renamed to int in PY3
+    # need to add long, as possible value, for PY2
+    NUMERIC_VALUES += [long]
+
+NUMERIC_VALUES = tuple(NUMERIC_VALUES)  # convert to tuple for instance call
 
 class InvalidMetricName(Exception):
     pass
@@ -79,7 +89,7 @@ def validate_value_meta(value_meta):
         msg = "Too many valueMeta entries {0}, limit is {1}: valueMeta {2}".\
             format(len(value_meta), VALUE_META_MAX_NUMBER, value_meta)
         raise InvalidValueMeta(msg)
-    for key, value in value_meta.iteritems():
+    for key, value in six.iteritems(value_meta):
         if not key:
             raise InvalidValueMeta("valueMeta name cannot be empty: key={}, "
                                    "value={}".format(key, value))
@@ -100,8 +110,8 @@ def validate_value_meta(value_meta):
 
 
 def validate_dimensions(dimensions):
-    for k, v in dimensions.iteritems():
-        if not isinstance(k, (str, unicode)):
+    for k, v in six.iteritems(dimensions):
+        if not isinstance(k, (str, six.text_type)):
             msg = "invalid dimension key type: " \
                   "{0} in {1} is not a string type".format(k, dimensions)
             raise InvalidDimensionKey(msg)
@@ -114,7 +124,7 @@ def validate_dimensions(dimensions):
                 format(k, dimensions)
             raise InvalidDimensionKey(msg)
 
-        if not isinstance(v, (str, unicode)):
+        if not isinstance(v, (str, six.text_type)):
             msg = "invalid dimension value type: {0} for key {1} must be a " \
                   "string: {2}".format(v, k, dimensions)
             raise InvalidDimensionValue(msg)
@@ -129,7 +139,7 @@ def validate_dimensions(dimensions):
 
 
 def validate_name(name):
-    if not isinstance(name, (str, unicode)):
+    if not isinstance(name, (str, six.text_type)):
         msg = "invalid metric name type: {0} is not a string type ".format(
             name)
         raise InvalidMetricName(msg)
@@ -142,14 +152,14 @@ def validate_name(name):
 
 
 def validate_value(value):
-    if not isinstance(value, (int, long, float)):
+    if not isinstance(value, NUMERIC_VALUES):
         msg = "invalid value type: {0} is not a number type for metric".\
             format(value)
         raise InvalidValue(msg)
 
 
 def validate_timestamp(timestamp):
-    if not isinstance(timestamp, (int, float)):
+    if not isinstance(timestamp, NUMERIC_VALUES):
         msg = "invalid timestamp type: {0} is not a number type for " \
               "metric".format(timestamp)
         raise InvalidTimeStamp(msg)

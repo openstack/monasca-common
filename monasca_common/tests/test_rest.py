@@ -11,7 +11,8 @@
 # under the License.
 
 import mock
-import unittest
+
+from oslotest import base
 
 from monasca_common.rest.exceptions import DataConversionException
 from monasca_common.rest.exceptions import UnreadableContentError
@@ -19,13 +20,15 @@ from monasca_common.rest.exceptions import UnsupportedContentTypeException
 from monasca_common.rest import utils
 
 
-class TestRestUtils(unittest.TestCase):
+class TestRestUtils(base.BaseTestCase):
 
     def setUp(self):
+        super(TestRestUtils, self).setUp()
         self.mock_json_patcher = mock.patch('monasca_common.rest.utils.json')
         self.mock_json = self.mock_json_patcher.start()
 
     def tearDown(self):
+        super(TestRestUtils, self).tearDown()
         self.mock_json_patcher.stop()
 
     def test_read_body_with_success(self):
