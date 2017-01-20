@@ -102,33 +102,39 @@ def validate_value_meta(value_meta):
         raise InvalidValueMeta("Unable to serialize valueMeta into JSON")
 
 
+def validate_dimension_key(k):
+    if not isinstance(k, (str, unicode)):
+        msg = "invalid dimension key type: " \
+              "{0} is not a string type".format(k)
+        raise InvalidDimensionKey(msg)
+    if len(k) > 255 or len(k) < 1:
+        msg = "invalid length ({0}) for dimension key {1}". \
+            format(len(k), k)
+        raise InvalidDimensionKey(msg)
+    if RESTRICTED_DIMENSION_CHARS.search(k) or re.match('^_', k):
+        msg = "invalid characters in dimension key {0}". \
+            format(k)
+        raise InvalidDimensionKey(msg)
+
+
+def validate_dimension_value(k, v):
+    if not isinstance(v, (str, unicode)):
+        msg = "invalid dimension value type: {0} must be a " \
+              "string (from key {1})".format(v, k)
+        raise InvalidDimensionValue(msg)
+    if len(v) > 255 or len(v) < 1:
+        msg = "invalid length ({0}) for dimension value {1} from key {2}". \
+            format(len(v), v, k)
+        raise InvalidDimensionValue(msg)
+    if RESTRICTED_DIMENSION_CHARS.search(v):
+        msg = "invalid characters in dimension value {0} from key {1}".format(v, k)
+        raise InvalidDimensionValue(msg)
+
+
 def validate_dimensions(dimensions):
     for k, v in dimensions.iteritems():
-        if not isinstance(k, (str, unicode)):
-            msg = "invalid dimension key type: " \
-                  "{0} in {1} is not a string type".format(k, dimensions)
-            raise InvalidDimensionKey(msg)
-        if len(k) > 255 or len(k) < 1:
-            msg = "invalid length for dimension key {0}: {1}".\
-                format(k, dimensions)
-            raise InvalidDimensionKey(msg)
-        if RESTRICTED_DIMENSION_CHARS.search(k) or re.match('^_', k):
-            msg = "invalid characters in dimension key {0}: {1}".\
-                format(k, dimensions)
-            raise InvalidDimensionKey(msg)
-
-        if not isinstance(v, (str, unicode)):
-            msg = "invalid dimension value type: {0} for key {1} must be a " \
-                  "string: {2}".format(v, k, dimensions)
-            raise InvalidDimensionValue(msg)
-        if len(v) > 255 or len(v) < 1:
-            msg = "invalid length for dimension value {0} in key {1}: {2}".\
-                format(v, k, dimensions)
-            raise InvalidDimensionValue(msg)
-        if RESTRICTED_DIMENSION_CHARS.search(v):
-            msg = "invalid characters in dimension value {0} for key {1}: " \
-                  "{2}".format(v, k, dimensions)
-            raise InvalidDimensionValue(msg)
+        validate_dimension_key(k)
+        validate_dimension_value(k, v)
 
 
 def validate_name(name):
