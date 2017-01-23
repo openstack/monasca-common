@@ -18,9 +18,9 @@ import logging
 import threading
 import time
 
-import kafka.client
-import kafka.common
-import kafka.consumer
+import monasca_common.kafka_lib.client as kafka_client
+import monasca_common.kafka_lib.common as kafka_common
+import monasca_common.kafka_lib.consumer as kafka_consumer
 
 from kazoo.client import KazooClient
 from kazoo.recipe.partitioner import SetPartitioner
@@ -89,13 +89,13 @@ class KafkaConsumer(object):
         self._zookeeper_url = zookeeper_url
         self._zookeeper_path = zookeeper_path
 
-        self._kafka = kafka.client.KafkaClient(kafka_url)
+        self._kafka = kafka_client.KafkaClient(kafka_url)
 
         self._consumer = self._create_kafka_consumer()
 
     def _create_kafka_consumer(self, partitions=None):
         # No auto-commit so that commits only happen after the message is processed.
-        consumer = kafka.consumer.SimpleConsumer(
+        consumer = kafka_consumer.SimpleConsumer(
             self._kafka,
             self._kafka_group,
             self._kafka_topic,
@@ -144,7 +144,7 @@ class KafkaConsumer(object):
                     if time_delta.total_seconds() > self._commit_timeout:
                         self._commit_callback()
 
-            except kafka.common.OffsetOutOfRangeError:
+            except kafka_common.OffsetOutOfRangeError:
                 log.error("Kafka OffsetOutOfRange.  Jumping to head.")
                 self._consumer.seek(0, 0)
 

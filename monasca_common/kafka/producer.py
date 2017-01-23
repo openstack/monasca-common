@@ -16,8 +16,8 @@
 import logging
 import time
 
-import kafka.client
-import kafka.producer
+import monasca_common.kafka_lib.client as kafka_client
+import monasca_common.kafka_lib.producer as kafka_producer
 
 log = logging.getLogger(__name__)
 
@@ -32,11 +32,11 @@ class KafkaProducer(object):
 
              url - kafka connection details
         """
-        self._kafka = kafka.client.KafkaClient(url)
-        self._producer = kafka.producer.KeyedProducer(
+        self._kafka = kafka_client.KafkaClient(url)
+        self._producer = kafka_producer.KeyedProducer(
             self._kafka,
             async=False,
-            req_acks=kafka.producer.KeyedProducer.ACK_AFTER_LOCAL_WRITE,
+            req_acks=kafka_producer.KeyedProducer.ACK_AFTER_LOCAL_WRITE,
             ack_timeout=2000)
 
     def publish(self, topic, messages, key=None):
