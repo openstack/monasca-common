@@ -161,7 +161,7 @@ def validate_value(value):
 
 
 def validate_timestamp(timestamp):
-    if not isinstance(timestamp, (int, float)):
+    if not isinstance(timestamp, (int, long, float)):
         msg = "invalid timestamp type: {0} is not a number type for " \
               "metric".format(timestamp)
         raise InvalidTimeStamp(msg)
