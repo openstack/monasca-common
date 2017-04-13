@@ -6,5 +6,5 @@ kazoo>=2.2 # Apache-2.0
 pykafka>=2.5.0 # Apache 2.0 License
 PyMySQL>=0.7.6 # MIT License
 oslo.config>=3.22.0 # Apache-2.0
-pbr>=2.0.0 # Apache-2.0
+pbr!=2.1.0,>=2.0.0 # Apache-2.0
 ujson>=1.35 # BSD
