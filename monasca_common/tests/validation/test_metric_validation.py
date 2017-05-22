@@ -81,7 +81,7 @@ class TestMetricValidation(base.BaseTestCase):
                                  "key2": "value2"},
                   "timestamp": 1405630174123,
                   "value": 5}
-        self.assertRaisesRegexp(
+        self.assertRaisesRegex(
             metric_validator.InvalidMetricName,
             "invalid length for metric name",
             metric_validator.validate, metric)
@@ -92,7 +92,7 @@ class TestMetricValidation(base.BaseTestCase):
                                  "key2": "value2"},
                   "timestamp": 1405630174123,
                   "value": 5}
-        self.assertRaisesRegexp(
+        self.assertRaisesRegex(
             metric_validator.InvalidMetricName,
             "invalid length for metric name",
             metric_validator.validate, metric)
@@ -103,7 +103,7 @@ class TestMetricValidation(base.BaseTestCase):
                                  "key2": "value2"},
                   "timestamp": 1405630174123,
                   "value": 5}
-        self.assertRaisesRegexp(
+        self.assertRaisesRegex(
             metric_validator.InvalidMetricName,
             "invalid metric name type",
             metric_validator.validate,
@@ -115,7 +115,7 @@ class TestMetricValidation(base.BaseTestCase):
                                  "key2": "value2"},
                   "timestamp": 1405630174123,
                   "value": 5}
-        self.assertRaisesRegexp(
+        self.assertRaisesRegex(
             metric_validator.InvalidMetricName,
             "invalid characters in metric name",
             metric_validator.validate, metric)
@@ -125,7 +125,7 @@ class TestMetricValidation(base.BaseTestCase):
                   "dimensions": {'A': 'B', '': 'C', 'D': 'E'},
                   "timestamp": 1405630174123,
                   "value": 5}
-        self.assertRaisesRegexp(
+        self.assertRaisesRegex(
             metric_validator.InvalidDimensionKey,
             "invalid length \(0\) for dimension key",
             metric_validator.validate, metric)
@@ -135,7 +135,7 @@ class TestMetricValidation(base.BaseTestCase):
                   "dimensions": {'A': 'B', 'B': 'C', 'D': ''},
                   "timestamp": 1405630174123,
                   "value": 5}
-        self.assertRaisesRegexp(
+        self.assertRaisesRegex(
             metric_validator.InvalidDimensionValue,
             "invalid length \(0\) for dimension value",
             metric_validator.validate, metric)
@@ -145,7 +145,7 @@ class TestMetricValidation(base.BaseTestCase):
                   "dimensions": {'A': 'B', 4: 'C', 'D': 'E'},
                   "timestamp": 1405630174123,
                   "value": 5}
-        self.assertRaisesRegexp(
+        self.assertRaisesRegex(
             metric_validator.InvalidDimensionKey,
             "invalid dimension key type",
             metric_validator.validate, metric)
@@ -155,7 +155,7 @@ class TestMetricValidation(base.BaseTestCase):
                   "dimensions": {'A': 13.3, 'B': 'C', 'D': 'E'},
                   "timestamp": 1405630174123,
                   "value": 5}
-        self.assertRaisesRegexp(
+        self.assertRaisesRegex(
             metric_validator.InvalidDimensionValue,
             "invalid dimension value type",
             metric_validator.validate, metric)
@@ -165,7 +165,7 @@ class TestMetricValidation(base.BaseTestCase):
                   "dimensions": {'A'*256: 'B', 'B': 'C', 'D': 'E'},
                   "timestamp": 1405630174123,
                   "value": 5}
-        self.assertRaisesRegexp(
+        self.assertRaisesRegex(
             metric_validator.InvalidDimensionKey,
             "invalid length \(256\) for dimension key",
             metric_validator.validate, metric)
@@ -175,7 +175,7 @@ class TestMetricValidation(base.BaseTestCase):
                   "dimensions": {'A': 'B', 'B': 'C'*256, 'D': 'E'},
                   "timestamp": 1405630174123,
                   "value": 5}
-        self.assertRaisesRegexp(
+        self.assertRaisesRegex(
             metric_validator.InvalidDimensionValue,
             "invalid length \(256\) for dimension value",
             metric_validator.validate, metric)
@@ -185,7 +185,7 @@ class TestMetricValidation(base.BaseTestCase):
                   "dimensions": {'A': 'B', 'B': 'C', '(D)': 'E'},
                   "timestamp": 1405630174123,
                   "value": 5}
-        self.assertRaisesRegexp(
+        self.assertRaisesRegex(
             metric_validator.InvalidDimensionKey,
             "invalid characters in dimension key",
             metric_validator.validate, metric)
@@ -195,7 +195,7 @@ class TestMetricValidation(base.BaseTestCase):
                   "dimensions": {'A': 'B;', 'B': 'C', 'D': 'E'},
                   "timestamp": 1405630174123,
                   "value": 5}
-        self.assertRaisesRegexp(
+        self.assertRaisesRegex(
             metric_validator.InvalidDimensionValue,
             "invalid characters in dimension value",
             metric_validator.validate, metric)
@@ -205,7 +205,7 @@ class TestMetricValidation(base.BaseTestCase):
                   "dimensions": {'_A': 'B', 'B': 'C', 'D': 'E'},
                   "timestamp": 1405630174123,
                   "value": 5}
-        self.assertRaisesRegexp(
+        self.assertRaisesRegex(
             metric_validator.InvalidDimensionKey,
             "invalid characters in dimension key",
             metric_validator.validate, metric)
@@ -216,7 +216,7 @@ class TestMetricValidation(base.BaseTestCase):
                                  "key2": "value2"},
                   "timestamp": 1405630174123,
                   "value": "value"}
-        self.assertRaisesRegexp(
+        self.assertRaisesRegex(
             metric_validator.InvalidValue,
             "invalid value type",
             metric_validator.validate, metric)
@@ -230,7 +230,7 @@ class TestMetricValidation(base.BaseTestCase):
 
         for value in ('nan', 'inf', '-inf'):
             metric['value'] = float(value)
-            self.assertRaisesRegexp(
+            self.assertRaisesRegex(
                 metric_validator.InvalidValue,
                 value,
                 metric_validator.validate, metric)
@@ -251,7 +251,7 @@ class TestMetricValidation(base.BaseTestCase):
                                      "key2": "value2"},
                       "timestamp": 1405630174123,
                       "value": 5}
-            self.assertRaisesRegexp(
+            self.assertRaisesRegex(
                 metric_validator.InvalidMetricName,
                 "invalid characters in metric name",
                 metric_validator.validate, metric)
@@ -271,7 +271,7 @@ class TestMetricValidation(base.BaseTestCase):
                       "dimensions": {'test{}key'.format(c): 'test-value'},
                       "timestamp": 1405630174123,
                       "value": 5}
-            self.assertRaisesRegexp(
+            self.assertRaisesRegex(
                 metric_validator.InvalidDimensionKey,
                 "invalid characters in dimension key",
                 metric_validator.validate, metric)
@@ -282,7 +282,7 @@ class TestMetricValidation(base.BaseTestCase):
                       "dimensions":  {'test-key': 'test{}value'.format(c)},
                       "timestamp": 1405630174123,
                       "value": 5}
-            self.assertRaisesRegexp(
+            self.assertRaisesRegex(
                 metric_validator.InvalidDimensionValue,
                 "invalid characters in dimension value",
                 metric_validator.validate, metric)
@@ -297,7 +297,7 @@ class TestMetricValidation(base.BaseTestCase):
                   "value_meta": value_meta,
                   "timestamp": 1405630174123,
                   "value": 5}
-        self.assertRaisesRegexp(
+        self.assertRaisesRegex(
             metric_validator.InvalidValueMeta,
             "Too many valueMeta entries",
             metric_validator.validate, metric)
@@ -309,7 +309,7 @@ class TestMetricValidation(base.BaseTestCase):
                   "value_meta": {'': 'BBB'},
                   "timestamp": 1405630174123,
                   "value": 5}
-        self.assertRaisesRegexp(
+        self.assertRaisesRegex(
             metric_validator.InvalidValueMeta,
             "valueMeta name cannot be empty",
             metric_validator.validate, metric)
@@ -325,7 +325,7 @@ class TestMetricValidation(base.BaseTestCase):
                   "value_meta": value_meta,
                   "timestamp": 1405630174123,
                   "value": 5}
-        self.assertRaisesRegexp(
+        self.assertRaisesRegex(
             metric_validator.InvalidValueMeta,
             "valueMeta name too long",
             metric_validator.validate, metric)
@@ -344,7 +344,7 @@ class TestMetricValidation(base.BaseTestCase):
                   "value_meta": value_meta,
                   "timestamp": 1405630174123,
                   "value": 5}
-        self.assertRaisesRegexp(
+        self.assertRaisesRegex(
             metric_validator.InvalidValueMeta,
             "Unable to serialize valueMeta into JSON",
             metric_validator.validate, metric)
@@ -355,7 +355,7 @@ class TestMetricValidation(base.BaseTestCase):
                                  "key2": "value2"},
                   "timestamp": "invalid_timestamp",
                   "value": 5}
-        self.assertRaisesRegexp(
+        self.assertRaisesRegex(
             metric_validator.InvalidTimeStamp,
             "invalid timestamp type",
             metric_validator.validate, metric)
