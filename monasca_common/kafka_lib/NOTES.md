@@ -9,12 +9,12 @@ There are a few levels of abstraction:
 
 # Methods of producing
 
-* Round robbin (each message to the next partition)
+* Round robin (each message to the next partition)
 * All-to-one (each message to one partition)
 * All-to-all? (each message to every partition)
 * Partitioned (run each message through a partitioning function)
-** HashPartitioned
-** FunctionPartition
+  * HashPartitioned
+  * FunctionPartition
 
 # Possible API
 
@@ -28,5 +28,3 @@ There are a few levels of abstraction:
     consumer.commit() # commit it
     for msg in consumer.iter_messages():
         print msg
-
-
