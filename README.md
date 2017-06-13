@@ -30,13 +30,14 @@ A change has been submitted to StackForge to switch to bare-trusty for this buil
 ### Platform Sub-Projects
 
 * [monasca-common-dropwizard](https://github.com/openstack/monasca-common/tree/master/java/monasca-common-dropwizard) - Utilities for building and testing dropwizard services.
+* [monasca-common-hibernate](https://github.com/openstack/monasca-common/tree/master/java/monasca-common-hibernate) - Hibernate based model of Monasca SQL schema
+* [monasca-common-influxdb](https://github.com/openstack/monasca-common/tree/master/java/monasca-common-influxdb) - InfluxDB related utilities.
 * [monasca-common-kafka](https://github.com/openstack/monasca-common/tree/master/java/monasca-common-kafka) - Various utilities for working with Kafka.
 * [monasca-common-persistence](https://github.com/openstack/monasca-common/tree/master/java/monasca-common-persistence) - Persistence related infrastructure and utilities.
-* [monasca-common-service](https://github.com/openstack/monasca-common/tree/master/java/monasca-common-service) - Simple service abstractions and utilities.
 * [monasca-common-streaming](https://github.com/openstack/monasca-common/tree/master/java/monasca-common-streaming) - Streaming related utilities.
 * [monasca-common-testing](https://github.com/openstack/monasca-common/tree/master/java/monasca-common-testing) - A set of testing related dependencies.
 * [monasca-common-util](https://github.com/openstack/monasca-common/tree/master/java/monasca-common-util) - Various utilities such as for serialization, dependency injection, date and time, invocation retries, concurrency, etc.
-* [monasca-common-hibernate](https://github.com/openstack/monasca-common/tree/master/java/monasca-common-hibernate) - Hibernate based model of Monasca SQL schema
+
 
 python monasca-common
 ======================
