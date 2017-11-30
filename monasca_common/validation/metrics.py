@@ -30,9 +30,9 @@ VALUE_META_MAX_NUMBER = 16
 VALUE_META_VALUE_MAX_LENGTH = 2048
 VALUE_META_NAME_MAX_LENGTH = 255
 
-INVALID_CHARS = "<>={}(),\"\\\\;&"
+INVALID_CHARS = "<>={},\"\\\\;&"
 RESTRICTED_DIMENSION_CHARS = re.compile('[' + INVALID_CHARS + ']')
-RESTRICTED_NAME_CHARS = re.compile('[' + INVALID_CHARS + ' ' + ']')
+RESTRICTED_NAME_CHARS = re.compile('[' + INVALID_CHARS + '() ' + ']')
 
 NUMERIC_VALUES = [int, float]
 if six.PY2:
@@ -41,6 +41,7 @@ if six.PY2:
     NUMERIC_VALUES += [long]
 
 NUMERIC_VALUES = tuple(NUMERIC_VALUES)  # convert to tuple for instance call
+
 
 class InvalidMetricName(Exception):
     pass

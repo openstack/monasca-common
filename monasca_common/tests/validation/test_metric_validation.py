@@ -24,7 +24,7 @@ invalid_name_chars = " <>={}(),\"\\\\;&"
 
 # a few valid characters to test
 valid_dimension_chars = " .'_-"
-invalid_dimension_chars = "<>={}(),\"\\\\;&"
+invalid_dimension_chars = "<>={},\"\\\\;&"
 
 
 class TestMetricValidation(base.BaseTestCase):
@@ -182,7 +182,7 @@ class TestMetricValidation(base.BaseTestCase):
 
     def test_invalid_dimension_key_restricted_characters(self):
         metric = {"name": "test_metric_name",
-                  "dimensions": {'A': 'B', 'B': 'C', '(D)': 'E'},
+                  "dimensions": {'A': 'B', 'B': 'C', 'D=': 'E'},
                   "timestamp": 1405630174123,
                   "value": 5}
         self.assertRaisesRegex(
