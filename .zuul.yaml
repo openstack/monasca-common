@@ -10,3 +10,7 @@
             voting: false
         - monasca-tempest-java-postgresql:
             voting: false
+        - monasca-tempest-python-cassandra:
+            voting: false
+        - monasca-tempest-java-cassandra:
+            voting: false
