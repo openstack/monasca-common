@@ -10,3 +10,8 @@
             voting: false
         - monasca-tempest-python-cassandra
         - monasca-tempest-java-cassandra
+    gate:
+      jobs:
+        - monasca-tempest-python-mysql
+        - monasca-tempest-python-cassandra
+        - monasca-tempest-java-cassandra
