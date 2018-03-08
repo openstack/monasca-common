@@ -1,17 +1,13 @@
 - project:
     check:
       jobs:
-        - monasca-tempest-python-mysql
-        - monasca-tempest-python-postgresql:
-            voting: false
-        - monasca-tempest-java-mysql:
-            voting: false
-        - monasca-tempest-java-postgresql:
+        - monasca-tempest-python-influxdb
+        - monasca-tempest-java-influxdb:
             voting: false
         - monasca-tempest-python-cassandra
         - monasca-tempest-java-cassandra
     gate:
       jobs:
-        - monasca-tempest-python-mysql
+        - monasca-tempest-python-influxdb
         - monasca-tempest-python-cassandra
         - monasca-tempest-java-cassandra
