@@ -6,8 +6,10 @@
             voting: false
         - monasca-tempest-python-cassandra
         - monasca-tempest-java-cassandra
+        - openstack-tox-lower-constraints
     gate:
       jobs:
         - monasca-tempest-python-influxdb
         - monasca-tempest-python-cassandra
         - monasca-tempest-java-cassandra
+        - openstack-tox-lower-constraints
