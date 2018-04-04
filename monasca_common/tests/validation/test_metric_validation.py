@@ -14,8 +14,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from oslotest import base
 import codecs
+from oslotest import base
 import six
 
 from monasca_common.validation import metrics as metric_validator
@@ -34,6 +34,7 @@ def _hex_to_unicode(hex_raw):
     hex_str_raw = codecs.getdecoder('hex')(hex_raw)[0]
     hex_str = hex_str_raw.decode('utf-8', 'replace')
     return hex_str
+
 
 # NOTE(trebskit) => http://www.cl.cam.ac.uk/~mgk25/ucs/examples/UTF-8-test.txt
 UNICODE_MESSAGES = [
@@ -207,7 +208,7 @@ class TestMetricValidation(base.BaseTestCase):
 
     def test_invalid_dimension_key_length(self):
         metric = {"name": "test_metric_name",
-                  "dimensions": {'A'*256: 'B', 'B': 'C', 'D': 'E'},
+                  "dimensions": {'A' * 256: 'B', 'B': 'C', 'D': 'E'},
                   "timestamp": 1405630174123,
                   "value": 5}
         self.assertRaisesRegex(
@@ -217,7 +218,7 @@ class TestMetricValidation(base.BaseTestCase):
 
     def test_invalid_dimension_value_length(self):
         metric = {"name": "test_metric_name",
-                  "dimensions": {'A': 'B', 'B': 'C'*256, 'D': 'E'},
+                  "dimensions": {'A': 'B', 'B': 'C' * 256, 'D': 'E'},
                   "timestamp": 1405630174123,
                   "value": 5}
         self.assertRaisesRegex(
@@ -324,7 +325,7 @@ class TestMetricValidation(base.BaseTestCase):
     def test_invalid_dimension_value_chars(self):
         for c in invalid_dimension_chars:
             metric = {"name": "test_name",
-                      "dimensions":  {'test-key': 'test{}value'.format(c)},
+                      "dimensions": {'test-key': 'test{}value'.format(c)},
                       "timestamp": 1405630174123,
                       "value": 5}
             self.assertRaisesRegex(
@@ -378,7 +379,8 @@ class TestMetricValidation(base.BaseTestCase):
     def test_invalid_too_large_value_meta(self):
         value_meta_value = ""
         num_value_meta = 10
-        for i in six.moves.range(0, int(metric_validator.VALUE_META_VALUE_MAX_LENGTH / num_value_meta)):
+        for i in six.moves.range(
+                0, int(metric_validator.VALUE_META_VALUE_MAX_LENGTH / num_value_meta)):
             value_meta_value = '{}{}'.format(value_meta_value, '1')
         value_meta = {}
         for i in six.moves.range(0, num_value_meta):

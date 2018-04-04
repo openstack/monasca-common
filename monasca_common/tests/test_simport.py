@@ -89,9 +89,11 @@ class TestSimport(base.BaseTestCase):
 # 'full_path/monasca-common/monasca_common/tests/external/externalmodule.py'>
 #
 # while Python 3:
-# <module 'external.externalmodule' from 'full_path/monasca-common/monasca_common/tests/external/externalmodule.py'>
+# <module 'external.externalmodule' from
+# 'full_path/monasca-common/monasca_common/tests/external/externalmodule.py'>
 # , that's why we need to provide different module names for simport in Python 2 and 3
 #
+
 
 if six.PY2:
 
@@ -107,7 +109,8 @@ if six.PY2:
 
         def test_good_load_external(self):
 
-            method = simport.load(PWD + "/external|monasca_common.tests.external.externalmodule:Blah.method_b")
+            method = simport.load(
+                PWD + "/external|monasca_common.tests.external.externalmodule:Blah.method_b")
 
             self.assertTrue('monasca_common.tests.external.externalmodule' in sys.modules)
             old = sys.modules['monasca_common.tests.external.externalmodule']
@@ -119,7 +122,8 @@ if six.PY2:
             self.assertEqual(method, external.externalmodule.Blah.method_b)
 
         def test_import_class(self):
-            klass = simport.load(PWD + "/external|monasca_common.tests.external.externalmodule:Blah")
+            klass = simport.load(
+                PWD + "/external|monasca_common.tests.external.externalmodule:Blah")
             import external.externalmodule
 
             self.assertEqual(klass, external.externalmodule.Blah)

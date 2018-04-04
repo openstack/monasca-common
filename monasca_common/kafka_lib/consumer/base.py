@@ -1,3 +1,15 @@
+# Licensed under the Apache License, Version 2.0 (the "License"); you may
+# not use this file except in compliance with the License. You may obtain
+# a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+# License for the specific language governing permissions and limitations
+# under the License.
+
 from __future__ import absolute_import
 
 import atexit
@@ -5,7 +17,6 @@ import logging
 import numbers
 from threading import Lock
 
-import monasca_common.kafka_lib.common as kafka_common
 from monasca_common.kafka_lib.common import (
     OffsetRequest, OffsetCommitRequest, OffsetFetchRequest,
     UnknownTopicOrPartitionError, check_error, KafkaError
@@ -30,6 +41,7 @@ NO_MESSAGES_WAIT_TIME_SECONDS = 0.1
 FULL_QUEUE_WAIT_TIME_SECONDS = 0.1
 
 MAX_BACKOFF_SECONDS = 60
+
 
 class Consumer(object):
     """
@@ -148,7 +160,7 @@ class Consumer(object):
                 partitions = list(self.offsets.keys())
 
             log.debug('Committing new offsets for %s, partitions %s',
-                     self.topic, partitions)
+                      self.topic, partitions)
             for partition in partitions:
                 offset = self.offsets[partition]
                 log.debug('Commit offset %d in SimpleConsumer: '
@@ -189,7 +201,7 @@ class Consumer(object):
 
             # py3 supports unregistering
             if hasattr(atexit, 'unregister'):
-                atexit.unregister(self._cleanup_func) # pylint: disable=no-member
+                atexit.unregister(self._cleanup_func)  # pylint: disable=no-member
 
             # py2 requires removing from private attribute...
             else:

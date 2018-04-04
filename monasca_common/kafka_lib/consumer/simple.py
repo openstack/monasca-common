@@ -1,14 +1,26 @@
+# Licensed under the Apache License, Version 2.0 (the "License"); you may
+# not use this file except in compliance with the License. You may obtain
+# a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+# License for the specific language governing permissions and limitations
+# under the License.
+
 from __future__ import absolute_import
 
 try:
     from itertools import zip_longest as izip_longest, repeat  # pylint: disable-msg=E0611
 except ImportError:
-    from itertools import izip_longest as izip_longest, repeat # python 2
+    from itertools import izip_longest as izip_longest, repeat  # python 2
 import logging
 try:
-    import queue # python 3
+    import queue  # python 3
 except ImportError:
-    import Queue as queue # python 2
+    import Queue as queue  # python 2
 import sys
 import time
 
@@ -166,7 +178,7 @@ class SimpleConsumer(Consumer):
             # Otherwise we should re-raise the upstream exception
             # b/c it typically includes additional data about
             # the request that triggered it, and we do not want to drop that
-            raise # pylint: disable-msg=E0704
+            raise  # pylint: disable-msg=E0704
 
         # send_offset_request
         log.info('Resetting topic-partition offset to %s for %s:%d',
@@ -198,7 +210,7 @@ class SimpleConsumer(Consumer):
                 If partition is None, would modify all partitions.
         """
 
-        if whence is None: # set an absolute offset
+        if whence is None:  # set an absolute offset
             if partition is None:
                 for tmp_partition in self.offsets:
                     self.offsets[tmp_partition] = offset
@@ -308,6 +320,7 @@ class SimpleConsumer(Consumer):
 
     def _get_message(self, block=True, timeout=0.1, get_partition_info=None,
                      update_offset=True):
+
         """
         If no messages can be fetched, returns None.
         If get_partition_info is None, it defaults to self.partition_info
@@ -365,8 +378,7 @@ class SimpleConsumer(Consumer):
 
     def _fetch(self):
         # Create fetch request payloads for all the partitions
-        partitions = dict((p, self.buffer_size)
-                      for p in self.fetch_offsets.keys())
+        partitions = dict((p, self.buffer_size) for p in self.fetch_offsets.keys())
         while partitions:
             requests = []
             for partition, buffer_size in six.iteritems(partitions):
@@ -416,8 +428,9 @@ class SimpleConsumer(Consumer):
                 try:
                     for message in resp.messages:
                         if message.offset < self.fetch_offsets[partition]:
-                            log.debug('Skipping message %s because its offset is less than the consumer offset',
-                                      message)
+                            log.debug(
+                                'Skipping message %s because its offset is less'
+                                ' than the consumer offset', message)
                             continue
                         # Put the message in our queue
                         self.queue.put((partition, message))

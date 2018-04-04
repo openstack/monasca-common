@@ -18,7 +18,6 @@ import pyparsing
 
 from monasca_common.monasca_query_language import aql_parser
 from monasca_common.monasca_query_language import exceptions
-from monasca_common.monasca_query_language import query_structures
 
 
 class TestMonascaQueryLanguage(base.BaseTestCase):
@@ -84,8 +83,8 @@ class TestMonascaQueryLanguage(base.BaseTestCase):
             "source metric_one targets metric_two excluding metric_three group by hostname",
             "source metric_one targets metric_two group by hostname",
             "source metric_one group by hostname",
-            "source {__severity__=HIGH} targets {__severity__=LOW} excluding "
-                "{__alarmName__=alarm_one} group by __alarmName__"
+            "source {__severity__=HIGH} targets {__severity__=LOW} excluding"
+            " {__alarmName__=alarm_one} group by __alarmName__"
         ]
         negative_expressions = [
             "targets metric_two source_metric_one"

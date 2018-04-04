@@ -1,3 +1,15 @@
+# Licensed under the Apache License, Version 2.0 (the "License"); you may
+# not use this file except in compliance with the License. You may obtain
+# a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+# License for the specific language governing permissions and limitations
+# under the License.
+
 import binascii
 import collections
 import struct
@@ -83,8 +95,7 @@ def group_by_topic_and_partition(tuples):
     out = collections.defaultdict(dict)
     for t in tuples:
         assert t.topic not in out or t.partition not in out[t.topic], \
-               'Duplicate {0}s for {1} {2}'.format(t.__class__.__name__,
-                                                   t.topic, t.partition)
+            'Duplicate {0}s for {1} {2}'.format(t.__class__.__name__, t.topic, t.partition)
         out[t.topic][t.partition] = t
     return out
 

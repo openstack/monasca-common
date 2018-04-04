@@ -1,3 +1,15 @@
+# Licensed under the Apache License, Version 2.0 (the "License"); you may
+# not use this file except in compliance with the License. You may obtain
+# a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+# License for the specific language governing permissions and limitations
+# under the License.
+
 import collections
 import copy
 import functools
@@ -7,12 +19,13 @@ import time
 
 import monasca_common.kafka_lib.common as kafka_common
 from monasca_common.kafka_lib.common import (TopicAndPartition, BrokerMetadata,
-                          ConnectionError, FailedPayloadsError,
-                          KafkaTimeoutError, KafkaUnavailableError,
-                          LeaderNotAvailableError, UnknownTopicOrPartitionError,
-                          NotLeaderForPartitionError, ReplicaNotAvailableError)
+                                             ConnectionError, FailedPayloadsError,
+                                             KafkaTimeoutError, KafkaUnavailableError,
+                                             LeaderNotAvailableError, UnknownTopicOrPartitionError,
+                                             NotLeaderForPartitionError, ReplicaNotAvailableError)
 
-from monasca_common.kafka_lib.conn import collect_hosts, KafkaConnection, DEFAULT_SOCKET_TIMEOUT_SECONDS
+from monasca_common.kafka_lib.conn import (collect_hosts, KafkaConnection,
+                                           DEFAULT_SOCKET_TIMEOUT_SECONDS)
 from monasca_common.kafka_lib.protocol import KafkaProtocol
 from monasca_common.kafka_lib.util import kafka_bytestring
 
@@ -43,7 +56,6 @@ class KafkaClient(object):
         self.topic_partitions = {}   # topic -> partition -> PartitionMetadata
 
         self.load_metadata_for_topics()  # bootstrap with all metadata
-
 
     ##################
     #   Private API  #
@@ -121,7 +133,7 @@ class KafkaClient(object):
     def _next_id(self):
         """Generate a new correlation id"""
         # modulo to keep w/i int32
-        self.correlation_id = (self.correlation_id + 1) % 2**31
+        self.correlation_id = (self.correlation_id + 1) % 2 ** 31
         return self.correlation_id
 
     def _send_broker_unaware_request(self, payloads, encoder_fn, decoder_fn):
@@ -421,10 +433,7 @@ class KafkaClient(object):
 
     def has_metadata_for_topic(self, topic):
         topic = kafka_bytestring(topic)
-        return (
-          topic in self.topic_partitions
-          and len(self.topic_partitions[topic]) > 0
-        )
+        return topic in self.topic_partitions and len(self.topic_partitions[topic]) > 0
 
     def get_partition_ids_for_topic(self, topic):
         topic = kafka_bytestring(topic)
@@ -437,7 +446,7 @@ class KafkaClient(object):
     def topics(self):
         return list(self.topic_partitions.keys())
 
-    def ensure_topic_exists(self, topic, timeout = 30):
+    def ensure_topic_exists(self, topic, timeout=30):
         start_time = time.time()
 
         while not self.has_metadata_for_topic(topic):
@@ -536,7 +545,8 @@ class KafkaClient(object):
                 # this error code is provided for admin purposes only
                 # we never talk to replicas, only the leader
                 except ReplicaNotAvailableError:
-                    log.debug('Some (non-leader) replicas not available for topic %s partition %d', topic, partition)
+                    log.debug('Some (non-leader) replicas not available for topic %s partition %d',
+                              topic, partition)
 
                 # If Known Broker, topic_partition -> BrokerMetadata
                 if leader in self.brokers:
@@ -623,8 +633,8 @@ class KafkaClient(object):
         """
 
         encoder = functools.partial(KafkaProtocol.encode_fetch_request,
-                          max_wait_time=max_wait_time,
-                          min_bytes=min_bytes)
+                                    max_wait_time=max_wait_time,
+                                    min_bytes=min_bytes)
 
         resps = self._send_broker_aware_request(
             payloads, encoder,
@@ -645,8 +655,7 @@ class KafkaClient(object):
 
     def send_offset_commit_request(self, group, payloads=[],
                                    fail_on_error=True, callback=None):
-        encoder = functools.partial(KafkaProtocol.encode_offset_commit_request,
-                          group=group)
+        encoder = functools.partial(KafkaProtocol.encode_offset_commit_request, group=group)
         decoder = KafkaProtocol.decode_offset_commit_response
         resps = self._send_broker_aware_request(payloads, encoder, decoder)
 
@@ -656,8 +665,7 @@ class KafkaClient(object):
     def send_offset_fetch_request(self, group, payloads=[],
                                   fail_on_error=True, callback=None):
 
-        encoder = functools.partial(KafkaProtocol.encode_offset_fetch_request,
-                          group=group)
+        encoder = functools.partial(KafkaProtocol.encode_offset_fetch_request, group=group)
         decoder = KafkaProtocol.decode_offset_fetch_response
         resps = self._send_broker_aware_request(payloads, encoder, decoder)
 
@@ -665,10 +673,10 @@ class KafkaClient(object):
                 if not fail_on_error or not self._raise_on_response_error(resp)]
 
     def send_offset_fetch_request_kafka(self, group, payloads=[],
-                                  fail_on_error=True, callback=None):
+                                        fail_on_error=True, callback=None):
 
         encoder = functools.partial(KafkaProtocol.encode_offset_fetch_request,
-                          group=group, from_kafka=True)
+                                    group=group, from_kafka=True)
         decoder = KafkaProtocol.decode_offset_fetch_response
         resps = self._send_consumer_aware_request(group, payloads, encoder, decoder)
 

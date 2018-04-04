@@ -1,3 +1,15 @@
+# Licensed under the Apache License, Version 2.0 (the "License"); you may
+# not use this file except in compliance with the License. You may obtain
+# a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+# License for the specific language governing permissions and limitations
+# under the License.
+
 from __future__ import absolute_import
 
 from collections import namedtuple
@@ -50,6 +62,7 @@ DEFAULT_CONSUMER_CONFIG = {
 DEPRECATED_CONFIG_KEYS = {
     'metadata_broker_list': 'bootstrap_servers',
 }
+
 
 class KafkaConsumer(object):
     """A simpler kafka consumer"""
@@ -258,7 +271,8 @@ class KafkaConsumer(object):
 
                 # or (2) auto reset
                 else:
-                    self._offsets.fetch[topic_partition] = self._reset_partition_offset(topic_partition)
+                    self._offsets.fetch[topic_partition] = \
+                        self._reset_partition_offset(topic_partition)
 
         # highwater marks (received from server on fetch response)
         # and task_done (set locally by user)
@@ -665,7 +679,7 @@ class KafkaConsumer(object):
             # Otherwise we should re-raise the upstream exception
             # b/c it typically includes additional data about
             # the request that triggered it, and we do not want to drop that
-            raise # pylint: disable-msg=E0704
+            raise  # pylint: disable-msg=E0704
 
         (offset, ) = self.get_partition_offsets(topic, partition,
                                                 request_time_ms, max_num_offsets=1)
@@ -682,7 +696,8 @@ class KafkaConsumer(object):
 
     def _check_consumer_timeout(self):
         if self._consumer_timeout and time.time() > self._consumer_timeout:
-            raise ConsumerTimeout('Consumer timed out after %d ms' % + self._config['consumer_timeout_ms'])
+            raise ConsumerTimeout(
+                'Consumer timed out after %d ms' % + self._config['consumer_timeout_ms'])
 
     #
     # Autocommit private methods
@@ -703,7 +718,8 @@ class KafkaConsumer(object):
         self._uncommitted_message_count = 0
         self._next_commit_time = None
         if self._does_auto_commit_ms():
-            self._next_commit_time = time.time() + (self._config['auto_commit_interval_ms'] / 1000.0)
+            self._next_commit_time = time.time() + (
+                self._config['auto_commit_interval_ms'] / 1000.0)
 
     def _incr_auto_commit_message_count(self, n=1):
         self._uncommitted_message_count += n
