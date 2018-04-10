@@ -1,12 +1,24 @@
+# Licensed under the Apache License, Version 2.0 (the "License"); you may
+# not use this file except in compliance with the License. You may obtain
+# a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+# License for the specific language governing permissions and limitations
+# under the License.
+
 from __future__ import absolute_import
 
 from collections import namedtuple
 import logging
 from multiprocessing import Process, Manager as MPManager
 try:
-    import queue # python 3
+    import queue  # python 3
 except ImportError:
-    import Queue as queue # python 2
+    import Queue as queue  # python 2
 import time
 
 from ..common import KafkaError
@@ -72,7 +84,8 @@ def _mp_consume(client, group, topic, queue, size, events, **consumer_options):
                             queue.put(message, timeout=FULL_QUEUE_WAIT_TIME_SECONDS)
                             break
                         except queue.Full:
-                            if events.exit.is_set(): break
+                            if events.exit.is_set():
+                                break
 
                     count += 1
 
@@ -93,9 +106,10 @@ def _mp_consume(client, group, topic, queue, size, events, **consumer_options):
 
         except KafkaError as e:
             # Retry with exponential backoff
-            log.error("Problem communicating with Kafka (%s), retrying in %d seconds..." % (e, interval))
+            log.error(
+                "Problem communicating with Kafka (%s), retrying in %d seconds..." % (e, interval))
             time.sleep(interval)
-            interval = interval*2 if interval*2 < MAX_BACKOFF_SECONDS else MAX_BACKOFF_SECONDS
+            interval = interval * 2 if interval * 2 < MAX_BACKOFF_SECONDS else MAX_BACKOFF_SECONDS
 
 
 class MultiProcessConsumer(Consumer):
@@ -150,9 +164,9 @@ class MultiProcessConsumer(Consumer):
         manager = MPManager()
         self.queue = manager.Queue(1024)  # Child consumers dump messages into this
         self.events = Events(
-            start = manager.Event(),        # Indicates the consumers to start fetch
-            exit  = manager.Event(),        # Requests the consumers to shutdown
-            pause = manager.Event())        # Requests the consumers to pause fetch
+            start=manager.Event(),        # Indicates the consumers to start fetch
+            exit=manager.Event(),        # Requests the consumers to shutdown
+            pause=manager.Event())        # Requests the consumers to pause fetch
         self.size = manager.Value('i', 0)   # Indicator of number of messages to fetch
 
         # dict.keys() returns a view in py3 + it's not a thread-safe operation

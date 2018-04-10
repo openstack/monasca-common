@@ -1,87 +1,81 @@
+# Licensed under the Apache License, Version 2.0 (the "License"); you may
+# not use this file except in compliance with the License. You may obtain
+# a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+# License for the specific language governing permissions and limitations
+# under the License.
+
+from collections import namedtuple
 import inspect
 import sys
-from collections import namedtuple
 
 ###############
 #   Structs   #
 ###############
 
 # https://cwiki.apache.org/confluence/display/KAFKA/A+Guide+To+The+Kafka+Protocol#AGuideToTheKafkaProtocol-MetadataAPI
-MetadataRequest = namedtuple("MetadataRequest",
-    ["topics"])
+MetadataRequest = namedtuple("MetadataRequest", ["topics"])
 
-MetadataResponse = namedtuple("MetadataResponse",
-    ["brokers", "topics"])
+MetadataResponse = namedtuple("MetadataResponse", ["brokers", "topics"])
 
 # https://cwiki.apache.org/confluence/display/KAFKA/A+Guide+To+The+Kafka+Protocol#AGuideToTheKafkaProtocol-ConsumerMetadataRequest
-ConsumerMetadataRequest = namedtuple("ConsumerMetadataRequest",
-    ["groups"])
+ConsumerMetadataRequest = namedtuple("ConsumerMetadataRequest", ["groups"])
 
 ConsumerMetadataResponse = namedtuple("ConsumerMetadataResponse",
-    ["error", "nodeId", "host", "port"])
+                                      ["error", "nodeId", "host", "port"])
 
 # https://cwiki.apache.org/confluence/display/KAFKA/A+Guide+To+The+Kafka+Protocol#AGuideToTheKafkaProtocol-ProduceAPI
-ProduceRequest = namedtuple("ProduceRequest",
-    ["topic", "partition", "messages"])
+ProduceRequest = namedtuple("ProduceRequest", ["topic", "partition", "messages"])
 
-ProduceResponse = namedtuple("ProduceResponse",
-    ["topic", "partition", "error", "offset"])
+ProduceResponse = namedtuple("ProduceResponse", ["topic", "partition", "error", "offset"])
 
 # https://cwiki.apache.org/confluence/display/KAFKA/A+Guide+To+The+Kafka+Protocol#AGuideToTheKafkaProtocol-FetchAPI
-FetchRequest = namedtuple("FetchRequest",
-    ["topic", "partition", "offset", "max_bytes"])
+FetchRequest = namedtuple("FetchRequest", ["topic", "partition", "offset", "max_bytes"])
 
 FetchResponse = namedtuple("FetchResponse",
-    ["topic", "partition", "error", "highwaterMark", "messages"])
+                           ["topic", "partition", "error", "highwaterMark", "messages"])
 
 # https://cwiki.apache.org/confluence/display/KAFKA/A+Guide+To+The+Kafka+Protocol#AGuideToTheKafkaProtocol-OffsetAPI
-OffsetRequest = namedtuple("OffsetRequest",
-    ["topic", "partition", "time", "max_offsets"])
+OffsetRequest = namedtuple("OffsetRequest", ["topic", "partition", "time", "max_offsets"])
 
-OffsetResponse = namedtuple("OffsetResponse",
-    ["topic", "partition", "error", "offsets"])
+OffsetResponse = namedtuple("OffsetResponse", ["topic", "partition", "error", "offsets"])
 
 # https://cwiki.apache.org/confluence/display/KAFKA/A+Guide+To+The+Kafka+Protocol#AGuideToTheKafkaProtocol-OffsetCommit/FetchAPI
 OffsetCommitRequest = namedtuple("OffsetCommitRequest",
-    ["topic", "partition", "offset", "metadata"])
+                                 ["topic", "partition", "offset", "metadata"])
 
-OffsetCommitResponse = namedtuple("OffsetCommitResponse",
-    ["topic", "partition", "error"])
+OffsetCommitResponse = namedtuple("OffsetCommitResponse", ["topic", "partition", "error"])
 
-OffsetFetchRequest = namedtuple("OffsetFetchRequest",
-    ["topic", "partition"])
+OffsetFetchRequest = namedtuple("OffsetFetchRequest", ["topic", "partition"])
 
 OffsetFetchResponse = namedtuple("OffsetFetchResponse",
-    ["topic", "partition", "offset", "metadata", "error"])
-
+                                 ["topic", "partition", "offset", "metadata", "error"])
 
 
 # Other useful structs
-BrokerMetadata = namedtuple("BrokerMetadata",
-    ["nodeId", "host", "port"])
+BrokerMetadata = namedtuple("BrokerMetadata", ["nodeId", "host", "port"])
 
-TopicMetadata = namedtuple("TopicMetadata",
-    ["topic", "error", "partitions"])
+TopicMetadata = namedtuple("TopicMetadata", ["topic", "error", "partitions"])
 
 PartitionMetadata = namedtuple("PartitionMetadata",
-    ["topic", "partition", "leader", "replicas", "isr", "error"])
+                               ["topic", "partition", "leader", "replicas", "isr", "error"])
 
-OffsetAndMessage = namedtuple("OffsetAndMessage",
-    ["offset", "message"])
+OffsetAndMessage = namedtuple("OffsetAndMessage", ["offset", "message"])
 
-Message = namedtuple("Message",
-    ["magic", "attributes", "key", "value"])
+Message = namedtuple("Message", ["magic", "attributes", "key", "value"])
 
-TopicAndPartition = namedtuple("TopicAndPartition",
-    ["topic", "partition"])
+TopicAndPartition = namedtuple("TopicAndPartition", ["topic", "partition"])
 
-KafkaMessage = namedtuple("KafkaMessage",
-    ["topic", "partition", "offset", "key", "value"])
+KafkaMessage = namedtuple("KafkaMessage", ["topic", "partition", "offset", "key", "value"])
 
 # Define retry policy for async producer
 # Limit value: int >= 0, 0 means no retries
-RetryOptions = namedtuple("RetryOptions",
-    ["limit", "backoff_ms", "retry_on_timeouts"])
+RetryOptions = namedtuple("RetryOptions", ["limit", "backoff_ms", "retry_on_timeouts"])
 
 
 #################
@@ -240,7 +234,8 @@ class AsyncProducerQueueFull(KafkaError):
 
 def _iter_broker_errors():
     for name, obj in inspect.getmembers(sys.modules[__name__]):
-        if inspect.isclass(obj) and issubclass(obj, BrokerResponseError) and obj != BrokerResponseError:
+        if inspect.isclass(obj) and issubclass(obj,
+                                               BrokerResponseError) and obj != BrokerResponseError:
             yield obj
 
 

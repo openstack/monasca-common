@@ -1,3 +1,15 @@
+# Licensed under the Apache License, Version 2.0 (the "License"); you may
+# not use this file except in compliance with the License. You may obtain
+# a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+# License for the specific language governing permissions and limitations
+# under the License.
+
 import six
 
 from .base import Partitioner
@@ -70,13 +82,13 @@ def murmur2(key):
     for i in range(length4):
         i4 = i * 4
         k = ((data[i4 + 0] & 0xff) +
-            ((data[i4 + 1] & 0xff) << 8) +
-            ((data[i4 + 2] & 0xff) << 16) +
-            ((data[i4 + 3] & 0xff) << 24))
+             ((data[i4 + 1] & 0xff) << 8) +
+             ((data[i4 + 2] & 0xff) << 16) +
+             ((data[i4 + 3] & 0xff) << 24))
         k &= 0xffffffff
         k *= m
         k &= 0xffffffff
-        k ^= (k % 0x100000000) >> r # k ^= k >>> r
+        k ^= (k % 0x100000000) >> r  # k ^= k >>> r
         k &= 0xffffffff
         k *= m
         k &= 0xffffffff
@@ -100,11 +112,11 @@ def murmur2(key):
         h *= m
         h &= 0xffffffff
 
-    h ^= (h % 0x100000000) >> 13 # h >>> 13;
+    h ^= (h % 0x100000000) >> 13  # h >>> 13;
     h &= 0xffffffff
     h *= m
     h &= 0xffffffff
-    h ^= (h % 0x100000000) >> 15 # h >>> 15;
+    h ^= (h % 0x100000000) >> 15  # h >>> 15;
     h &= 0xffffffff
 
     return h

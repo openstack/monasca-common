@@ -57,7 +57,6 @@ class PolicyFileTestCase(base.BaseTestCase):
                           self.context, action, self.target)
 
 
-
 class PolicyTestCase(base.BaseTestCase):
     def setUp(self):
         super(PolicyTestCase, self).setUp()
@@ -73,7 +72,7 @@ class PolicyTestCase(base.BaseTestCase):
             os_policy.RuleDefault("example:uppercase_admin",
                                   "role:ADMIN or role:sysadmin"),
             os_policy.RuleDefault("example:get_http",
-                                    "http://www.example.com"),
+                                  "http://www.example.com"),
             os_policy.RuleDefault("example:my_file",
                                   "role:compute_admin or "
                                   "project_id:%(project_id)s"),

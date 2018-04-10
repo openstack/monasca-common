@@ -1,3 +1,15 @@
+# Licensed under the Apache License, Version 2.0 (the "License"); you may
+# not use this file except in compliance with the License. You may obtain
+# a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+# License for the specific language governing permissions and limitations
+# under the License.
+
 from __future__ import absolute_import
 
 import atexit
@@ -83,7 +95,9 @@ def _send_upstream(queue, client, codec, batch_time, batch_size,
         try:
             client.reinit()
         except Exception as e:
-            log.warn('Async producer failed to connect to brokers; backoff for %s(ms) before retrying', retry_options.backoff_ms)
+            log.warn(
+                'Async producer failed to connect to brokers; backoff for %s(ms) before retrying',
+                retry_options.backoff_ms)
             time.sleep(float(retry_options.backoff_ms) / 1000)
         else:
             break
@@ -148,7 +162,9 @@ def _send_upstream(queue, client, codec, batch_time, batch_size,
         }
 
         def _handle_error(error_cls, request):
-            if issubclass(error_cls, RETRY_ERROR_TYPES) or (retry_options.retry_on_timeouts and issubclass(error_cls, RequestTimedOutError)):
+            if (issubclass(error_cls, RETRY_ERROR_TYPES) or
+                    (retry_options.retry_on_timeouts and
+                     issubclass(error_cls, RequestTimedOutError))):
                 reqs_to_retry.append(request)
             if issubclass(error_cls, RETRY_BACKOFF_ERROR_TYPES):
                 retry_state['do_backoff'] |= True
@@ -179,8 +195,7 @@ def _send_upstream(queue, client, codec, batch_time, batch_size,
                           'to %s:%d with msgs %s',
                           error_cls.__name__, (i + 1), len(requests),
                           orig_req.topic, orig_req.partition,
-                          orig_req.messages if log_messages_on_error
-                                            else hash(orig_req.messages))
+                          orig_req.messages if log_messages_on_error else hash(orig_req.messages))
 
         if not reqs_to_retry:
             request_tries = {}
@@ -203,17 +218,15 @@ def _send_upstream(queue, client, codec, batch_time, batch_size,
         request_tries = dict(
             (key, count + 1)
             for (key, count) in request_tries.items()
-                if key in reqs_to_retry
-                    and (retry_options.limit is None
-                    or (count < retry_options.limit))
+            if key in reqs_to_retry and (retry_options.limit is None or
+                                         (count < retry_options.limit))
         )
 
         # Log messages we are going to retry
         for orig_req in request_tries.keys():
             log.info('Retrying ProduceRequest to %s:%d with msgs %s',
                      orig_req.topic, orig_req.partition,
-                     orig_req.messages if log_messages_on_error
-                                       else hash(orig_req.messages))
+                     orig_req.messages if log_messages_on_error else hash(orig_req.messages))
 
     if request_tries or not queue.empty():
         log.error('Stopped producer with {0} unsent messages'
@@ -282,7 +295,7 @@ class Producer(object):
                  codec_compresslevel=None,
                  sync_fail_on_error=SYNC_FAIL_ON_ERROR_DEFAULT,
                  async=False,
-                 batch_send=False, # deprecated, use async
+                 batch_send=False,  # deprecated, use async
                  batch_send_every_n=BATCH_SEND_MSG_COUNT,
                  batch_send_every_t=BATCH_SEND_DEFAULT_INTERVAL,
                  async_retry_limit=ASYNC_RETRY_LIMIT,
@@ -403,7 +416,8 @@ class Producer(object):
                         'Current queue size %d.' % self.queue.qsize())
             resp = []
         else:
-            messages = create_message_set([(m, key) for m in msg], self.codec, key, self.codec_compresslevel)
+            messages = create_message_set(
+                [(m, key) for m in msg], self.codec, key, self.codec_compresslevel)
             req = ProduceRequest(topic, partition, messages)
             try:
                 resp = self.client.send_produce_request(
@@ -441,7 +455,7 @@ class Producer(object):
 
             # py3 supports unregistering
             if hasattr(atexit, 'unregister'):
-                atexit.unregister(self._cleanup_func) # pylint: disable=no-member
+                atexit.unregister(self._cleanup_func)  # pylint: disable=no-member
 
             # py2 requires removing from private attribute...
             else:

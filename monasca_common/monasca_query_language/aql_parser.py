@@ -13,10 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import datetime
 import six
-import sys
-import time
 
 import pyparsing
 
@@ -56,8 +53,7 @@ dimension = dimension_name + dim_comparison_op + dimension_value
 dimension.setParseAction(query_structures.Dimension)
 
 dimension_list = pyparsing.Group((LBRACE + pyparsing.Optional(
-    pyparsing.delimitedList(dimension)) +
-                                  RBRACE))
+    pyparsing.delimitedList(dimension)) + RBRACE))
 
 metric = (metric_name + pyparsing.Optional(dimension_list) |
           pyparsing.Optional(metric_name) + dimension_list)
