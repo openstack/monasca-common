@@ -39,14 +39,14 @@ A change has been submitted to StackForge to switch to bare-trusty for this buil
 * [monasca-common-util](https://github.com/openstack/monasca-common/tree/master/java/monasca-common-util) - Various utilities such as for serialization, dependency injection, date and time, invocation retries, concurrency, etc.
 
 
-python monasca-common
-======================
+Python
+======
 
-To install the python monasca-common modules, git clone the source and run the
-following command::
+To install the Python monasca-common modules, git clone the source and run the
+following command:
 
     $ sudo python setup.py install
 
-To run the python monasca-common tests use::
+To run the unit tests use:
 
-    $ nosetests monasca_common/tests
+    $ tox -e py27,py35
