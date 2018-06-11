@@ -38,7 +38,7 @@ NUMERIC_VALUES = [int, float]
 if six.PY2:
     # according to PEP537 long was renamed to int in PY3
     # need to add long, as possible value, for PY2
-    NUMERIC_VALUES += [long]
+    NUMERIC_VALUES += [long]  # noqa
 
 NUMERIC_VALUES = tuple(NUMERIC_VALUES)  # convert to tuple for instance call
 
