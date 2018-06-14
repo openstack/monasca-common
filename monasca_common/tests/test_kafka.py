@@ -51,19 +51,20 @@ class TestKafkaProducer(base.BaseTestCase):
     def test_kafka_producer_publish(self):
         topic = FAKE_KAFKA_TOPIC
         messages = ['message']
-        key = 'key'
+        key = "key"
+        expected_key = b"key"
 
         self.monasca_kafka_producer.publish(topic, messages, key)
 
         self.producer.send_messages.assert_called_once_with(
-            topic, key, *messages)
+            topic, expected_key, *messages)
 
     @mock.patch('monasca_common.kafka.producer.time')
     def test_kafka_producer_publish_one_message_without_key(self, mock_time):
         topic = FAKE_KAFKA_TOPIC
         message = 'not_a_list'
         mock_time.time.return_value = 1
-        expected_key = '1000'
+        expected_key = b'1000'
 
         self.monasca_kafka_producer.publish(topic, message)
 
