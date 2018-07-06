@@ -5,11 +5,11 @@ Docker base image for Monasca services
 This image is used as a starting point for images of all Monasca services.
 
 
-Building monasca-base
-=====================
+Building monasca-base image
+===========================
 
-You need to have Docker installed (minimum supported version is ``17.09``).
-Then you could build image inside of this folder:
+You need to have Docker installed (minimum tested version is ``17.09``).
+Then you can build image inside of this folder by running:
 
 ``docker build --no-cache -t monasca-base:1.0.0 .``
 
@@ -17,38 +17,38 @@ Then you could build image inside of this folder:
 Building child image
 --------------------
 
-In the ``example`` folder you could file sample of how to start building
-new child image using ``monasca-base`` as start.
+In the ``example`` folder you can find samples of how to start building
+new child image using ``monasca-base``.
 
 Requirements
 ~~~~~~~~~~~~
 
-Every child image need to provide two files:
+Every child image has to provide two files:
 
 start.sh
-  In this starting script provide all steps that direct to proper service
+  In this starting script provide all steps that lead to the proper service
   start. Including usage of wait scripts and templating of configuration files.
-  You also could provide ability to allow running container after service died
-  for easier debugging.
+  You also could provide the ability to allow running container after service
+  died for easier debugging.
 
 health_check.py
-  This file will be used for checking status of application running in the
-  container. It will be useful for programs like Kubernetes or Docker Swarm
-  to properly handle services that are still running but stopped being
-  responsive. Avoid using `curl` directly and instead use `health_check.py`
-  written with specific service in mind. It will provide more flexibility
-  like when creating JSON request body.
+  This file will be used for checking the status of the application running in
+  the container. It will be useful for container orchestration like Kubernetes
+  or Docker Swarm to properly handle services that are still running but
+  stopped being responsive. Avoid using `curl` directly and instead, use
+  `health_check.py` written with specific service in mind. It will provide more
+  flexibility like when creating JSON request body.
 
 
 Wait scripts
 ------------
 
-Some Python libraries are already preinstalled: `pykafka` and `PyMySQL`.
-They are used by wait scripts and in the process of creating child image
-`pip3` will reinstall them to proper versions confronting to upper constraints
+Some Python libraries are already pre-installed: `pykafka` and `PyMySQL`. They
+are used by wait scripts and in the process of creating the child image `pip3`
+will reinstall them to use proper versions confronting the upper constraints
 file.
 
-This wait scripts will be available in every child image and could be used in
+These wait scripts will be available in every child image and can be used in
 `start.sh` to avoid unnecessary errors and restarts of containers when they
 are started.
 
@@ -58,18 +58,18 @@ are started.
     python3 /mysql_check.py || exit 1
     /wait_for.sh 192.168.10.6:5000 || exit 1
 
-Please, check content of every of this files for documentation of what
+Please, check the content of each of these files for documentation of what
 environment variables are used and more usage examples.
 
 
 Useful commands
 ---------------
 
-List all labels on image (you need to have ``jq`` installed):
+List all labels of the image (you need to have ``jq`` installed):
 
 ``docker inspect monasca-api:master | jq .[].Config.Labels``
 
-Get all steps from what Docker image was build:
+Get all steps of the Docker image build process history:
 
 ::
 
