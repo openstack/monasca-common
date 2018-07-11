@@ -99,11 +99,11 @@ ONBUILD RUN \
                 "$CONSTRAINTS_FILE"?h="$CONSTRAINTS_BRANCH" >> /VERSIONS && \
             # Clean after instalation.
             apk del .build-deps && \
+            # Pip is leaving monasca-common repo in /src so remove it.
             rm -rf \
                 /app \
                 /root/.cache/ \
-                # Pip is leaving monasca-common repo in /src so remove it.
-                /src/ \
+                /src/monasca-common/java/ \
                 /tmp/* \
                 /var/cache/apk/* \
                 /var/log/* && \
