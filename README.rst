@@ -9,8 +9,35 @@ Team and repository tags
 Overview
 ========
 
-``monasca-common`` is a collection of sub-projects containing reusable
-application and platform code for building monitoring related services.
+``monasca-common`` is a collection of modules containing reusable application
+and platform code for building monitoring related services.
+
+Python
+======
+
+To install the Python monasca-common modules, git clone the source and
+run the following command:
+
+::
+
+   $ sudo python setup.py install
+
+To run the unit tests use:
+
+::
+
+   $ tox -e py27,py35
+
+For information on contributing, see `Contribution Guidelines`_.
+
+* License: Apache License, Version 2.0
+* Source: https://git.openstack.org/cgit/openstack/monasca-common
+* Bugs: https://storyboard.openstack.org/#!/project/865
+
+.. _`Contribution Guidelines`: https://docs.openstack.org/monasca-api/latest/contributor/index.html
+
+Java
+======
 
 Build Instructions
 ~~~~~~~~~~~~~~~~~~
@@ -22,10 +49,13 @@ Download and do mvn install.
    $ cd java
    $ mvn clean install
 
-There is a pom.xml in the base directory but that should only be used
-for the StackForge build. The issue is that currently StackForge’s
-bare-precise system only has Maven 2 on it and at least one of the
-modules of monasca-common requires Maven 3.
+.. caution::
+
+  There is a pom.xml in the base directory but that should only be used
+  for the Zuul build.
+
+The issue is that currently StackForge’s bare-precise system only has Maven 2
+on it and at least one of the modules of monasca-common requires Maven 3.
 
 In order to get around this problem, the pom.xml in the base directory
 uses the exec-maven-plugin to run the script run_maven.sh. This script
@@ -69,21 +99,7 @@ Platform Sub-Projects
    dependency injection, date and time, invocation retries, concurrency,
    etc.
 
-Python
-======
 
-To install the Python monasca-common modules, git clone the source and
-run the following command:
-
-::
-
-   $ sudo python setup.py install
-
-To run the unit tests use:
-
-::
-
-   $ tox -e py27,py35
 
 .. _Team and repository tags: https://governance.openstack.org/tc/reference/tags/index.html
 .. _monasca-common-model: https://github.com/openstack/monasca-common/tree/master/java/monasca-common-model
