@@ -13,10 +13,10 @@
 #  under the License.
 
 # Starting script.
-# All checks you need to do before service could be safely started should
-# be added in this file.
+# All checks and configuration templating you need to do before service
+# could be safely started should be added in this file.
 
-set -e  # Exit the script if any statement returns a non-true return value.
+set -eo pipefail  # Exit the script if any statement returns error.
 
 # Test services we need before starting our service.
 echo "Start script: waiting for needed services"

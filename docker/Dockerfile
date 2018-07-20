@@ -1,3 +1,8 @@
+# TODO(Dobroslaw): Update to Alpine 3.8.
+# We can't update to Alpine 3.8 until pyca/cryptography is updated in
+# upper constrains file to be bigger than 2.2.2.
+# LibreSSL 2.7.x is not supported by older versions:
+# https://github.com/pyca/cryptography/pull/4270
 FROM python:3.5.5-alpine3.7
 
 COPY wait_for.sh kafka_wait_for_topics.py /
@@ -9,6 +14,14 @@ ENV \
     PIP_NO_COMPILE="no" \
     PYTHONIOENCODING="utf-8"
 
+ARG BASE_CREATION_TIME
+ARG BASE_GIT_COMMIT
+
+LABEL org.opencontainers.image.created="$BASE_CREATION_TIME"
+LABEL org.opencontainers.image.title="monasca-base"
+LABEL org.opencontainers.image.revision="$BASE_GIT_COMMIT"
+LABEL org.opencontainers.image.licenses="Apache-2.0"
+
 RUN \
     chmod +x /wait_for.sh /kafka_wait_for_topics.py && \
     apk add --no-cache \
@@ -16,6 +29,8 @@ RUN \
         tini=0.16.1-r0 \
         # We need this to allow users choose different time zone.
         tzdata=2017c-r0 && \
+    printf "Monasca base build date: %s\\n" $BASE_CREATION_TIME >> /VERSIONS && \
+    printf "Monasca base revision:   %s\\n" $BASE_GIT_COMMIT >> /VERSIONS && \
     # Cleaning.
     rm -rf /var/cache/apk/* && \
     rm -rf /var/log/* && \
@@ -65,14 +80,14 @@ ONBUILD RUN \
             # This many steps are needed to support gerrit patch sets.
             mkdir -p /app && \
             git -C /app init && \
-            git -C /app remote add origin $APP_REPO && \
-            git -C /app fetch origin $REPO_VERSION && \
+            git -C /app remote add origin "$APP_REPO" && \
+            git -C /app fetch origin "$REPO_VERSION" && \
             git -C /app reset --hard FETCH_HEAD && \
             wget --output-document /app/upper-constraints.txt \
-                $CONSTRAINTS_FILE?h=$CONSTRAINTS_BRANCH && \
+                "$CONSTRAINTS_FILE"?h="$CONSTRAINTS_BRANCH" && \
             # When creating image from master, stable branch or commit use
             # monasca-common from git repository.
-            [ ! $(git -C /app tag -l "${REPO_VERSION}") ] && \
+            [ ! "$(git -C /app tag -l ${REPO_VERSION})" ] && \
                 sed -i "s|monasca-common.*|-e git+$COMMON_REPO@$CONSTRAINTS_BRANCH#egg=monasca-common|" \
                     /app/upper-constraints.txt || true && \
             # Install packages needed by wait scripts and used for templating.
@@ -87,15 +102,15 @@ ONBUILD RUN \
                 --requirement /app/requirements.txt \
                 --constraint /app/upper-constraints.txt && \
             # Save info about build to `/VERSIONS` file.
-            printf "App:        %s\n" $DOCKER_IMAGE >> /VERSIONS && \
-            printf "Repository: %s\n" $APP_REPO >> /VERSIONS && \
-            printf "Version:    %s\n" $REPO_VERSION >> /VERSIONS && \
-            printf "Build date: %s\n" $CREATION_TIME >> /VERSIONS && \
-            printf "Revision:   %s\n" \
+            printf "App:        %s\\n" "$DOCKER_IMAGE" >> /VERSIONS && \
+            printf "Repository: %s\\n" "$APP_REPO" >> /VERSIONS && \
+            printf "Version:    %s\\n" "$REPO_VERSION" >> /VERSIONS && \
+            printf "Build date: %s\\n" "$CREATION_TIME" >> /VERSIONS && \
+            printf "Revision:   %s\\n" \
                 "$(git -C /app rev-parse FETCH_HEAD)" >> /VERSIONS && \
-            printf "Monasca-common version: %s\n" \
-                "$(pip3 freeze 2>1 | grep 'monasca-common')" >> /VERSIONS && \
-            printf "Constraints file: %s\n" \
+            printf "Monasca-common version: %s\\n" \
+                "$(pip3 freeze 2>&1 | grep 'monasca-common')" >> /VERSIONS && \
+            printf "Constraints file: %s\\n" \
                 "$CONSTRAINTS_FILE"?h="$CONSTRAINTS_BRANCH" >> /VERSIONS && \
             # Clean after instalation.
             apk del .build-deps && \
