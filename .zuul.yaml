@@ -16,7 +16,7 @@
         - openstack-tox-lower-constraints
     post:
       jobs:
-        - docker-publish-image
+        - docker-publish-monasca-base
 
 - job:
     name: docker-build-monasca-base
@@ -32,7 +32,7 @@
       - ^doc/.*$
 
 - job:
-    name: docker-publish-image
+    name: docker-publish-monasca-base
     parent: docker-build-monasca-base
     post-run: playbooks/publish.yml
     required-projects:
