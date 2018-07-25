@@ -5,7 +5,7 @@
 # https://github.com/pyca/cryptography/pull/4270
 FROM python:3.5.5-alpine3.7
 
-COPY wait_for.sh kafka_wait_for_topics.py /
+COPY wait_for.sh kafka_wait_for_topics.py mysql_check.py /
 COPY ashrc /root/.ashrc
 
 ENV \
@@ -23,7 +23,7 @@ LABEL org.opencontainers.image.revision="$BASE_GIT_COMMIT"
 LABEL org.opencontainers.image.licenses="Apache-2.0"
 
 RUN \
-    chmod +x /wait_for.sh /kafka_wait_for_topics.py && \
+    chmod +x /wait_for.sh /kafka_wait_for_topics.py /mysql_check.py && \
     apk add --no-cache \
         su-exec=0.2-r0 \
         tini=0.16.1-r0 \
