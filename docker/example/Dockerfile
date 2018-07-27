@@ -5,13 +5,14 @@ ARG APP_REPO=https://git.openstack.org/openstack/monasca-api
 # Branch, tag or git hash to build from.
 ARG REPO_VERSION=master
 ARG CONSTRAINTS_BRANCH=master
+ARG COMMON_VERSION=master
 
 # Extra Python3 dependencies.
 ARG EXTRA_DEPS="gunicorn influxdb python-memcached"
 
 # Always start from `monasca-base` image and use specific tag of it.
 ARG BASE_TAG=1.0.0
-FROM monasca-base:$BASE_TAG
+FROM monasca/base:$BASE_TAG
 
 # Environment variables used for our service or wait scripts.
 ENV \

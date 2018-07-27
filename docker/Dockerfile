@@ -44,9 +44,11 @@ ONBUILD ARG GITHUB_REPO
 ONBUILD ARG REPO_VERSION
 ONBUILD ARG GIT_COMMIT
 ONBUILD ARG CONSTRAINTS_BRANCH
-ONBUILD ARG CONSTRAINTS_FILE=http://git.openstack.org/cgit/openstack/requirements/plain/upper-constraints.txt
+ONBUILD ARG CONSTRAINTS_FILE
 ONBUILD ARG EXTRA_DEPS
-ONBUILD ARG COMMON_REPO=https://git.openstack.org/openstack/monasca-common
+ONBUILD ARG COMMON_REPO
+ONBUILD ARG COMMON_VERSION
+ONBUILD ARG COMMON_GIT_COMMIT
 
 # Build-time metadata as defined at
 # https://github.com/opencontainers/image-spec/blob/master/annotations.md
@@ -59,6 +61,9 @@ ONBUILD LABEL org.opencontainers.image.revision="$GIT_COMMIT"
 ONBUILD LABEL org.opencontainers.image.licenses="Apache-2.0"
 ONBUILD LABEL org.openstack.constraints_uri="$CONSTRAINTS_FILE?h=$CONSTRAINTS_BRANCH"
 ONBUILD LABEL org.openstack.monasca.python.extra_deps="$EXTRA_DEPS"
+ONBUILD LABEL org.openstack.monasca.common.source="$COMMON_REPO"
+ONBUILD LABEL org.openstack.monasca.common.version="$COMMON_VERSION"
+ONBUILD LABEL org.openstack.monasca.common.revision="$COMMON_GIT_COMMIT"
 
 # Every child image need to provide starting and health check script.
 # If they're not provided build will fail. We want that for uniformity.
@@ -81,15 +86,30 @@ ONBUILD RUN \
             mkdir -p /app && \
             git -C /app init && \
             git -C /app remote add origin "$APP_REPO" && \
+            echo "Cloning app in version: $REPO_VERSION" && \
             git -C /app fetch origin "$REPO_VERSION" && \
             git -C /app reset --hard FETCH_HEAD && \
             wget --output-document /app/upper-constraints.txt \
                 "$CONSTRAINTS_FILE"?h="$CONSTRAINTS_BRANCH" && \
+            # Download monasca-common
+            mkdir -p /monasca-common && \
+            git -C /monasca-common init && \
+            git -C /monasca-common remote add origin "$COMMON_REPO" && \
+            echo "Cloning monasca-common in version: $COMMON_VERSION" && \
+            git -C /monasca-common fetch origin "$COMMON_VERSION" && \
+            git -C /monasca-common reset --hard FETCH_HEAD && \
             # When creating image from master, stable branch or commit use
-            # monasca-common from git repository.
-            [ ! "$(git -C /app tag -l ${REPO_VERSION})" ] && \
-                sed -i "s|monasca-common.*|-e git+$COMMON_REPO@$CONSTRAINTS_BRANCH#egg=monasca-common|" \
+            # monasca-common from git repository in /monasca-common,
+            # otherwise use the version from upper-constraints.txt
+            [ ! "$(git -C /monasca-common tag -l ${COMMON_VERSION})" ] && \
+                sed -i "s|monasca-common.*||" \
+                    /app/requirements.txt || true && \
+            [ ! "$(git -C /monasca-common tag -l ${COMMON_VERSION})" ] && \
+                sed -i "s|monasca-common.*||" \
                     /app/upper-constraints.txt || true && \
+            pip3 install \
+                --editable /monasca-common \
+                --constraint /app/upper-constraints.txt && \
             # Install packages needed by wait scripts and used for templating.
             pip3 install \
                 pykafka \
@@ -105,20 +125,24 @@ ONBUILD RUN \
             printf "App:        %s\\n" "$DOCKER_IMAGE" >> /VERSIONS && \
             printf "Repository: %s\\n" "$APP_REPO" >> /VERSIONS && \
             printf "Version:    %s\\n" "$REPO_VERSION" >> /VERSIONS && \
+            printf "Revision:   %s\\n" "$GIT_COMMIT" >> /VERSIONS && \
             printf "Build date: %s\\n" "$CREATION_TIME" >> /VERSIONS && \
             printf "Revision:   %s\\n" \
                 "$(git -C /app rev-parse FETCH_HEAD)" >> /VERSIONS && \
-            printf "Monasca-common version: %s\\n" \
+            printf "Monasca-common version:     %s\\n" "$COMMON_VERSION" \
+                >> /VERSIONS && \
+            printf "Monasca-common pip version: %s\\n" \
                 "$(pip3 freeze 2>&1 | grep 'monasca-common')" >> /VERSIONS && \
+            printf "Monasca-common revision:    %s\\n" \
+                "$COMMON_GIT_COMMIT" >> /VERSIONS && \
             printf "Constraints file: %s\\n" \
                 "$CONSTRAINTS_FILE"?h="$CONSTRAINTS_BRANCH" >> /VERSIONS && \
             # Clean after instalation.
             apk del .build-deps && \
-            # Pip is leaving monasca-common repo in /src so remove it.
             rm -rf \
                 /app \
                 /root/.cache/ \
-                /src/monasca-common/java/ \
+                /monasca-common/java/ \
                 /tmp/* \
                 /var/cache/apk/* \
                 /var/log/* && \
