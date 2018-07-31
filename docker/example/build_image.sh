@@ -131,8 +131,6 @@ COMMON_GIT_COMMIT=$(git -C "$COMMON_TMP_DIR" rev-parse HEAD)
 rm -rf "$COMMON_TMP_DIR"
 
 CREATION_TIME=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
-# Docker tags don't like colons so use shorter version of ISO 8601 for them.
-CREATION_TIME_SHORT=$(date -d "$CREATION_TIME" -u +"%Y%m%dT%H%M%SZ")
 
 docker build --no-cache \
     --build-arg CREATION_TIME="$CREATION_TIME" \
@@ -145,5 +143,4 @@ docker build --no-cache \
     --build-arg COMMON_REPO="$COMMON_REPO" \
     --build-arg COMMON_VERSION="$COMMON_VERSION" \
     --build-arg COMMON_GIT_COMMIT="$COMMON_GIT_COMMIT" \
-    --tag "$DOCKER_IMAGE":"$REPO_VERSION_CLEAN" \
-    --tag "$DOCKER_IMAGE":"$REPO_VERSION_CLEAN"-"$CREATION_TIME_SHORT" .
+    --tag "$DOCKER_IMAGE":"$REPO_VERSION_CLEAN" .
