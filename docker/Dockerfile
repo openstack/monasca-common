@@ -129,7 +129,7 @@ ONBUILD RUN \
                     -o \( -type f -a \( -name '*.pyc' -o -name '*.pyo' \) \) \
                 \) -exec rm -rf '{}' +
 
-ONBUILD HEALTHCHECK --interval=5m --timeout=3s \
+ONBUILD HEALTHCHECK --interval=5s --timeout=2s \
                    CMD python3 health_check.py || exit 1
 
 ENTRYPOINT ["/sbin/tini", "-s", "--"]
