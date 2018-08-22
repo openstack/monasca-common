@@ -1,4 +1,8 @@
 - project:
+    templates:
+      - openstack-python-jobs
+      - openstack-python35-jobs
+      - check-requirements
     check:
       jobs:
         - monasca-tempest-python-influxdb
@@ -8,15 +12,19 @@
         - monasca-tempest-java-cassandra
         - openstack-tox-lower-constraints
         - docker-build-monasca-base
+        - legacy-monasca-common-maven-build
     gate:
+      queue: monasca
       jobs:
         - monasca-tempest-python-influxdb
         - monasca-tempest-python-cassandra
         - monasca-tempest-java-cassandra
         - openstack-tox-lower-constraints
+        - legacy-monasca-common-maven-build
     post:
       jobs:
         - docker-publish-monasca-base
+        - legacy-monasca-common-localrepo-upload
 
 - job:
     name: docker-build-monasca-base
@@ -40,9 +48,9 @@
     required-projects:
       - openstack/monasca-common
     vars:
-        publisher: true
+      publisher: true
     secrets:
-        - doker_hub_login
+      - doker_hub_login
 
 - secret:
     name: doker_hub_login
