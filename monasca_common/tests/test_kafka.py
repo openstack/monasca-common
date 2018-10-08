@@ -16,6 +16,7 @@ from oslotest import base
 
 from monasca_common.kafka import consumer
 from monasca_common.kafka import producer
+from monasca_common.kafka_lib import common as kafka_common
 
 
 FAKE_KAFKA_URL = "kafka_url"
@@ -104,6 +105,7 @@ class TestKafkaConsumer(base.BaseTestCase):
 
         self.mock_kafka_client = self.kafka_client_patcher.start()
         self.mock_kafka_common = self.kafka_common_patcher.start()
+        self.mock_kafka_common.OffsetOutOfRangeError = kafka_common.OffsetOutOfRangeError
         self.mock_kafka_consumer = self.kafka_consumer_patcher.start()
         self.kazoo_patcher.start()
 
