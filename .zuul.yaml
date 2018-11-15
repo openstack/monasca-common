@@ -12,6 +12,7 @@
             voting: false
         - monasca-tempest-python-cassandra
         - monasca-tempest-java-cassandra
+        - monascalog-tempest
         - openstack-tox-lower-constraints
         - docker-build-monasca-base
         - legacy-monasca-common-maven-build
@@ -21,6 +22,7 @@
         - monasca-tempest-python-influxdb
         - monasca-tempest-python-cassandra
         - monasca-tempest-java-cassandra
+        - monascalog-tempest
         - openstack-tox-lower-constraints
         - legacy-monasca-common-maven-build
     post:
