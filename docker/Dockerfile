@@ -25,10 +25,10 @@ LABEL org.opencontainers.image.licenses="Apache-2.0"
 RUN \
     chmod +x /wait_for.sh /kafka_wait_for_topics.py /mysql_check.py && \
     apk add --no-cache \
-        su-exec=0.2-r0 \
-        tini=0.16.1-r0 \
+        su-exec \
+        tini \
         # We need this to allow users choose different time zone.
-        tzdata=2017c-r0 && \
+        tzdata && \
     printf "Monasca base build date: %s\\n" $BASE_CREATION_TIME >> /VERSIONS && \
     printf "Monasca base revision:   %s\\n" $BASE_GIT_COMMIT >> /VERSIONS && \
     # Cleaning.
@@ -75,12 +75,12 @@ ONBUILD SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
 ONBUILD RUN \
             chmod +x /start.sh && \
             apk add --no-cache --virtual .build-deps \
-                g++=6.4.0-r5 \
-                git=2.15.2-r0 \
-                libffi-dev=3.2.1-r4 \
-                libressl-dev=2.6.5-r0 \
-                linux-headers=4.4.6-r2 \
-                make=4.2.1-r0 && \
+                g++ \
+                git \
+                libffi-dev \
+                libressl-dev \
+                linux-headers \
+                make && \
             # Clone repository and checkout requested version.
             # This many steps are needed to support gerrit patch sets.
             mkdir -p /app && \
