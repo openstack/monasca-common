@@ -29,6 +29,12 @@
       jobs:
         - docker-publish-monasca-base
         - legacy-monasca-common-localrepo-upload
+    periodic:
+      jobs:
+        - docker-publish-monasca-base
+    release:
+      jobs:
+        - docker-publish-monasca-base
 
 - job:
     name: docker-build-monasca-base
@@ -38,8 +44,6 @@
     required-projects:
       - openstack/monasca-common
     attempts: 1
-    files:
-      - ^docker\/(?!example).*
     irrelevant-files:
       - ^.*\.rst$
       - ^.*\.md$

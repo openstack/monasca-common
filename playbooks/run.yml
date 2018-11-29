@@ -13,6 +13,8 @@
 
     - name: Build monasca-base Docker image
       shell: "{{ zuul.project.src_dir }}/docker/build_base_image.sh"
+      environment:
+        MONASCA_COMMON_TAG: "{{ zuul.tag if zuul.pipeline == 'release' else zuul.branch | basename }}"
       become: true
 
     - name: List images
