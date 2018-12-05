@@ -1,9 +1,4 @@
-# TODO(Dobroslaw): Update to Alpine 3.8.
-# We can't update to Alpine 3.8 until pyca/cryptography is updated in
-# upper constrains file to be bigger than 2.2.2.
-# LibreSSL 2.7.x is not supported by older versions:
-# https://github.com/pyca/cryptography/pull/4270
-FROM python:3.5.5-alpine3.7
+FROM python:3.5.6-alpine3.8
 
 COPY wait_for.sh kafka_wait_for_topics.py mysql_check.py /
 COPY ashrc /root/.ashrc
