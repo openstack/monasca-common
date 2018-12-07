@@ -12,10 +12,11 @@ ENV \
 ARG BASE_CREATION_TIME
 ARG BASE_GIT_COMMIT
 
-LABEL org.opencontainers.image.created="$BASE_CREATION_TIME"
-LABEL org.opencontainers.image.title="monasca-base"
-LABEL org.opencontainers.image.revision="$BASE_GIT_COMMIT"
-LABEL org.opencontainers.image.licenses="Apache-2.0"
+LABEL \
+    org.opencontainers.image.created="$BASE_CREATION_TIME" \
+    org.opencontainers.image.title="monasca-base" \
+    org.opencontainers.image.revision="$BASE_GIT_COMMIT" \
+    org.opencontainers.image.licenses="Apache-2.0"
 
 RUN \
     chmod +x /wait_for.sh /kafka_wait_for_topics.py /mysql_check.py && \
@@ -47,18 +48,19 @@ ONBUILD ARG COMMON_GIT_COMMIT
 
 # Build-time metadata as defined at
 # https://github.com/opencontainers/image-spec/blob/master/annotations.md
-ONBUILD LABEL org.opencontainers.image.created="$CREATION_TIME"
-ONBUILD LABEL org.opencontainers.image.title="$DOCKER_IMAGE"
-ONBUILD LABEL org.opencontainers.image.source="$APP_REPO"
-ONBUILD LABEL org.opencontainers.image.url="$GITHUB_REPO"
-ONBUILD LABEL org.opencontainers.image.version="$REPO_VERSION"
-ONBUILD LABEL org.opencontainers.image.revision="$GIT_COMMIT"
-ONBUILD LABEL org.opencontainers.image.licenses="Apache-2.0"
-ONBUILD LABEL org.openstack.constraints_uri="$CONSTRAINTS_FILE?h=$CONSTRAINTS_BRANCH"
-ONBUILD LABEL org.openstack.monasca.python.extra_deps="$EXTRA_DEPS"
-ONBUILD LABEL org.openstack.monasca.common.source="$COMMON_REPO"
-ONBUILD LABEL org.openstack.monasca.common.version="$COMMON_VERSION"
-ONBUILD LABEL org.openstack.monasca.common.revision="$COMMON_GIT_COMMIT"
+ONBUILD LABEL \
+    org.opencontainers.image.created="$CREATION_TIME" \
+    org.opencontainers.image.title="$DOCKER_IMAGE" \
+    org.opencontainers.image.source="$APP_REPO" \
+    org.opencontainers.image.url="$GITHUB_REPO" \
+    org.opencontainers.image.version="$REPO_VERSION" \
+    org.opencontainers.image.revision="$GIT_COMMIT" \
+    org.opencontainers.image.licenses="Apache-2.0" \
+    org.openstack.constraints_uri="$CONSTRAINTS_FILE?h=$CONSTRAINTS_BRANCH" \
+    org.openstack.monasca.python.extra_deps="$EXTRA_DEPS" \
+    org.openstack.monasca.common.source="$COMMON_REPO" \
+    org.openstack.monasca.common.version="$COMMON_VERSION" \
+    org.openstack.monasca.common.revision="$COMMON_GIT_COMMIT"
 
 # Every child image need to provide starting and health check script.
 # If they're not provided build will fail. We want that for uniformity.
