@@ -281,6 +281,21 @@ class TestMetricValidation(base.BaseTestCase):
                 value,
                 metric_validator.validate, metric)
 
+    def test_invalid_value_includes_metric(self):
+        """When it fails, does it include the metric name in the ex?"""
+        metric = {"name": "test_metric_name",
+                  "dimensions": {"key1": "value1",
+                                 "key2": "value2"},
+                  "timestamp": 1405630174123,
+                  "value": None}
+
+        for value in ('nan', 'inf', '-inf'):
+            metric['value'] = float(value)
+            self.assertRaisesRegex(
+                metric_validator.InvalidValue,
+                "for metric test_metric_name",
+                metric_validator.validate, metric)
+
     def test_valid_name_chars(self):
         for c in valid_name_chars:
             metric = {"name": 'test{}counter'.format(c),
@@ -335,7 +350,7 @@ class TestMetricValidation(base.BaseTestCase):
 
     def test_invalid_too_many_value_meta(self):
         value_meta = {}
-        for i in six.moves.range(0, 17):
+        for i in six.moves.range(0, metric_validator.VALUE_META_MAX_NUMBER + 3):
             value_meta['key{}'.format(i)] = 'value{}'.format(i)
         metric = {"name": "test_metric_name",
                   "dimensions": {"key1": "value1",
@@ -393,8 +408,9 @@ class TestMetricValidation(base.BaseTestCase):
                   "value": 5}
         self.assertRaisesRegex(
             metric_validator.InvalidValueMeta,
-            "Unable to serialize valueMeta into JSON",
+            "value combinations must be",
             metric_validator.validate, metric)
+        # TODO: what would make ujson.dumps fail?
 
     def test_invalid_timestamp(self):
         metric = {'name': 'test_metric_name',
