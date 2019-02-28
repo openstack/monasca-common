@@ -13,6 +13,7 @@
 
 import mock
 
+from monasca_common.confluent_kafka import consumer
 from monasca_common.confluent_kafka import producer
 
 import confluent_kafka
@@ -28,13 +29,13 @@ class TestConfluentKafkaProducer(base.BaseTestCase):
     def setUp(self, mock_confluent_producer):
         super(TestConfluentKafkaProducer, self).setUp()
         self.mock_confluent_producer = mock_confluent_producer
-        self.prod = producer.KafkaProducer(FAKE_KAFKA_TOPIC)
+        self.prod = producer.KafkaProducer(FAKE_KAFKA_URL)
 
     def tearDown(self):
         super(TestConfluentKafkaProducer, self).tearDown()
 
     def test_kafka_producer_init(self):
-        expected_config = {'bootstrap.servers': FAKE_KAFKA_TOPIC}
+        expected_config = {'bootstrap.servers': FAKE_KAFKA_URL}
 
         self.mock_confluent_producer.assert_called_once_with(expected_config)
         self.assertEqual(self.mock_confluent_producer.return_value,
@@ -92,3 +93,85 @@ class TestConfluentKafkaProducer(base.BaseTestCase):
     def test_delivery_report(self, mock_message, mock_logger):
         self.prod.delivery_report(None, confluent_kafka.Message)
         mock_logger.debug.assert_called_once()
+
+
+class TestConfluentKafkaConsumer(base.BaseTestCase):
+
+    @mock.patch('confluent_kafka.Consumer')
+    def setUp(self, mock_confluent_consumer):
+        super(TestConfluentKafkaConsumer, self).setUp()
+        self.mock_confluent_consumer = mock_confluent_consumer
+        self.consumer = consumer.KafkaConsumer(['fake_server1',
+                                                'fake_server2'],
+                                               'fake_group',
+                                               FAKE_KAFKA_TOPIC, 128,
+                                               'test_client',
+                                               TestConfluentKafkaConsumer.rep_callback,
+                                               TestConfluentKafkaConsumer.com_callback,
+                                               5)
+
+    @staticmethod
+    def rep_callback(consumer, partitions):
+        pass
+
+    @staticmethod
+    def com_callback(consumer, partitions):
+        pass
+
+    def tearDown(self):
+        super(TestConfluentKafkaConsumer, self).tearDown()
+
+    def test_kafka_consumer_init(self):
+        expected_config = {'group.id': 'fake_group',
+                           'bootstrap.servers': ['fake_server1',
+                                                 'fake_server2'],
+                           'fetch.min.bytes': 128,
+                           'client.id': 'test_client',
+                           'enable.auto.commit': False,
+                           'default.topic.config':
+                               {'auto.offset.reset': 'earliest'}
+                           }
+
+        self.mock_confluent_consumer.assert_called_once_with(expected_config)
+        self.assertEqual(self.consumer._consumer,
+                         self.mock_confluent_consumer.return_value)
+        self.assertEqual(self.consumer._commit_callback,
+                         TestConfluentKafkaConsumer.com_callback)
+        self.assertEqual(self.consumer._max_commit_interval, 5)
+        self.mock_confluent_consumer.return_value.subscribe \
+            .assert_called_once_with([FAKE_KAFKA_TOPIC],
+                                     on_revoke=TestConfluentKafkaConsumer.rep_callback)
+
+    @mock.patch('confluent_kafka.Message')
+    def test_kafka_consumer_iteration(self, mock_kafka_message):
+        mock_kafka_message.return_value.error.return_value = None
+        messages = []
+        for i in range(5):
+            m = mock_kafka_message.return_value
+            m.set_value("message{}".format(i))
+            messages.append(m)
+        self.consumer._consumer.poll.side_effect = messages
+        for index, message in enumerate(self.consumer):
+            self.assertEqual(message, messages[index])
+
+    @mock.patch('confluent_kafka.Message')
+    @mock.patch('confluent_kafka.KafkaError')
+    def test_kafka_consumer_poll_exception(self,
+                                           mock_kafka_error,
+                                           mock_kafka_message):
+        mock_kafka_error.return_value.str = 'fake error message'
+        mock_kafka_message.return_value.error.return_value = \
+            mock_kafka_error
+        messages = [mock_kafka_message.return_value]
+
+        self.consumer._consumer.poll.side_effect = messages
+        try:
+            list(self.consumer)
+        except Exception as ex:
+            self.assertIsInstance(ex, confluent_kafka.KafkaException)
+
+    @mock.patch('datetime.datetime')
+    def test_kafka_commit(self, mock_datetime):
+        self.consumer.commit()
+        mock_datetime.now.assert_called_once()
+        self.mock_confluent_consumer.return_value.commit.assert_called_once()
