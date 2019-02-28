@@ -17,6 +17,7 @@ import math
 import re
 
 import six
+import sys
 import ujson
 
 # This is used to ensure that metrics with a timestamp older than
@@ -77,12 +78,17 @@ def validate(metrics):
 
 def validate_metric(metric):
     validate_name(metric['name'])
-    validate_value(metric['value'])
-    validate_timestamp(metric['timestamp'])
-    if "dimensions" in metric:
-        validate_dimensions(metric['dimensions'])
-    if "value_meta" in metric:
-        validate_value_meta(metric['value_meta'])
+    try:
+        validate_value(metric['value'])
+        validate_timestamp(metric['timestamp'])
+        if "dimensions" in metric:
+            validate_dimensions(metric['dimensions'])
+        if "value_meta" in metric:
+            validate_value_meta(metric['value_meta'])
+    except Exception as ex:
+        six.reraise(type(ex),
+                    type(ex)(str(ex) + ": for metric %s" % metric['name']),
+                    sys.exc_info()[2])
 
 
 def validate_value_meta(value_meta):
@@ -103,13 +109,13 @@ def validate_value_meta(value_meta):
 
     try:
         value_meta_json = ujson.dumps(value_meta)
-        if len(value_meta_json) > VALUE_META_VALUE_MAX_LENGTH:
-            msg = "valueMeta name value combinations must be {0} characters " \
-                  "or less: valueMeta {1}".format(VALUE_META_VALUE_MAX_LENGTH,
-                                                  value_meta)
-            raise InvalidValueMeta(msg)
     except Exception:
         raise InvalidValueMeta("Unable to serialize valueMeta into JSON")
+    if len(value_meta_json) > VALUE_META_VALUE_MAX_LENGTH:
+        msg = "valueMeta name value combinations must be {0} characters " \
+              "or less: valueMeta {1}".format(VALUE_META_VALUE_MAX_LENGTH,
+                                              value_meta)
+        raise InvalidValueMeta(msg)
 
 
 def validate_dimension_key(k):
