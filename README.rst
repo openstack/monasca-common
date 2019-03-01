@@ -101,7 +101,6 @@ Platform Sub-Projects
 
 
 
-.. _Team and repository tags: https://governance.openstack.org/tc/reference/tags/index.html
 .. _monasca-common-model: https://github.com/openstack/monasca-common/tree/master/java/monasca-common-model
 .. _monasca-common-dropwizard: https://github.com/openstack/monasca-common/tree/master/java/monasca-common-dropwizard
 .. _monasca-common-hibernate: https://github.com/openstack/monasca-common/tree/master/java/monasca-common-hibernate
