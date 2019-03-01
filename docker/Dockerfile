@@ -114,6 +114,9 @@ ONBUILD RUN \
             [ ! "$(git -C /monasca-common tag -l ${COMMON_VERSION})" ] && \
                 sed -i "s|monasca-common.*||" \
                     /app/upper-constraints.txt || true && \
+            [ $DOCKER_IMAGE = "monasca/client" ] && \
+                sed -i "s|python-monascaclient.*||" \
+                    /app/upper-constraints.txt || true && \
             pip3 install \
                 --editable /monasca-common \
                 --constraint /app/upper-constraints.txt && \
