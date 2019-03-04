@@ -15,7 +15,7 @@
         - monasca-tempest-python2-cassandra
         - monasca-tempest-java-cassandra
         - monascalog-tempest
-        - docker-build-monasca-base
+        - build-monasca-common-docker-base-image
         - legacy-monasca-common-maven-build
     gate:
       queue: monasca
@@ -28,17 +28,17 @@
         - legacy-monasca-common-maven-build
     post:
       jobs:
-        - docker-publish-monasca-base
+        - publish-monasca-common-docker-base-image
         - legacy-monasca-common-localrepo-upload
     periodic:
       jobs:
-        - docker-publish-monasca-base
+        - publish-monasca-common-docker-base-image
     release:
       jobs:
-        - docker-publish-monasca-base
+        - publish-monasca-common-docker-base-image
 
 - job:
-    name: docker-build-monasca-base
+    name: build-monasca-common-docker-base-image
     run: playbooks/docker_build_base.yml
     required-projects:
       - openstack/monasca-common
@@ -60,8 +60,8 @@
       - ^doc/.*$
 
 - job:
-    name: docker-publish-monasca-base
-    parent: docker-build-monasca-base
+    name: publish-monasca-common-docker-base-image
+    parent: build-monasca-common-docker-base-image
     post-run: playbooks/publish.yml
     required-projects:
       - openstack/monasca-common
