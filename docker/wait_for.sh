@@ -42,7 +42,9 @@ wait_for() {
 
 for var in "$@"
 do
-  host=${var%:*}
-  port=${var#*:}
+  # nc does not work with links containing http(s), remove trailing slash
+  clean_link=$(echo "$var" | sed -e "s/^http[s]*:\/\///" | sed 's:/*$::')
+  host=${clean_link%:*}
+  port=${clean_link#*:}
   wait_for "$host" "$port"
 done
