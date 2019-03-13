@@ -156,11 +156,15 @@ ONBUILD RUN \
                 /tmp/* \
                 /var/cache/apk/* \
                 /var/log/* && \
-            # Remove all Python pyc and pyo files.
+            # Remove all Python pyc and pyo files. Don't remove tempest tests.
             find /usr/local -depth \
                 \( \
-                    \( -type d -a \( -name test -o -name tests \) \) \
-                    -o \( -type f -a \( -name '*.pyc' -o -name '*.pyo' \) \) \
+                    \( -type d -and \( \
+                        -name test -or -name tests \
+                        -not -path '*/monasca_tempest_tests/*' \) \) \
+                    -or \
+                    \( -type f -and \( \
+                        -name '*.pyc' -or -name '*.pyo' \) \) \
                 \) -exec rm -rf '{}' +
 
 ONBUILD HEALTHCHECK --interval=5s --timeout=2s \
