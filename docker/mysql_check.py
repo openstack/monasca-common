@@ -61,7 +61,7 @@ logging.basicConfig(level=LOG_LEVEL)
 logger = logging.getLogger(__name__)
 
 MYSQL_HOST = os.environ.get('MYSQL_HOST', 'mysql')
-MYSQL_PORT = os.environ.get('MYSQL_PORT', 3306)
+MYSQL_PORT = int(os.environ.get('MYSQL_PORT', 3306))
 MYSQL_USER = os.environ.get('MYSQL_USER', 'monapi')
 MYSQL_PASSWORD = os.environ.get('MYSQL_PASSWORD', 'password')
 MYSQL_DB = os.environ.get('MYSQL_DB', 'mon')
