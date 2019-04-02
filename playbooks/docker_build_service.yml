@@ -12,7 +12,7 @@
       become: true
 
     - name: Build Docker image
-      shell: "{{ zuul.project.src_dir }}/docker/build_image.sh {{ zuul.tag if zuul.pipeline == 'release' else zuul.branch | basename }}"
+      shell: "{{ zuul.project.src_dir }}/docker/build_image.sh {{ zuul.tag if zuul.pipeline == 'release' else zuul.branch }}"
       become: true
 
     - name: List images
