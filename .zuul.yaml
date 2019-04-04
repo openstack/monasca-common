@@ -49,7 +49,7 @@
       - ^doc/.*$
 
 - job:
-    name: docker-build-monasca-service
+    name: build-monasca-docker-image
     run: playbooks/docker_build_service.yml
     required-projects:
       - openstack/monasca-common
