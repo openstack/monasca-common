@@ -2,7 +2,7 @@
 - hosts: all
   tasks:
     - name: Run node setup script
-      shell: "{{ zuul.projects['git.openstack.org/openstack/monasca-common'].src_dir }}/playbooks/setup_ci.sh"
+      shell: "{{ zuul.projects['opendev.org/openstack/monasca-common'].src_dir }}/playbooks/setup_ci.sh"
       become: true
 
     - name: Changing permission of Docker socket to 666
