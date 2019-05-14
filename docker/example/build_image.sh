@@ -55,7 +55,7 @@ set -eo pipefail  # Exit the script if any statement returns error.
 REPO_VERSION_CLEAN=$(echo "$REPO_VERSION" | sed 's|/|-|g')
 
 [ -z "$APP_REPO" ] && APP_REPO=$(\grep APP_REPO Dockerfile | cut -f2 -d"=")
-GITHUB_REPO=$(echo "$APP_REPO" | sed 's/opendev.org/github.com/' | \
+GITHUB_REPO=$(echo "$APP_REPO" | sed 's/review.opendev.org/github.com/' | \
               sed 's/ssh:/https:/')
 
 if [ -z "$CONSTRAINTS_FILE" ]; then
@@ -71,10 +71,11 @@ fi
 case "$REPO_VERSION" in
     *stable*)
         CONSTRAINTS_BRANCH_CLEAN="$REPO_VERSION"
+        CONSTRAINTS_FILE=${CONSTRAINTS_FILE/master/$CONSTRAINTS_BRANCH_CLEAN}
         # Get monasca-common version from stable upper constraints file.
         CONSTRAINTS_TMP_FILE=$(mktemp)
         wget --output-document "$CONSTRAINTS_TMP_FILE" \
-            "$CONSTRAINTS_FILE"?h="$CONSTRAINTS_BRANCH_CLEAN"
+            $CONSTRAINTS_FILE
         UPPER_COMMON=$(\grep 'monasca-common' "$CONSTRAINTS_TMP_FILE")
         # Get only version part from monasca-common.
         UPPER_COMMON_VERSION="${UPPER_COMMON##*===}"
@@ -88,7 +89,7 @@ esac
 # Monasca-common variables.
 if [ -z "$COMMON_REPO" ]; then
     COMMON_REPO=$(\grep COMMON_REPO Dockerfile | cut -f2 -d"=") || true
-    : "${COMMON_REPO:=https://opendev.org/openstack/monasca-common}"
+    : "${COMMON_REPO:=https://review.opendev.org/openstack/monasca-common}"
 fi
 : "${COMMON_VERSION:=$3}"
 if [ -z "$COMMON_VERSION" ]; then

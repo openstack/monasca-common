@@ -56,7 +56,7 @@ ONBUILD LABEL \
     org.opencontainers.image.version="$REPO_VERSION" \
     org.opencontainers.image.revision="$GIT_COMMIT" \
     org.opencontainers.image.licenses="Apache-2.0" \
-    org.openstack.constraints_uri="$CONSTRAINTS_FILE?h=$CONSTRAINTS_BRANCH" \
+    org.openstack.constraints_uri="$CONSTRAINTS_FILE" \
     org.openstack.monasca.python.extra_deps="$EXTRA_DEPS" \
     org.openstack.monasca.common.source="$COMMON_REPO" \
     org.openstack.monasca.common.version="$COMMON_VERSION" \
@@ -97,7 +97,7 @@ ONBUILD RUN \
             git -C /app fetch origin "$REPO_VERSION" && \
             git -C /app reset --hard FETCH_HEAD && \
             wget --output-document /app/upper-constraints.txt \
-                "$CONSTRAINTS_FILE"?h="$CONSTRAINTS_BRANCH" && \
+                "$CONSTRAINTS_FILE" && \
             # Download monasca-common
             mkdir -p /monasca-common && \
             git -C /monasca-common init && \
@@ -146,7 +146,7 @@ ONBUILD RUN \
             printf "Monasca-common revision:    %s\\n" \
                 "$COMMON_GIT_COMMIT" >> /VERSIONS && \
             printf "Constraints file: %s\\n" \
-                "$CONSTRAINTS_FILE"?h="$CONSTRAINTS_BRANCH" >> /VERSIONS && \
+                "$CONSTRAINTS_FILE" >> /VERSIONS && \
             # Clean after instalation.
             apk del .build-deps .build-librdkafka && \
             rm -rf \
