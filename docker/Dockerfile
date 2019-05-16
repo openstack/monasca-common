@@ -1,4 +1,4 @@
-FROM python:3.6.8-alpine3.8
+FROM python:3.6.8-alpine3.9
 
 COPY wait_for.sh kafka_wait_for_topics.py mysql_check.py /
 COPY ashrc /root/.ashrc
@@ -80,8 +80,8 @@ ONBUILD RUN \
                 libxslt-dev \
                 linux-headers \
                 make && \
-            # We need librdkafka at last v0.11.5 so take it from edge.
-            # It will be default in Apline 3.9.
+            # We need librdkafka at least v1.0.0 so take it from edge.
+            # It will be default in Apline 3.10.
             apk add --no-cache --virtual .build-librdkafka \
                 libressl2.7-libcrypto \
                 librdkafka-dev \
