@@ -31,7 +31,7 @@ To run the unit tests use:
 For information on contributing, see `Contribution Guidelines`_.
 
 * License: Apache License, Version 2.0
-* Source: https://git.openstack.org/cgit/openstack/monasca-common
+* Source: https://opendev.org/openstack/monasca-common
 * Bugs: https://storyboard.openstack.org/#!/project/865
 
 .. _`Contribution Guidelines`: https://docs.openstack.org/monasca-api/latest/contributor/index.html
