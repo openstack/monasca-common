@@ -61,4 +61,4 @@ class KeyedProducer(Producer):
         return self.send_messages(topic, key, msg)
 
     def __repr__(self):
-        return '<KeyedProducer batch=%s>' % self.async
+        return '<KeyedProducer batch=%s>' % self.is_async

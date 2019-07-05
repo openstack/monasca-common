@@ -38,7 +38,7 @@ class KafkaProducer(object):
         self._kafka = kafka_client.KafkaClient(url)
         self._producer = kafka_producer.KeyedProducer(
             self._kafka,
-            async=False,
+            is_async=False,
             req_acks=kafka_producer.KeyedProducer.ACK_AFTER_LOCAL_WRITE,
             ack_timeout=2000)
 
