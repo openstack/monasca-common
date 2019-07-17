@@ -67,7 +67,6 @@ class KafkaConsumer(object):
 
             if message is None:
                 time.sleep(0.1)
-                continue
             elif not message.error():
                 yield message
             elif message.error().code() == \
