@@ -18,12 +18,13 @@ import logging
 import threading
 import time
 
-import monasca_common.kafka_lib.client as kafka_client
-import monasca_common.kafka_lib.common as kafka_common
-import monasca_common.kafka_lib.consumer as kafka_consumer
-
 from kazoo.client import KazooClient
 from kazoo.recipe.partitioner import SetPartitioner
+
+import monasca_common.kafka_lib.client as kafka_client
+import monasca_common.kafka_lib.common as kafka_common
+from monasca_common.kafka_lib.conn import DEFAULT_SOCKET_TIMEOUT_SECONDS
+import monasca_common.kafka_lib.consumer as kafka_consumer
 
 log = logging.getLogger(__name__)
 
@@ -52,7 +53,8 @@ class KafkaConsumer(object):
                  fetch_size=1048576,
                  repartition_callback=None,
                  commit_callback=None,
-                 commit_timeout=30):
+                 commit_timeout=30,
+                 timeout=DEFAULT_SOCKET_TIMEOUT_SECONDS):
         """Init
 
              kafka_url            - Kafka location
@@ -68,6 +70,7 @@ class KafkaConsumer(object):
              commit_callback      - Callback to run when the commit_timeout
                                     has elapsed between commits.
              commit_timeout       - Timeout between commits.
+             timeout              - kafka connection timeout
         """
 
         self._kazoo_client = None
@@ -89,7 +92,7 @@ class KafkaConsumer(object):
         self._zookeeper_url = zookeeper_url
         self._zookeeper_path = zookeeper_path
 
-        self._kafka = kafka_client.KafkaClient(kafka_url)
+        self._kafka = kafka_client.KafkaClient(kafka_url, timeout=timeout)
 
         self._consumer = self._create_kafka_consumer()
 

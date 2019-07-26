@@ -123,6 +123,7 @@ class TestConfluentKafkaConsumer(base.BaseTestCase):
 
     def test_kafka_consumer_init(self):
         expected_config = {'group.id': 'fake_group',
+                           'session.timeout.ms': 10000,
                            'bootstrap.servers': ['fake_server1',
                                                  'fake_server2'],
                            'fetch.min.bytes': 128,
