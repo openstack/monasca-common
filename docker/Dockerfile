@@ -83,10 +83,16 @@ ONBUILD RUN \
             # It will be default in Apline 3.10.
             apk add --no-cache --virtual .build-librdkafka \
                 libressl2.7-libcrypto \
-                librdkafka-dev \
                 libressl2.7-libssl \
                 --repository=http://dl-cdn.alpinelinux.org/alpine/edge/main \
                 --repository=http://dl-cdn.alpinelinux.org/alpine/edge/community && \
+            # Install librdkafka from source code.
+            apk add --no-cache curl bash && \
+            curl https://codeload.github.com/edenhill/librdkafka/tar.gz/v1.1.0 | tar xzf - -C /tmp/ && \
+                 cd /tmp/librdkafka-1.1.0/ && \
+                 ./configure && \
+                 make && \
+                 make install && \
             # Clone repository and checkout requested version.
             # This many steps are needed to support gerrit patch sets.
             mkdir -p /app && \
