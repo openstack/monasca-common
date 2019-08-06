@@ -56,7 +56,10 @@ class KafkaConsumer(object):
         self._commit_callback = commit_callback
         self._max_commit_interval = max_commit_interval
         self._consumer = confluent_kafka.Consumer(consumer_config)
-        self._consumer.subscribe([topic], on_revoke=repartition_callback)
+        if repartition_callback:
+            self._consumer.subscribe([topic], on_revoke=repartition_callback)
+        else:
+            self._consumer.subscribe([topic])
         self._last_commit = None
 
     def __iter__(self):
