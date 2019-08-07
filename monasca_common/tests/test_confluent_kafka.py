@@ -101,8 +101,7 @@ class TestConfluentKafkaConsumer(base.BaseTestCase):
     def setUp(self, mock_confluent_consumer):
         super(TestConfluentKafkaConsumer, self).setUp()
         self.mock_confluent_consumer = mock_confluent_consumer
-        self.consumer = consumer.KafkaConsumer(['fake_server1',
-                                                'fake_server2'],
+        self.consumer = consumer.KafkaConsumer('fake_server1,fake_server2',
                                                'fake_group',
                                                FAKE_KAFKA_TOPIC, 128,
                                                'test_client',
@@ -124,8 +123,7 @@ class TestConfluentKafkaConsumer(base.BaseTestCase):
     def test_kafka_consumer_init(self):
         expected_config = {'group.id': 'fake_group',
                            'session.timeout.ms': 10000,
-                           'bootstrap.servers': ['fake_server1',
-                                                 'fake_server2'],
+                           'bootstrap.servers': 'fake_server1,fake_server2',
                            'fetch.min.bytes': 128,
                            'client.id': 'test_client',
                            'enable.auto.commit': False,
