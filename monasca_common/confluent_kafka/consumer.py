@@ -29,8 +29,8 @@ class KafkaConsumer(object):
         """
         Create new high-level Consumer instance.
 
-        :param list(str) bootstrap_servers: A list of host/port pairs to use
-        for establishing the initial connection to the Kafka cluster.
+        :param str bootstrap_servers: Comma separated list of host/port pairs to
+         use for establishing the initial connection to the Kafka cluster.
         :param str group_id: A unique string that identifies the consumer group
         this consumer belongs to.
         :param str topic: Topic to subscribe to.
