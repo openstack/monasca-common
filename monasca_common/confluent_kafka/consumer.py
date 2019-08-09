@@ -25,7 +25,7 @@ class KafkaConsumer(object):
     def __init__(self, bootstrap_servers, group_id, topic,
                  fetch_min_bytes=1048576, client_id="",
                  repartition_callback=None, commit_callback=None,
-                 max_commit_interval=30):
+                 max_commit_interval=30, timeout=10000):
         """
         Create new high-level Consumer instance.
 
@@ -43,10 +43,12 @@ class KafkaConsumer(object):
         :param callable commit_callback: Callback function responsible for
         calling the commit() method.
         :param int max_commit_interval: Maximum time in seconds between commits.
+        :param int timeout: Client group session and failure detection timeout.
         """
 
         consumer_config = {'bootstrap.servers': bootstrap_servers,
                            'group.id': group_id,
+                           'session.timeout.ms': timeout,
                            'fetch.min.bytes': fetch_min_bytes,
                            'client.id': client_id,
                            'enable.auto.commit': False,
