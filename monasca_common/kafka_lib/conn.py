@@ -12,6 +12,7 @@
 
 import copy
 import logging
+from oslo_utils import netutils
 from random import shuffle
 import socket
 import struct
@@ -35,13 +36,10 @@ def collect_hosts(hosts, randomize=True):
     if isinstance(hosts, str):
         hosts = hosts.strip().split(',')
 
-    result = []
-    for host_port in hosts:
+    parse = netutils.parse_host_port
+    result = map(lambda host_port: parse(host_port, DEFAULT_KAFKA_PORT), hosts)
 
-        res = host_port.split(':')
-        host = res[0]
-        port = int(res[1]) if len(res) > 1 else DEFAULT_KAFKA_PORT
-        result.append((host.strip(), port))
+    result = list(map(lambda host_port: (host_port[0], int(host_port[1])), result))
 
     if randomize:
         shuffle(result)
