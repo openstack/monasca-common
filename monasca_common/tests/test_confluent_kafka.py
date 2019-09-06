@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -93,6 +94,17 @@ class TestConfluentKafkaProducer(base.BaseTestCase):
     def test_delivery_report(self, mock_message, mock_logger):
         self.prod.delivery_report(None, confluent_kafka.Message)
         mock_logger.debug.assert_called_once()
+
+    @mock.patch('monasca_common.confluent_kafka.producer.log')
+    @mock.patch('confluent_kafka.Message')
+    def test_delivery_report_with_unicode(self, mock_message, mock_logger):
+        mock_message.topic.return_value = 'test_topic'
+        mock_message.partition.return_value = '1'
+        mock_message.value.return_value = 'gęś'
+        self.prod.delivery_report(None, mock_message)
+        mock_logger.debug.assert_called_once_with('Message delivered to '
+                                                  'test_topic [1]: '
+                                                  'gęś')
 
 
 class TestConfluentKafkaConsumer(base.BaseTestCase):

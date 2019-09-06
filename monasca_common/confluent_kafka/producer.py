@@ -48,10 +48,10 @@ class KafkaProducer(object):
         """
 
         if err is not None:
-            log.exception(u'Message delivery failed: {}'.format(err))
+            log.exception('Message delivery failed: {}'.format(err))
             raise confluent_kafka.KafkaException(err)
         else:
-            log.debug(u'Message delivered to {} [{}]: {}'.format(
+            log.debug('Message delivered to {} [{}]: {}'.format(
                 msg.topic(), msg.partition(), msg.value()))
 
     def publish(self, topic, messages, key=None, timeout=2):
