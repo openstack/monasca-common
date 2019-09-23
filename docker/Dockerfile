@@ -74,13 +74,13 @@ ONBUILD RUN \
                 g++ \
                 git \
                 libffi-dev \
-                libressl-dev \
+                openssl-dev \
                 libxml2-dev \
                 libxslt-dev \
                 linux-headers \
                 make && \
-            # We need librdkafka at least v1.0.0 so take it from edge.
-            # It will be default in Apline 3.10.
+            # For librdkafka bigger than v1.0.0 we need newer versions of some
+            # libraries.
             apk add --no-cache --virtual .build-librdkafka \
                 libressl2.7-libcrypto \
                 libressl2.7-libssl \
