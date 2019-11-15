@@ -3,13 +3,11 @@
       - check-requirements
       - openstack-cover-jobs
       - openstack-lower-constraints-jobs
-      - openstack-python-jobs
       - openstack-python3-train-jobs
     check:
       jobs:
-        - monasca-tempest-python2-influxdb
         - monasca-tempest-python3-influxdb
-        - monasca-tempest-python2-cassandra
+        - monasca-tempest-python3-cassandra
         - monasca-tempest-java-cassandra
         - monascalog-tempest
         - build-monasca-common-docker-base-image
@@ -17,9 +15,7 @@
     gate:
       queue: monasca
       jobs:
-        - monasca-tempest-python2-influxdb
         - monasca-tempest-python3-influxdb
-        - monasca-tempest-python2-cassandra
         - monasca-tempest-java-cassandra
         - monascalog-tempest
         - legacy-monasca-common-maven-build

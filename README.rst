@@ -26,7 +26,7 @@ To run the unit tests use:
 
 ::
 
-   $ tox -e py27,py35
+   $ tox -e py35
 
 For information on contributing, see `Contribution Guidelines`_.
 
