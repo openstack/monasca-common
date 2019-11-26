@@ -173,6 +173,10 @@ class TestKafkaConsumer(base.BaseTestCase):
         mock_set_partitioner.return_value.acquired = True
         mock_set_partitioner.return_value.__iter__.return_value = [1]
 
-        list(self.monasca_kafka_consumer)
+        try:
+            list(self.monasca_kafka_consumer)
+        except RuntimeError as re:
+            if 'generator raised StopIteration' in str(re):
+                pass
 
         self.consumer.seek.assert_called_once_with(0, 0)
