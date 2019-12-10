@@ -22,16 +22,17 @@ log = logging.getLogger(__name__)
 class KafkaProducer(object):
     """Wrapper around asynchronous Kafka Producer"""
 
-    def __init__(self, bootstrap_servers):
+    def __init__(self, bootstrap_servers, **config):
         """
         Create new Producer wrapper instance.
 
         :param str bootstrap_servers: Initial list of brokers as a CSV
         list of broker host or host:port.
+        :param config Configuration properties
         """
 
-        self._producer = confluent_kafka.Producer({'bootstrap.servers':
-                                                   bootstrap_servers})
+        config['bootstrap.servers'] = bootstrap_servers
+        self._producer = confluent_kafka.Producer(config)
 
     @staticmethod
     def delivery_report(err, msg):

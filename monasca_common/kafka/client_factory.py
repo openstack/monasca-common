@@ -49,8 +49,8 @@ def get_kafka_consumer(kafka_url,
         )
 
 
-def get_kafka_producer(kafka_url, use_legacy_client=False):
+def get_kafka_producer(kafka_url, use_legacy_client=False, **config):
     if use_legacy_client:
         return legacy_kafka_producer.KafkaProducer(kafka_url)
     else:
-        return producer.KafkaProducer(",".join(kafka_url))
+        return producer.KafkaProducer(",".join(kafka_url), **config)
