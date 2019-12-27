@@ -623,7 +623,7 @@ class KafkaConsumer(object):
                 return
 
     #
-    # Offset-managment private methods
+    # Offset-management private methods
     #
 
     def _get_commit_offsets(self):
