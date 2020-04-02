@@ -410,7 +410,7 @@ class TestMetricValidation(base.BaseTestCase):
             metric_validator.InvalidValueMeta,
             "value combinations must be",
             metric_validator.validate, metric)
-        # TODO: what would make ujson.dumps fail?
+        # TODO: what would make json.dumps fail (simplejson)?
 
     def test_invalid_timestamp(self):
         metric = {'name': 'test_metric_name',

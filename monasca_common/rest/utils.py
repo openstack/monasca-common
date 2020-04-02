@@ -13,7 +13,7 @@
 # under the License.
 
 import six
-import ujson as json
+import simplejson as json
 
 from monasca_common.rest import exceptions
 
