@@ -41,8 +41,8 @@ import os
 import sys
 import time
 
-from pykafka import KafkaClient
 from pykafka.exceptions import NoBrokersAvailableError
+from pykafka import KafkaClient
 
 # Run this script only with Python 3
 if sys.version_info.major != 3:

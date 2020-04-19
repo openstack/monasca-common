@@ -201,7 +201,7 @@ class KafkaClient(object):
                                                         payload.partition)
                 payloads_by_broker[leader].append(payload)
                 brokers_for_payloads.append(leader)
-            except KafkaUnavailableError as e:
+            except KafkaUnavailableError:
                 log.warning('KafkaUnavailableError attempting to send request '
                             'on topic %s partition %d', payload.topic, payload.partition)
                 topic_partition = (payload.topic, payload.partition)
