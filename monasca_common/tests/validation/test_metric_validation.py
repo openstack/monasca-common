@@ -173,7 +173,7 @@ class TestMetricValidation(base.BaseTestCase):
                   "value": 5}
         self.assertRaisesRegex(
             metric_validator.InvalidDimensionKey,
-            "invalid length \(0\) for dimension key",
+            r"invalid length \(0\) for dimension key",
             metric_validator.validate, metric)
 
     def test_invalid_dimension_empty_value(self):
@@ -183,7 +183,7 @@ class TestMetricValidation(base.BaseTestCase):
                   "value": 5}
         self.assertRaisesRegex(
             metric_validator.InvalidDimensionValue,
-            "invalid length \(0\) for dimension value",
+            r"invalid length \(0\) for dimension value",
             metric_validator.validate, metric)
 
     def test_invalid_dimension_non_str_key(self):
@@ -213,7 +213,7 @@ class TestMetricValidation(base.BaseTestCase):
                   "value": 5}
         self.assertRaisesRegex(
             metric_validator.InvalidDimensionKey,
-            "invalid length \(256\) for dimension key",
+            r"invalid length \(256\) for dimension key",
             metric_validator.validate, metric)
 
     def test_invalid_dimension_value_length(self):
@@ -223,7 +223,7 @@ class TestMetricValidation(base.BaseTestCase):
                   "value": 5}
         self.assertRaisesRegex(
             metric_validator.InvalidDimensionValue,
-            "invalid length \(256\) for dimension value",
+            r"invalid length \(256\) for dimension value",
             metric_validator.validate, metric)
 
     def test_invalid_dimension_key_restricted_characters(self):

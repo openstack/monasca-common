@@ -12,8 +12,8 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-import six
 import simplejson as json
+import six
 
 from monasca_common.rest import exceptions
 
