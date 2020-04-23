@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import mock
+from unittest import mock
 
 from monasca_common.confluent_kafka import consumer
 from monasca_common.confluent_kafka import producer
