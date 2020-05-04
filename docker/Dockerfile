@@ -79,17 +79,17 @@ ONBUILD RUN \
                 libxslt-dev \
                 linux-headers \
                 make && \
-            # For librdkafka bigger than v1.0.0 we need newer versions of some
+            # For librdkafka bigger than v1.4.0 we need newer versions of some
             # libraries.
             apk add --no-cache --virtual .build-librdkafka \
-                libressl2.7-libcrypto \
-                libressl2.7-libssl \
+                libressl3.0-libcrypto \
+                libressl3.0-libssl \
                 --repository=http://dl-cdn.alpinelinux.org/alpine/edge/main \
                 --repository=http://dl-cdn.alpinelinux.org/alpine/edge/community && \
             # Install librdkafka from source code.
             apk add --no-cache curl bash && \
-            curl https://codeload.github.com/edenhill/librdkafka/tar.gz/v1.1.0 | tar xzf - -C /tmp/ && \
-                 cd /tmp/librdkafka-1.1.0/ && \
+            curl https://codeload.github.com/edenhill/librdkafka/tar.gz/v1.4.0 | tar xzf - -C /tmp/ && \
+                 cd /tmp/librdkafka-1.4.0/ && \
                  ./configure && \
                  make && \
                  make install && \
