@@ -66,7 +66,7 @@ In addition, the run_maven.sh script copies the jar files that get built
 from java/``*``/target directories to the target directory in the base
 project directory. This is because the StackForge
 “monasca-common-localrepo-upload” job uploads any jar files from that
-directory to http://tarballs.openstack.org/ci/monasca-common.
+directory to https://tarballs.opendev.org/openstack/ci/monasca-common.
 Copying the jar files to that directory made it so there didn’t have to
 be changes made to the “monasca-common-localrepo-upload” job. The build
 for monasca-thresh downloads the jars it depends on from that location on
