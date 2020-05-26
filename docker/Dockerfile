@@ -82,8 +82,8 @@ ONBUILD RUN \
             # For librdkafka bigger than v1.4.0 we need newer versions of some
             # libraries.
             apk add --no-cache --virtual .build-librdkafka \
-                libressl3.0-libcrypto \
-                libressl3.0-libssl \
+                libressl3.1-libcrypto \
+                libressl3.1-libssl \
                 --repository=http://dl-cdn.alpinelinux.org/alpine/edge/main \
                 --repository=http://dl-cdn.alpinelinux.org/alpine/edge/community && \
             # Install librdkafka from source code.
