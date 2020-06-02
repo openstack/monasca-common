@@ -10,8 +10,6 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-from __future__ import absolute_import
-
 try:
     from itertools import zip_longest as izip_longest, repeat  # pylint: disable-msg=E0611
 except ImportError:
