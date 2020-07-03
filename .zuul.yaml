@@ -3,7 +3,7 @@
       - check-requirements
       - openstack-cover-jobs
       - openstack-lower-constraints-jobs
-      - openstack-python3-train-jobs
+      - openstack-python3-ussuri-jobs
     check:
       jobs:
         - monasca-tempest-python3-influxdb
