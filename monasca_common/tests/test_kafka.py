@@ -139,8 +139,12 @@ class TestKafkaConsumer(base.BaseTestCase):
         mock_set_partitioner.return_value.acquired = True
         mock_set_partitioner.return_value.__iter__.return_value = [1]
 
-        for index, message in enumerate(self.monasca_kafka_consumer):
-            self.assertEqual(message, messages[index])
+        try:
+            for index, message in enumerate(self.monasca_kafka_consumer):
+                self.assertEqual(message, messages[index])
+        except RuntimeError as re:
+            if 'generator raised StopIteration' in str(re):
+                pass
 
     @mock.patch('monasca_common.kafka.consumer.datetime')
     def test_commit(self, mock_datetime):
