@@ -17,7 +17,6 @@ import os
 import sys
 
 from oslotest import base
-import six
 
 import monasca_common.simport.simport as simport
 
@@ -73,10 +72,10 @@ class TestSimport(base.BaseTestCase):
                           "TestSimport:missing")
 
     def test_good_load_internal(self):
-        self.assertEqual(six.get_function_code(dummy_function),
-                         six.get_function_code(simport.load("test_simport:dummy_function")))
-        self.assertEqual(six.get_function_code(DummyClass.method_a),
-                         six.get_function_code(simport.load("test_simport:DummyClass.method_a")))
+        self.assertEqual(dummy_function.__code__,
+                         simport.load("test_simport:dummy_function").__code__)
+        self.assertEqual(DummyClass.method_a.__code__,
+                         simport.load("test_simport:DummyClass.method_a").__code__)
 
     def test_local_class(self):
         klass = simport.load("LocalClass", __name__)
@@ -95,66 +94,31 @@ class TestSimport(base.BaseTestCase):
 #
 
 
-if six.PY2:
+class TestSimportPY3(base.BaseTestCase):
 
-    class TestSimportPY2(base.BaseTestCase):
+    def test_good_load_local(self):
+        method = simport.load(PWD + "|localmodule:Foo.method_a")
+        import localmodule
 
-        def test_good_load_local(self):
-            method = simport.load(PWD + "|monasca_common.tests.localmodule:Foo.method_a")
-            import localmodule
+        self.assertEqual(method, localmodule.Foo.method_a)
+        self.assertEqual(localmodule.function_a,
+                         simport.load("localmodule:function_a"))
 
-            self.assertEqual(method, localmodule.Foo.method_a)
-            self.assertEqual(localmodule.function_a,
-                             simport.load("monasca_common.tests.localmodule:function_a"))
+    def test_good_load_external(self):
 
-        def test_good_load_external(self):
+        method = simport.load(PWD + "/external|external.externalmodule:Blah.method_b")
 
-            method = simport.load(
-                PWD + "/external|monasca_common.tests.external.externalmodule:Blah.method_b")
+        self.assertTrue('external.externalmodule' in sys.modules)
+        old = sys.modules['external.externalmodule']
+        import external.externalmodule
 
-            self.assertTrue('monasca_common.tests.external.externalmodule' in sys.modules)
-            old = sys.modules['monasca_common.tests.external.externalmodule']
-            import external.externalmodule
+        self.assertEqual(external.externalmodule,
+                         sys.modules['external.externalmodule'])
+        self.assertEqual(old, external.externalmodule)
+        self.assertEqual(method, external.externalmodule.Blah.method_b)
 
-            self.assertEqual(external.externalmodule,
-                             sys.modules['monasca_common.tests.external.externalmodule'])
-            self.assertEqual(old, external.externalmodule)
-            self.assertEqual(method, external.externalmodule.Blah.method_b)
+    def test_import_class(self):
+        klass = simport.load(PWD + "/external|external.externalmodule:Blah")
+        import external.externalmodule
 
-        def test_import_class(self):
-            klass = simport.load(
-                PWD + "/external|monasca_common.tests.external.externalmodule:Blah")
-            import external.externalmodule
-
-            self.assertEqual(klass, external.externalmodule.Blah)
-
-elif six.PY3:
-
-    class TestSimportPY3(base.BaseTestCase):
-
-        def test_good_load_local(self):
-            method = simport.load(PWD + "|localmodule:Foo.method_a")
-            import localmodule
-
-            self.assertEqual(method, localmodule.Foo.method_a)
-            self.assertEqual(localmodule.function_a,
-                             simport.load("localmodule:function_a"))
-
-        def test_good_load_external(self):
-
-            method = simport.load(PWD + "/external|external.externalmodule:Blah.method_b")
-
-            self.assertTrue('external.externalmodule' in sys.modules)
-            old = sys.modules['external.externalmodule']
-            import external.externalmodule
-
-            self.assertEqual(external.externalmodule,
-                             sys.modules['external.externalmodule'])
-            self.assertEqual(old, external.externalmodule)
-            self.assertEqual(method, external.externalmodule.Blah.method_b)
-
-        def test_import_class(self):
-            klass = simport.load(PWD + "/external|external.externalmodule:Blah")
-            import external.externalmodule
-
-            self.assertEqual(klass, external.externalmodule.Blah)
+        self.assertEqual(klass, external.externalmodule.Blah)

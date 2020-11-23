@@ -16,7 +16,6 @@
 
 import codecs
 from oslotest import base
-import six
 
 from monasca_common.validation import metrics as metric_validator
 
@@ -30,7 +29,7 @@ invalid_dimension_chars = "<>={},\"\\\\;&"
 
 
 def _hex_to_unicode(hex_raw):
-    hex_raw = six.b(hex_raw.replace(' ', ''))
+    hex_raw = hex_raw.replace(' ', '').encode("latin-1")
     hex_str_raw = codecs.getdecoder('hex')(hex_raw)[0]
     hex_str = hex_str_raw.decode('utf-8', 'replace')
     return hex_str
@@ -350,7 +349,7 @@ class TestMetricValidation(base.BaseTestCase):
 
     def test_invalid_too_many_value_meta(self):
         value_meta = {}
-        for i in six.moves.range(0, metric_validator.VALUE_META_MAX_NUMBER + 3):
+        for i in range(0, metric_validator.VALUE_META_MAX_NUMBER + 3):
             value_meta['key{}'.format(i)] = 'value{}'.format(i)
         metric = {"name": "test_metric_name",
                   "dimensions": {"key1": "value1",
@@ -377,7 +376,7 @@ class TestMetricValidation(base.BaseTestCase):
 
     def test_invalid_too_long_value_meta_key(self):
         key = "K"
-        for i in six.moves.range(0, metric_validator.VALUE_META_NAME_MAX_LENGTH):
+        for i in range(0, metric_validator.VALUE_META_NAME_MAX_LENGTH):
             key = "{}{}".format(key, "1")
         value_meta = {key: 'BBB'}
         metric = {"name": "test_metric_name",
@@ -394,11 +393,11 @@ class TestMetricValidation(base.BaseTestCase):
     def test_invalid_too_large_value_meta(self):
         value_meta_value = ""
         num_value_meta = 10
-        for i in six.moves.range(
+        for i in range(
                 0, int(metric_validator.VALUE_META_VALUE_MAX_LENGTH / num_value_meta)):
             value_meta_value = '{}{}'.format(value_meta_value, '1')
         value_meta = {}
-        for i in six.moves.range(0, num_value_meta):
+        for i in range(0, num_value_meta):
             value_meta['key{}'.format(i)] = value_meta_value
         metric = {"name": "test_metric_name",
                   "dimensions": {"key1": "value1",
@@ -438,7 +437,7 @@ class TestMetricValidation(base.BaseTestCase):
              "timestamp": 1405630174123,
              "value": 2.0}
         ]
-        for i in six.moves.range(len(metrics)):
+        for i in range(len(metrics)):
             metric_validator.validate_name(metrics[i]['name'])
             metric_validator.validate_value(metrics[i]['value'])
             metric_validator.validate_timestamp(metrics[i]['timestamp'])

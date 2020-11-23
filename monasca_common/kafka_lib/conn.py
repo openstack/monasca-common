@@ -17,8 +17,6 @@ import socket
 import struct
 from threading import local
 
-import six
-
 from monasca_common.kafka_lib.common import ConnectionError
 
 
@@ -34,7 +32,7 @@ def collect_hosts(hosts, randomize=True):
     randomize the returned list.
     """
 
-    if isinstance(hosts, six.string_types):
+    if isinstance(hosts, str):
         hosts = hosts.strip().split(',')
 
     result = []

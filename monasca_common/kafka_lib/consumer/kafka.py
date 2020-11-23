@@ -17,8 +17,6 @@ import random
 import sys
 import time
 
-import six
-
 from monasca_common.kafka_lib.client import KafkaClient
 from monasca_common.kafka_lib.common import (
     OffsetFetchRequest, OffsetCommitRequest, OffsetRequest, FetchRequest,
@@ -202,7 +200,7 @@ class KafkaConsumer(object):
         for arg in topics:
 
             # Topic name str -- all partitions
-            if isinstance(arg, (six.string_types, six.binary_type)):
+            if isinstance(arg, (str, bytes)):
                 topic = kafka_bytestring(arg)
 
                 for partition in self._client.get_partition_ids_for_topic(topic):
@@ -219,10 +217,10 @@ class KafkaConsumer(object):
 
             # { topic: partitions, ... } dict
             elif isinstance(arg, dict):
-                for key, value in six.iteritems(arg):
+                for key, value in arg.items():
 
                     # key can be string (a topic)
-                    if isinstance(key, (six.string_types, six.binary_type)):
+                    if isinstance(key, (str, bytes)):
                         topic = kafka_bytestring(key)
 
                         # topic: partition
@@ -304,7 +302,7 @@ class KafkaConsumer(object):
         while True:
 
             try:
-                return six.next(self._get_message_iterator())
+                return next(self._get_message_iterator())
 
             # Handle batch completion
             except StopIteration:
@@ -540,7 +538,7 @@ class KafkaConsumer(object):
 
         offsets = self._offsets.task_done
         commits = []
-        for topic_partition, task_done_offset in six.iteritems(offsets):
+        for topic_partition, task_done_offset in offsets.items():
 
             # Skip if None
             if task_done_offset is None:
@@ -776,7 +774,7 @@ class KafkaConsumer(object):
     #
 
     def _deprecate_configs(self, **configs):
-        for old, new in six.iteritems(DEPRECATED_CONFIG_KEYS):
+        for old, new in DEPRECATED_CONFIG_KEYS.items():
             if old in configs:
                 logger.warning('Deprecated Kafka Consumer configuration: %s. '
                                'Please use %s instead.', old, new)

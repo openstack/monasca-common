@@ -10,8 +10,6 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-import six
-
 from .base import Partitioner
 
 
@@ -63,7 +61,7 @@ def murmur2(key):
     """
 
     # Convert key to bytes or bytearray
-    if isinstance(key, bytearray) or (six.PY3 and isinstance(key, bytes)):
+    if isinstance(key, bytes):
         data = key
     else:
         data = bytearray(str(key).encode())

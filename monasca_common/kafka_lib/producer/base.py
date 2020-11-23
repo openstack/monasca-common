@@ -22,8 +22,6 @@ from collections import defaultdict
 
 from threading import Thread, Event
 
-import six
-
 from monasca_common.kafka_lib.common import (
     ProduceRequest, ProduceResponse, TopicAndPartition, RetryOptions,
     kafka_errors, UnsupportedCodecError, FailedPayloadsError,
@@ -388,15 +386,15 @@ class Producer(object):
                 if key is None:
                     raise TypeError("key and payload can't be null in one")
             # Raise TypeError if any non-null message is not encoded as bytes
-            elif not isinstance(m, six.binary_type):
+            elif not isinstance(m, bytes):
                 raise TypeError("all produce message payloads must be null or type bytes")
 
         # Raise TypeError if topic is not encoded as bytes
-        if not isinstance(topic, six.binary_type):
+        if not isinstance(topic, bytes):
             raise TypeError("the topic must be type bytes")
 
         # Raise TypeError if the key is not encoded as bytes
-        if key is not None and not isinstance(key, six.binary_type):
+        if key is not None and not isinstance(key, bytes):
             raise TypeError("the key must be type bytes")
 
         if self.is_async:

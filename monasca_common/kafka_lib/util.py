@@ -16,8 +16,6 @@ import struct
 import sys
 from threading import Thread, Event
 
-import six
-
 from monasca_common.kafka_lib.common import BufferUnderflowError
 
 
@@ -26,7 +24,7 @@ def crc32(data):
 
 
 def write_int_string(s):
-    if s is not None and not isinstance(s, six.binary_type):
+    if s is not None and not isinstance(s, bytes):
         raise TypeError('Expected "%s" to be bytes\n'
                         'data=%s' % (type(s), repr(s)))
     if s is None:
@@ -36,7 +34,7 @@ def write_int_string(s):
 
 
 def write_short_string(s):
-    if s is not None and not isinstance(s, six.binary_type):
+    if s is not None and not isinstance(s, bytes):
         raise TypeError('Expected "%s" to be bytes\n'
                         'data=%s' % (type(s), repr(s)))
     if s is None:
@@ -105,9 +103,9 @@ def kafka_bytestring(s):
     Takes a string or bytes instance
     Returns bytes, encoding strings in utf-8 as necessary
     """
-    if isinstance(s, six.binary_type):
+    if isinstance(s, bytes):
         return s
-    if isinstance(s, six.string_types):
+    if isinstance(s, bytes):
         return s.encode('utf-8')
     raise TypeError(s)
 

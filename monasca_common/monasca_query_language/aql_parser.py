@@ -13,8 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import six
-
 import pyparsing
 
 from monasca_common.monasca_query_language import query_structures
@@ -36,7 +34,7 @@ decimal_number.setParseAction(lambda tokens: float("".join(tokens)))
 
 # Initialize non-ascii unicode code points in the Basic Multilingual Plane.
 unicode_printables = u''.join(
-    six.unichr(c) for c in range(128, 65536) if not six.unichr(c).isspace())
+    chr(c) for c in range(128, 65536) if not chr(c).isspace())
 
 # Does not like comma. No Literals from above allowed.
 valid_identifier_chars = (

@@ -22,8 +22,6 @@ except ImportError:
 import sys
 import time
 
-import six
-
 from .base import (
     Consumer,
     FETCH_DEFAULT_BLOCK_TIMEOUT,
@@ -379,7 +377,7 @@ class SimpleConsumer(Consumer):
         partitions = dict((p, self.buffer_size) for p in self.fetch_offsets.keys())
         while partitions:
             requests = []
-            for partition, buffer_size in six.iteritems(partitions):
+            for partition, buffer_size in partitions.items():
                 requests.append(FetchRequest(self.topic, partition,
                                              self.fetch_offsets[partition],
                                              buffer_size))

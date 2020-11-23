@@ -17,7 +17,6 @@ import logging
 import time
 
 from oslo_utils import encodeutils
-from six import PY3
 
 import monasca_common.kafka_lib.client as kafka_client
 import monasca_common.kafka_lib.producer as kafka_producer
@@ -57,7 +56,7 @@ class KafkaProducer(object):
 
         messages = [encodeutils.to_utf8(m) for m in messages]
 
-        key = bytes(str(key), 'utf-8') if PY3 else str(key)
+        key = bytes(str(key), 'utf-8')
 
         while not success:
             try:

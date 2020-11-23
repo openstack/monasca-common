@@ -12,8 +12,8 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
+import functools
 import simplejson as json
-import six
 
 from monasca_common.rest import exceptions
 
@@ -25,7 +25,7 @@ JSON_CONTENT_TYPE = 'application/json'
 
 def _try_catch(fun):
 
-    @six.wraps(fun)
+    @functools.wraps(fun)
     def wrapper(*args, **kwargs):
         try:
             return fun(*args, **kwargs)

@@ -14,8 +14,6 @@ import gzip
 from io import BytesIO
 import struct
 
-from six.moves import xrange
-
 _XERIAL_V1_HEADER = (-126, b'S', b'N', b'A', b'P', b'P', b'Y', 0, 1, 1)
 _XERIAL_V1_FORMAT = 'bccccccBii'
 
@@ -92,7 +90,7 @@ def snappy_encode(payload, xerial_compatible=False, xerial_blocksize=32 * 1024):
 
     if xerial_compatible:
         def _chunker():
-            for i in xrange(0, len(payload), xerial_blocksize):
+            for i in range(0, len(payload), xerial_blocksize):
                 yield payload[i:i + xerial_blocksize]
 
         out = BytesIO()
