@@ -3,7 +3,7 @@
 set -x  # Print each script step.
 set -eo pipefail  # Exit the script if any statement returns error.
 
-REAL_PATH=$(python -c "import os,sys;print(os.path.realpath('$0'))")
+REAL_PATH=$(python3 -c "import os,sys;print(os.path.realpath('$0'))")
 cd "$(dirname "$REAL_PATH")/../docker/"
 
 BASE_GIT_COMMIT=$(git rev-parse --verify HEAD)

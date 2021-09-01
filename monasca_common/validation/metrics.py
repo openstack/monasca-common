@@ -13,12 +13,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import json
 import math
 import re
+import sys
 
 import six
-import sys
-import ujson
 
 # This is used to ensure that metrics with a timestamp older than
 # RECENT_POINT_THRESHOLD_DEFAULT seconds (or the value passed in to
@@ -108,7 +108,7 @@ def validate_value_meta(value_meta):
             raise InvalidValueMeta(msg)
 
     try:
-        value_meta_json = ujson.dumps(value_meta)
+        value_meta_json = json.dumps(value_meta)
     except Exception:
         raise InvalidValueMeta("Unable to serialize valueMeta into JSON")
     if len(value_meta_json) > VALUE_META_VALUE_MAX_LENGTH:
