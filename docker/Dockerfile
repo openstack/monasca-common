@@ -1,4 +1,4 @@
-FROM python:3.6.8-alpine3.9
+FROM python:3.8-alpine3.15
 
 COPY wait_for.sh kafka_wait_for_topics.py mysql_check.py /
 COPY ashrc /root/.ashrc
@@ -7,8 +7,7 @@ ENV \
     ENV="/root/.ashrc" \
     PIP_NO_CACHE_DIR="no" \
     PIP_NO_COMPILE="no" \
-    PYTHONIOENCODING="utf-8" \
-    CRYPTOGRAPHY_DONT_BUILD_RUST=1
+    PYTHONIOENCODING="utf-8"
 
 ARG BASE_CREATION_TIME
 ARG BASE_GIT_COMMIT
@@ -72,6 +71,7 @@ ONBUILD SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
 ONBUILD RUN \
             chmod +x /start.sh && \
             apk add --no-cache --virtual .build-deps \
+                cairo \
                 g++ \
                 git \
                 libffi-dev \
@@ -79,8 +79,9 @@ ONBUILD RUN \
                 libxml2-dev \
                 libxslt-dev \
                 linux-headers \
-                make && \
-            # For librdkafka bigger than v1.6.0 we need newer versions of some
+                make \
+                rust && \
+            # For librdkafka bigger than v1.8.0 we need newer versions of some
             # libraries.
             apk add --no-cache --virtual .build-librdkafka \
                 libressl3.4-libcrypto \
@@ -89,8 +90,8 @@ ONBUILD RUN \
                 --repository=http://dl-cdn.alpinelinux.org/alpine/edge/community && \
             # Install librdkafka from source code.
             apk add --no-cache curl bash && \
-            curl https://codeload.github.com/edenhill/librdkafka/tar.gz/v1.6.0 | tar xzf - -C /tmp/ && \
-                 cd /tmp/librdkafka-1.6.0/ && \
+            curl https://codeload.github.com/edenhill/librdkafka/tar.gz/v1.8.0 | tar xzf - -C /tmp/ && \
+                 cd /tmp/librdkafka-1.8.0/ && \
                  ./configure && \
                  make && \
                  make install && \
