@@ -84,8 +84,8 @@ ONBUILD RUN \
             apk add --no-cache --virtual .build-librdkafka \
                 libressl2.7-libcrypto \
                 libressl2.7-libssl \
-                --repository=http://dl-cdn.alpinelinux.org/alpine/edge/main \
-                --repository=http://dl-cdn.alpinelinux.org/alpine/edge/community && \
+                --repository=http://dl-cdn.alpinelinux.org/alpine/3.10/main \
+                --repository=http://dl-cdn.alpinelinux.org/alpine/3.10/community && \
             # Install librdkafka from source code.
             apk add --no-cache curl bash && \
             curl https://codeload.github.com/edenhill/librdkafka/tar.gz/v1.1.0 | tar xzf - -C /tmp/ && \
