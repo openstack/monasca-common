@@ -10,7 +10,7 @@
     <packaging>jar</packaging>
 
     <properties>
-        <hibernate-core.version>5.0.1.Final</hibernate-core.version>
+        <hibernate-core.version>5.4.24.Final</hibernate-core.version>
     </properties>
 
     <dependencies>
