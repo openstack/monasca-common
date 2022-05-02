@@ -11,7 +11,6 @@
         - monasca-tempest-python3-cassandra
         - monasca-tempest-java-cassandra
         - monascalog-tempest
-        - build-monasca-common-docker-base-image
         - legacy-monasca-common-maven-build
     gate:
       queue: monasca
@@ -23,14 +22,7 @@
         - legacy-monasca-common-maven-build
     post:
       jobs:
-        - publish-monasca-common-docker-base-image
         - legacy-monasca-common-localrepo-upload
-    periodic:
-      jobs:
-        - publish-monasca-common-docker-base-image
-    release:
-      jobs:
-        - publish-monasca-common-docker-base-image
 
 - job:
     name: build-monasca-common-docker-base-image
