@@ -1,4 +1,5 @@
 - project:
+    queue: monasca
     templates:
       - check-requirements
       - openstack-cover-jobs
@@ -10,18 +11,13 @@
         - monasca-tempest-python2-influxdb
         - monasca-tempest-python3-influxdb
         - monasca-tempest-python2-cassandra
-        - monasca-tempest-java-cassandra
-        - monascalog-tempest
         - build-monasca-common-docker-base-image
         - legacy-monasca-common-maven-build
     gate:
-      queue: monasca
       jobs:
         - monasca-tempest-python2-influxdb
         - monasca-tempest-python3-influxdb
         - monasca-tempest-python2-cassandra
-        - monasca-tempest-java-cassandra
-        - monascalog-tempest
         - legacy-monasca-common-maven-build
     post:
       jobs:
