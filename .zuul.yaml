@@ -1,4 +1,5 @@
 - project:
+    queue: monasca
     templates:
       - check-requirements
       - openstack-cover-jobs
@@ -12,7 +13,6 @@
         - monascalog-tempest
         - legacy-monasca-common-maven-build
     gate:
-      queue: monasca
       jobs:
         - monasca-tempest-python3-influxdb:
             voting: false
