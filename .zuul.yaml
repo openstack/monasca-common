@@ -20,6 +20,9 @@
       jobs:
         - publish-monasca-common-docker-base-image
         - legacy-monasca-common-localrepo-upload
+    periodic:
+      jobs:
+        - publish-monasca-common-docker-base-image
     release:
       jobs:
         - publish-monasca-common-docker-base-image
