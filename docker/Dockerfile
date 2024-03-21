@@ -103,6 +103,7 @@ ONBUILD RUN \
             git -C /app reset --hard FETCH_HEAD && \
             wget --output-document /app/upper-constraints.txt \
                 "$CONSTRAINTS_FILE" && \
+            sed -i 's/PyYAML===6\.0/PyYAML===6.0.1/g' /app/upper-constraints.txt && \
             # Download monasca-common
             mkdir -p /monasca-common && \
             git -C /monasca-common init && \
