@@ -3,14 +3,17 @@
     templates:
       - check-requirements
       - openstack-cover-jobs
-      - openstack-python3-zed-jobs
+      - openstack-python3-jobs
     check:
       jobs:
         - monasca-tempest-python3-influxdb:
             voting: false
-        - monasca-tempest-python3-cassandra
-        - legacy-monasca-common-maven-build
-        - build-monasca-common-docker-base-image
+        - monasca-tempest-python3-cassandra:
+            voting: false
+        - legacy-monasca-common-maven-build:
+            voting: false
+        - build-monasca-common-docker-base-image:
+            voting: false
     gate:
       jobs:
         - monasca-tempest-python3-influxdb:

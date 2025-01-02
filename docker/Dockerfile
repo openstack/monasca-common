@@ -88,8 +88,8 @@ ONBUILD RUN \
                 --repository=http://dl-cdn.alpinelinux.org/alpine/edge/community && \
             # Install librdkafka from source code.
             apk add --no-cache curl bash && \
-            curl https://codeload.github.com/edenhill/librdkafka/tar.gz/v2.4.0 | tar xzf - -C /tmp/ && \
-                 cd /tmp/librdkafka-2.4.0/ && \
+            curl https://codeload.github.com/edenhill/librdkafka/tar.gz/v2.6.1 | tar xzf - -C /tmp/ && \
+                 cd /tmp/librdkafka-2.6.1/ && \
                  ./configure && \
                  make && \
                  make install && \
