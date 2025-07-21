@@ -27,7 +27,7 @@ from monasca_common.tests.policy import base
 class PolicyFileTestCase(base.BaseTestCase):
     def setUp(self):
         super(PolicyFileTestCase, self).setUp()
-        self.context = context.RequestContext(user='fake',
+        self.context = context.RequestContext(user_id='fake',
                                               project_id='fake',
                                               is_admin=False)
         self.target = {}
@@ -82,7 +82,7 @@ class PolicyTestCase(base.BaseTestCase):
         policy_engine.reset()
         policy_engine.init()
 
-        self.context = context.RequestContext(user='fake',
+        self.context = context.RequestContext(user_id='fake',
                                               project_id='fake',
                                               is_admin=False)
         policy_engine._ENFORCER.register_defaults(rules)
