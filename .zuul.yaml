@@ -10,7 +10,7 @@
             voting: false
         - monasca-tempest-python3-cassandra:
             voting: false
-        - legacy-monasca-common-maven-build:
+        - monasca-common-maven-build:
             voting: false
         - build-monasca-common-docker-base-image:
             voting: false
@@ -18,17 +18,30 @@
       jobs:
         - monasca-tempest-python3-influxdb:
             voting: false
-        - legacy-monasca-common-maven-build
+        - monasca-common-maven-build
     post:
       jobs:
         - publish-monasca-common-docker-base-image
-        - legacy-monasca-common-localrepo-upload
+        - monasca-common-localrepo-upload
     periodic:
       jobs:
         - publish-monasca-common-docker-base-image
     release:
       jobs:
         - publish-monasca-common-docker-base-image
+
+- job:
+    name: monasca-common-localrepo-upload
+    parent: legacy-publish-openstack-artifacts
+    run: playbooks/legacy/monasca-common-localrepo-upload/run.yaml
+    post-run: playbooks/legacy/monasca-common-localrepo-upload/post.yaml
+    timeout: 1800
+
+- job:
+    name: monasca-common-maven-build
+    parent: legacy-base
+    run: playbooks/legacy/monasca-common-maven-build/run.yaml
+    timeout: 1800
 
 - job:
     name: build-monasca-common-docker-base-image
