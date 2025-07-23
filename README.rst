@@ -1,13 +1,10 @@
-Team and repository tags
-========================
+==============
+monasca-common
+==============
 
 .. image:: https://governance.openstack.org/tc/badges/monasca-common.svg
-    :target: https://governance.openstack.org/tc/reference/tags/index.html
 
 .. Change things from this point on
-
-Overview
-========
 
 ``monasca-common`` is a collection of modules containing reusable application
 and platform code for building monitoring related services.
@@ -26,7 +23,7 @@ To run the unit tests use:
 
 ::
 
-   $ tox -e py35
+   $ tox -e py3
 
 For information on contributing, see `Contribution Guidelines`_.
 
@@ -37,7 +34,7 @@ For information on contributing, see `Contribution Guidelines`_.
 .. _`Contribution Guidelines`: https://docs.openstack.org/monasca-api/latest/contributor/index.html
 
 Java
-======
+====
 
 Build Instructions
 ~~~~~~~~~~~~~~~~~~
@@ -99,14 +96,12 @@ Platform Sub-Projects
    dependency injection, date and time, invocation retries, concurrency,
    etc.
 
-
-
-.. _monasca-common-model: https://github.com/openstack/monasca-common/tree/master/java/monasca-common-model
-.. _monasca-common-dropwizard: https://github.com/openstack/monasca-common/tree/master/java/monasca-common-dropwizard
-.. _monasca-common-hibernate: https://github.com/openstack/monasca-common/tree/master/java/monasca-common-hibernate
-.. _monasca-common-influxdb: https://github.com/openstack/monasca-common/tree/master/java/monasca-common-influxdb
-.. _monasca-common-kafka: https://github.com/openstack/monasca-common/tree/master/java/monasca-common-kafka
-.. _monasca-common-persistence: https://github.com/openstack/monasca-common/tree/master/java/monasca-common-persistence
-.. _monasca-common-streaming: https://github.com/openstack/monasca-common/tree/master/java/monasca-common-streaming
-.. _monasca-common-testing: https://github.com/openstack/monasca-common/tree/master/java/monasca-common-testing
-.. _monasca-common-util: https://github.com/openstack/monasca-common/tree/master/java/monasca-common-util
+.. _monasca-common-model: https://opendev.org/openstack/monasca-common/src/branch/master/java/monasca-common-model
+.. _monasca-common-dropwizard: https://opendev.org/openstack/monasca-common/src/branch/master/java/monasca-common-dropwizard
+.. _monasca-common-hibernate: https://opendev.org/openstack/monasca-common/src/branch/master/java/monasca-common-hibernate
+.. _monasca-common-influxdb: https://opendev.org/openstack/monasca-common/src/branch/master/java/monasca-common-influxdb
+.. _monasca-common-kafka: https://opendev.org/openstack/monasca-common/src/branch/master/java/monasca-common-kafka
+.. _monasca-common-persistence: https://opendev.org/openstack/monasca-common/src/branch/master/java/monasca-common-persistence
+.. _monasca-common-streaming: https://opendev.org/openstack/monasca-common/src/branch/master/java/monasca-common-streaming
+.. _monasca-common-testing: https://opendev.org/openstack/monasca-common/src/branch/master/java/monasca-common-testing
+.. _monasca-common-util: https://opendev.org/openstack/monasca-common/src/branch/master/java/monasca-common-util
