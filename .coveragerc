@@ -1,7 +1,0 @@
-[run]
-branch = True
-source = monasca_common
-omit = monasca_common/tests/*
-
-[report]
-ignore_errors = True

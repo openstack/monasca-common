@@ -1,5 +1,0 @@
-alias ll="ls -alp"
-
-# Print versions on login to the container.
-cat /VERSIONS
-echo
